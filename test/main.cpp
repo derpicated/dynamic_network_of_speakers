@@ -1,4 +1,4 @@
-#include "..\libs\rwf\relative_weight_factor.hpp"
+#include "../libs/rwf/relative_weight_factor.hpp"
 #include <iostream>
 #include <stdio.h>
 
