@@ -3,8 +3,15 @@
 #include <stdio.h>
 
 int main (int argc, char const* argv[]) {
-    std::cout << "Testing" << std::endl << std::endl;
-    relative_weight_factor::rwf<int> rwf_int ({ 1, 2, 3 });
-    relative_weight_factor::rwf<double> rwf_double ({ 1.1, 2.2, 3.3 });
+    std::cout << "Testing RWF" << std::endl;
+    relative_weight_factor::rwf<double> rwf_double ({ 1, 1, 1, 1, 1, 1, 1, 1 }, 100);
+    std::cout << std::endl
+              << rwf_double.get_relative_weight_factor ().at (0) << std::endl;
+    rwf_double.set_factors ({ 2, 1, 1, 1, 1, 1, 1, 1 });
+    std::cout << std::endl
+              << rwf_double.get_relative_weight_factor ().at (0) << std::endl;
+    rwf_double.set_head_tail (50);
+    std::cout << std::endl
+              << rwf_double.get_relative_weight_factor ().at (0) << std::endl;
     return 0;
 }
