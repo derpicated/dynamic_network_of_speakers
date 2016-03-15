@@ -29,7 +29,7 @@ The request topis is a topic where all the request to devices are handled.
 
 - `request`: Request topic to request data e.g. `request/online`.
 - `request/online`: request a message form all the online users. The message payload is the topic location to respond to?
-- `request/distance/object_id`: request the distance from all devices form the object.
+- `request/distance/object_id`: request the distance from all devices from the object.
 - [something for devices relative to object]
 
 ### client
@@ -62,7 +62,9 @@ A general status topic.
 
 ### Information
 
-A general Information topic. `Information/music/stream`
+A general Information topic.
+
+- `Information/music/stream`: contains the stream to the music file, if applicable.
 
 # General notes
 
