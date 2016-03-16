@@ -61,7 +61,7 @@ A general information topic.
 #### Music status
 
 - `info/music/time/position`: The position of the song in the time. If send, the speaker will adapt their time to this value. If a speaker gets the play command but doesn't know the time, a value of `0` will be used. [in `sec` format or `mm:ss`, not yet decided]
-- `info/music/status`: the state of the playing music. [`play`/`p`] / [`s`/`stop`] If a speaker joins, they will wait for a command before they start doing anything.
+- `info/music/status`: The state of the playing music. [`play`/`p`] / [`s`/`stop`] If a speaker joins, they will wait for a command before they start doing anything.
 - `info/music/stream`: Contains the stream to the music file, if applicable. [A test will tell whether or not this will be used.]
 - `info/music/volume`: The master volume. This value will be of a value between `100` or `0`. [For now just use `100` as the value. This could later be in a request format to the website]
 
@@ -72,7 +72,7 @@ A general information topic.
 
 # General notes
 
-- Client name - Speaker: The name for a speaker will be in the form of `speak_xxx`, where XXX is a random number. The maximal value of this random number is: `999`. Make sure that the devices can connect with its clientname. If not, that name already could be in use.
+- Client name (aka the `clientid`) - Speaker: The name for a speaker will be in the form of `speak_xxx`, where XXX is a random number. The maximal value of this random number is: `999`. Make sure that the devices can connect with its clientname. If not, that name already could be in use.
 - An MQTT client can create topic strings of up to 65535 bytes.
 - The maximal MQTT payload size is: `xxx xx` [280MB?]
 - Parts between `[]` or the use of `*` after a sentence in this document usually mean that information needs to be added. Or that clarification is needed.
