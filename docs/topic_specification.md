@@ -23,52 +23,56 @@ Details for the used Broker.
 
 This is a global topic listing. All the headers are a topic that will follow after the [Root topic](#root-topic)
 
-### request
+### Request
 
-The request topis is a topic where all the request to devices are handled.
+The request topic is a topic where all the requests to devices are handled.
 
-- `request`: Request topic to request data e.g. `request/online`.
-- `request/online`: request a message form all the online users. The message payload is the topic location to respond to?
-- `request/distance/object_id`: request the distance from all devices from the object.
-- [something for devices relative to object]
+- `request/online`: Request a message from all the online devices, the message payload is the topic location to respond to. The preferred location for the answer would be `info/client/online`.
+- `request/distance/objectid`: Request the distance from all devices relative to the object [objectid]. Payload is topic to publish to. If a location is unknown to a device, they don't respond.
+- `request/updated/rwf`: Request all devices to update their Relative Weight Factor for all their designated objects. All the devices will use the `request/distance/objectid` request for an update. This command can be used be a device, but this will usually be the website.
 
-### client
+### Client
 
 The client topic is for sending client specific data.
 
-For speakers the topic: `client/speakers/clientname` is used. The payload in the form of a JSON string (more information possible):
+`client/speakes/clientid/objectid/`: This is used to send device specific details concerning the relative distance from a virtual object. I.e. the website will send the data belonging to the device.
+
+The data is in the from of a JSON string. (more information possible):
 
 ```
 {
-  "clientname": {
-    "object_id": {
-      "length": 0,
+  "clientid": {
+    "objectid": {
+      "distance": 0,
       "angle": 0
     },
-    "object_id2": {
-      "length": 0,
+    "objectid2": {
+      "distance": 0,
       "angle": 0
     }
   }
 }
 ```
 
-### Status
+### Info
 
-A general status topic.
+A general information topic.
 
-- `status/time/position`: The position of the song in the time? If send, the speaker will adapt. if not time when it needs to play, value will be 0.
-- `status/music`: the state of the playing music. [`play`/`p`] / [`s`/`stop`] in `sec` format or `mm:ss`
+#### Music status
 
-### Information
+- `info/music/time/position`: The position of the song in the time. If send, the speaker will adapt their time to this value. If a speaker gets the play command but doesn't know the time, a value of `0` will be used. [in `sec` format or `mm:ss`, not yet decided]
+- `info/music/status`: the state of the playing music. [`play`/`p`] / [`s`/`stop`] If a speaker joins, they will wait for a command before they start doing anything.
+- `info/music/stream`: Contains the stream to the music file, if applicable. [A test will tell whether or not this will be used.]
+- `info/music/volume`: The master volume. This value will be of a value between `100` or `0`. [For now just use `100` as the value. This could later be in a request format to the website]
 
-A general Information topic.
+#### Device status
 
-- `Information/music/stream`: contains the stream to the music file, if applicable.
+- `info/client/online`: If a clients comes online, it will post its `clientid`.
+- `info/client/offline`: If a client goes offline, it will post its `clientid`.
 
 # General notes
 
-Some general notes/facts.
-
+- Client name - Speaker: The name for a speaker will be in the form of `speak_xxx`, where XXX is a random number. The maximal value of this random number is: `999`. Make sure that the devices can connect with its clientname. If not, that name already could be in use.
 - An MQTT client can create topic strings of up to 65535 bytes.
-- Payload size was 280MB?
+- The maximal MQTT payload size is: `xxx xx` [280MB?]
+- Parts between `[]` or the use of `*` after a sentence in this document usually mean that information needs to be added. Or that clarification is needed.
