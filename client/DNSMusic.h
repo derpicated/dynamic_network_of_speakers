@@ -2,7 +2,7 @@
 #define DNS_MUSIC_H
 
 #include "Topic.h"
-#include "relative_weight_factor.hpp"
+#include "../libs/rwf/relative_weight_factor.hpp"
 
 #include <mosquittopp.h>
 #include <atomic>
@@ -40,7 +40,7 @@ protected:
   int Volume;
   bool Stop, Play;
   std::string JsonDataString;
- 
+
   std::condition_variable _cv;
   std::mutex _mtx;
   std::atomic<bool> _running;
