@@ -1,0 +1,9 @@
+Config.o: Config.cpp Config.h
+DNSMusic.o: DNSMusic.cpp Config.h DNSMusic.h Topic.h \
+ relative_weight_factor.hpp
+main.o: main.cpp AppInfo.h Config.h DNSMusic.h Topic.h \
+ relative_weight_factor.hpp
+relative_weight_factor.o: relative_weight_factor.cpp \
+ relative_weight_factor.hpp
+Tokenizer.o: Tokenizer.cpp Tokenizer.h
+Topic.o: Topic.cpp Topic.h Tokenizer.h
