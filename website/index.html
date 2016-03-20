@@ -9,7 +9,7 @@
         <script src="./dynamic_speaker_network.js" type="text/javascript"></script>
         <script src="./libs/marked.js" type="text/javascript"></script>
     </head>
-    <body onload="DNS.start();">
+    <body onload="DNS.init();">
         <div id='page'>
 
             <div id='banner'>
@@ -22,35 +22,35 @@
             </div>
 
             <div id='top'>
-                <div id='draw_area'>
-                    <p>
-                        Draw speakers and objects in here
-                    </p>
-                </div>
-                <div id='speaker_list'>
+                <div id='speaker_list' class='right'>
                     <p>
                         List speakers in here
                     </p>
                 </div>
+                <div id='draw_area' class='left'>
+                    <p>
+                        Draw speakers and objects in here
+                    </p>
+                </div>
             </div>
             <div id='bottom'>
-                <div id='misc'>
+                <div id='media_controls' class='right'>
+                    <div id='volume_controls' class='right_control'>
+                        <input type="range" id='volume_slider' onclick="DNS.send(DNS.topic.info_music_volume, this.value)" min="0" max="100" step="1" value="0" />
+                    </div>
+                    <div id='music_controls' class='left_control'>
+                        <button class="fa fa-play button" onclick="DNS.send(DNS.topic.info_music_status, 'play')"></button>
+                        <button class="fa fa-pause button"  onclick="DNS.send(DNS.topic.info_music_status, 'pause')"></button>
+                        <button class="fa fa-stop button"  onclick="DNS.send(DNS.topic.info_music_status, 'stop')"></button>
+                    </div>
+                    <div id='time_controls' class='left_control'>
+                        <input type="range" id='time_slider' min="0" max="100" step="1" value="0" />
+                    </div>
+                </div>
+                <div id='misc' class='left'>
                     <p>
                         Misc controls like streaming
                     </p>
-                </div>
-                <div id='media_controls'>
-                    <div id='music_controls'>
-                        <button class="fa fa-play button"></button>
-                        <button class="fa fa-pause button"></button>
-                        <button class="fa fa-stop button"></button>
-                    </div>
-                    <div id='volume_controls'>
-                        <input type="range" id='volume_slider' min="0" max="100" step="10" value="0" />
-                    </div>
-                    <div id='time_controls'>
-                        <input type="range" id='time_slider' min="0" max="100" step="1" value="0" />
-                    </div>
                 </div>
             </div>
             <div id='main_text'>

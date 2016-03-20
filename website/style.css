@@ -6,8 +6,7 @@ body {
 #page {
     margin: auto;
     min-width: 1000px;
-    max-width: 1500px;
-    width: 90%;
+    width: 95%;
     height: 700px;
 }
 
@@ -39,37 +38,35 @@ body {
     width: 100%;
     height: 80%;
 }
+#draw_area {
+    height: 100%;
+    background-color: #DCDCDC;
+}
+#speaker_list {
+    height: 100%;
+    background-color: #C5C5C5;
+}
+
 #bottom {
     width: 100%;
     height: 20%;
 }
-
-#draw_area {
-    float:left;
-    width: 65%;
-    height: 100%;
-
-    background-color: #DCDCDC;
-}
-#speaker_list {
-    float:left;
-    width: 35%;
-    height: 100%;
-
-    background-color: #C5C5C5;
-}
-
 #misc {
-    float:left;
-    width: 65%;
     height: 100%;
     background-color: #C5C5C5;
 }
 #media_controls {
-    float:left;
-    width: 35%;
     height: 100%;
     background-color: #DCDCDC;
+}
+
+.left {
+    width: auto;
+    overflow: hidden;
+}
+.right {
+    width: 400px;
+    float: right;
 }
 
 #main_text {
@@ -119,19 +116,30 @@ a:active{
     font-size: 15px;
 }
 
-#music_controls {
-    float:left;
-    height: 50%;
-    background-color: none;
-    padding-left: 12%;
-    padding-top: 5%;
-}
 #volume_controls {
-    float:right;
-    width: 20%;
     height: 100%;
     background-color: none;
 }
+#music_controls {
+    height: 50%;
+    background-color: none;
+    padding-left: 15%;
+    padding-top: 5%;
+}
+#time_controls {
+    height: 50%;
+    background-color: none;
+}
+.left_control {
+    width: auto;
+    overflow: hidden;
+}
+.right_control {
+    width: 50px;
+    float: right;
+}
+
+/* input styles */
 #volume_controls input[type=range] {
     -webkit-appearance: none;
     -webkit-transform:rotate(-90deg);
@@ -140,37 +148,30 @@ a:active{
     -ms-transform:rotate(-90deg);
     transform:rotate(-90deg);
     position: relative;
-    top: 40%;
+    top: 38%;
     margin-left: -40px;
     background: none;
-    width: 120px;
 }
 #volume_controls  input[type=range]:focus {
     outline: none;
 }
 #volume_controls  input[type=range]::-webkit-slider-runnable-track {
     width: 100%;
-    height: 20px;
+    height: 30px;
     cursor: pointer;
     background: #646464;
     border-radius: 25px;
 }
 #volume_controls input[type=range]::-webkit-slider-thumb {
-    height: 28px;
-    width: 28px;
+    height: 30px;
+    width: 30px;
     border-radius: 24px;
-    border: 1px solid #909090;
+    border: 5px solid #909090;
     background: #808080;
     cursor: pointer;
     -webkit-appearance: none;
     margin-top: 0px;
-    margin-top: -4px;
-}
-#time_controls {
-    float:right;
-    width: 80%;
-    height: 50%;
-    background-color: none;
+    margin-top: 0px;
 }
 #time_controls input[type=range] {
     -webkit-appearance: none;
@@ -178,7 +179,7 @@ a:active{
     top: 10%;
     left: 5%;
     background: none;
-    width: 80%;
+    width: 90%;
 }
 #time_controls  input[type=range]:focus {
     outline: none;
@@ -194,7 +195,7 @@ a:active{
     height: 28px;
     width: 28px;
     border-radius: 24px;
-    border: 1px solid #909090;
+    border: 5px solid #909090;
     background: #808080;
     cursor: pointer;
     -webkit-appearance: none;
