@@ -34,6 +34,8 @@ DNS = (function (global) {
             console.log("MQTT Connected as: "+client._getClientId());
             connected = true;
             subscribe_list();// Connection succeeded; subscribe to our topics
+            DNS.send(DNS.topic.request_online, '1');    //get initial devices
+            //update device info
         },
         onFailure: function (message) {
             connected = false;
@@ -48,6 +50,8 @@ DNS = (function (global) {
         this.request_online             = this.request+'/online';
         this.request_distance           = this.request+'/distance';
         this.request_distance_objectid  = this.request_distance+'/objectid';
+        this.request_information        = this.request+'/information';
+        this.request_information_client = this.request_information+'/client';
         this.request_update             = this.request+'/update';
         this.request_updated_rwf        = this.request_update+'/rwf';
         this.client                     = this.root+'/client';
@@ -105,22 +109,25 @@ DNS = (function (global) {
     var message_recieve = function (message) {
         switch (message.destinationName) {
             case topic.info_client_online:
-                console.log("Client came online: "+message.payloadString);
+                //console.log("Client send ID: "+message.payloadString);
                 CLIENT.online(message.payloadString);
                 break;
             case topic.info_client_offline:
-                console.log("Client went offline: "+message.payloadString);
+                //console.log("Client send ID: "+message.payloadString);
                 CLIENT.offline(message.payloadString);
                 break;
             default:
-                if(message.destinationName.indexOf(topic.answer)>-1){//answer topic
+                if(message.destinationName.indexOf(topic.request)>-1){//request topic
+                    console.log("Request: "+message.destinationName);
+                    return;
+                } else if(message.destinationName.indexOf(topic.answer)>-1){//answer topic
                     //one for the distance answer
                     //one for the angle answer
-                    var tmp = message.destinationName;
-                    console.log("Answer!! "+tmp);
-                    tmp=tmp.replace(topic.answer+'/distance/', '');
-                    console.log("Answer!! "+tmp);
-
+                    //var tmp = message.destinationName;
+                    //console.log("Answer!! "+tmp);
+                    //tmp=tmp.replace(topic.answer+'/distance/', '');
+                    //console.log("Answer!! "+tmp);
+                    return;
                 }
                 console.log("Got unfiltred message from: "+message.destinationName+" | "+message.payloadString);
         }
@@ -149,6 +156,7 @@ DNS = (function (global) {
         subscribe(topic.answer+'/#');
         subscribe(topic.root+'/#');
     };
+
     /* Random gen */
     function rand(min,max) {
         return Math.floor(Math.random()*(max-min+1)+min);
