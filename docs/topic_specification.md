@@ -29,7 +29,7 @@ The request topic is a topic where all the requests to devices are handled.
 
 - `request/online`: Request a message from all the online devices, the message payload is the topic location to respond to. The preferred location for the answer would be `info/client/online`.
 - `request/distance/objectid`: Request the distance from all devices relative to the object [objectid]. Payload is topic to publish to. If a location is unknown to a device, they don't respond.
-- `request/distance`
+- `request/information/client`: Request all the devices to send their device specific information to a topic. Payload is topic to publish to. All devices respond with the JSON string that they have. If a device has no information, It wont respond.
 - `request/updated/rwf`: Request all devices to update their Relative Weight Factor for all their designated objects. All the devices will use the `request/distance/objectid` request for an update. This command can be used be a device, but this will usually be the website.
 
 ### Client
