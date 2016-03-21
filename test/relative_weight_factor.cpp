@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdio.h>
 
-int main (int argc, char const* argv[]) {
+int main () {
     std::cout << "Testing RWF" << std::endl;
     relative_weight_factor::rwf<double> rwf_double ({ 1, 1, 1, 1, 1, 1, 1, 1 }, 100);
     std::cout << std::endl
