@@ -14,9 +14,6 @@
 template <class T>
 relative_weight_factor::rwf<T>::rwf (std::vector<T> vec, int head, int tail)
 : _factors (vec), _steps (head - tail) {
-    T sum_of_elements = 0;
-    sum_of_elements   = _sum (_factors);
-    D(std::cout << std::endl << "Total: " << sum_of_elements << std::endl);
 }
 
 template <class T> relative_weight_factor::rwf<T>::~rwf () {
