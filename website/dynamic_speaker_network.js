@@ -116,6 +116,10 @@ DNS = (function (global) {
                 //console.log("Client send ID: "+message.payloadString);
                 CLIENT.offline(message.payloadString);
                 break;
+            case topic.info_music_volume:
+                console.log("Volume: "+message.payloadString);
+                $("#volume_slider").val(message.payloadString);//set slider value
+                break;
             default:
                 if(message.destinationName.indexOf(topic.request)>-1){//request topic
                     console.log("Request: "+message.destinationName);
@@ -132,13 +136,10 @@ DNS = (function (global) {
                 console.log("Got unfiltred message from: "+message.destinationName+" | "+message.payloadString);
         }
     };
-    var send = function (topic, payload) {
-        if(!(typeof topic=='string')){
-            console.log('Wrong topic!');
-            return -1;
-        }
-        message = new Messaging.Message(payload);
-        message.destinationName = topic;
+    var send = function (topic, payload, retain = false) {
+        message = new Messaging.Message(String(payload));
+        message.destinationName = String(topic);
+        message.retained = !!retain;
         client.send(message);
     };
 
@@ -152,9 +153,10 @@ DNS = (function (global) {
     var subscribe_list = function () {
         subscribe(topic.info_client_online);
         subscribe(topic.info_client_offline);
+        subscribe(topic.info_music_volume);
 
         subscribe(topic.answer+'/#');
-        subscribe(topic.root+'/#');
+        //subscribe(topic.root+'/#');
     };
 
     /* Random gen */
