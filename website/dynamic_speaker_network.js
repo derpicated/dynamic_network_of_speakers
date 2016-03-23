@@ -8,16 +8,17 @@ var DNS_VERSION = {
 //console.log = function() {};
 
 function include(filename) {
+    if (document.querySelectorAll('[src="' + filename + '"]').length > 0 > 0) {
+        return;
+    }
 	var head = document.getElementsByTagName('head')[0];
 	script = document.createElement('script');
 	script.src = filename;
 	script.type = 'text/javascript';
-	head.appendChild(script)
+	head.appendChild(script);
 }
 
-include('./libs/jquery-2.2.1.min.js');
-include('./libs/mqttws31.js');
-
+include('./gui.js');
 include('./devices.js');
 include('./objects.js');
 
@@ -75,6 +76,7 @@ DNS = (function (global) {
     var init = function () {
         welcome();
         connect_MQTT();
+        GUI.init();
         return 0;
     };
     /* stops the DNS */
@@ -111,10 +113,12 @@ DNS = (function (global) {
             case topic.info_client_online:
                 //console.log("Client send ID: "+message.payloadString);
                 CLIENT.online(message.payloadString);
+                GUI.draw_speakers();
                 break;
             case topic.info_client_offline:
                 //console.log("Client send ID: "+message.payloadString);
                 CLIENT.offline(message.payloadString);
+                GUI.draw_speakers();
                 break;
             case topic.info_music_volume:
                 console.log("Volume: "+message.payloadString);
@@ -156,7 +160,6 @@ DNS = (function (global) {
         subscribe(topic.info_music_volume);
 
         subscribe(topic.answer+'/#');
-        subscribe(topic.ese+'/#');
     };
 
     /* Random gen */
