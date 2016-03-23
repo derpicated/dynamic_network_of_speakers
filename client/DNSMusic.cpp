@@ -22,11 +22,13 @@ DNSMusic::DNSMusic(	const std::string& appname,
 , 	Volume{0}
 , 	Stop {true}
 , 	Play {false}
+, 	Pause {false}
 , 	JsonDataString {""}
 , 	_cv {}
 ,	_mtx {}
 , 	_running {true}
-, 	_thread {&DNSMusic::processData, this}
+, 	_thread_data {&DNSMusic::processData, this}
+, 	_thread_music {&DNSMusic::MusicPlayer, this}
 
 {
 	_topicRoot.add("DNS");
@@ -49,10 +51,15 @@ DNSMusic::~DNSMusic()
 void DNSMusic::stop()
 {
 	_running = false;
-	if (_thread.joinable())
+	if (_thread_music.joinable())
 	{
-		_thread.join();
+		_thread_music.join();
 	}
+	if (_thread_data.joinable())
+	{
+		_thread_data.join();
+	}
+
 }
 
 
@@ -128,13 +135,22 @@ void DNSMusic::on_message(const mosquitto_message *message)
 			if (!PS.compare("p") || !PS.compare("play"))
 			{
 				Play = true;
+				Pause = false;
+				Stop = false;
+			}
+			if (!PS.compare("pa") || !PS.compare("pause"))
+			{
+				Play = false;
+				Pause = true;
 				Stop = false;
 			}
 			if (!PS.compare("s") || !PS.compare("stop"))
 			{
 				Play = false;
+				Pause = false;
 				Stop = true;
 			}
+
 	}
 
 	if (topic.compare(MQTT_TOPIC_CLIENTID_OBJECTID) == 0){
@@ -170,9 +186,7 @@ void DNSMusic::processData()
 	while(_running)
 	{
 
-		std::cerr << "this is a thread     " <<  "Client name: " << CLIENT_XXX << std::endl<< std::endl;
-		std::cerr << "volume = " << std::setprecision(3)<< Volume << std::endl;
-		std::cerr << "Play " << Play << "  " << "Stop " << Stop << std::endl;
+		std::cerr << "this is the thread for calculating the RWF" <<  "Client name: " << CLIENT_XXX << std::endl;
 		std::cerr << "JsonDataString" << JsonDataString << std::endl; 
 
 		std::this_thread::sleep_for(Tms);
@@ -181,7 +195,45 @@ void DNSMusic::processData()
 
 
 
+void DNSMusic::MusicPlayer()
+{
+	std::chrono::milliseconds Tms {1000};
+	std::chrono::milliseconds Tstartup {5000};
+	std::this_thread::sleep_for(Tstartup);
+	audio_player player("/home/brian/Mumford_&_Sons-The_Wolf_(Live).mp3");
+	bool playing = false; 
+	//player.play();
 
+	while(_running)
+	{
+		if (playing == false)
+		{
+			if(Play == true) 	{ player.play(); playing = true; }
+		}
+		if(playing == true)
+		{
+			if(Stop == true) 	{ player.stop(); playing = false; }
+		}
+
+		// if (playing == false)
+		// {
+
+		// 	if(Play == true) 	{ player.play(); playing = true; }
+		// 	if(Stop == true) 	{ player.stop(); playing = false; }
+		// }
+		// if (playing == true)
+		// {
+		// 	if(Play == true) 	{ player.play(); playing = true; }
+		// 	if(Stop == true) 	{ player.stop(); playing = false; }
+		// }
+		player.set_volume(Volume);
+		
+		std::cerr << "this the thread for playing music " << std::endl;
+		std::cerr << "volume = " << std::setprecision(3)<< Volume << std::endl;
+		std::cerr << "Play " << Play << "  " << "Pause " << Pause << " " << "Stop " << Stop << std::endl;
+		std::this_thread::sleep_for(Tms);
+	}
+}
 
 
 

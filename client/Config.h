@@ -18,6 +18,8 @@ const bool MQTT_RETAIN_ON {true};
 
 const std::string MQTT_BROKER {"test.mosquitto.org"};
 
+const std::string MUSIC_LOCATION {"/home/brian/Mumford_&_Sons-The_Wolf_(Live).mp3"};
+
 /*this one is also declared in the construtor of DNSMusic class*/
 const std::string MQTT_TOPIC_ROOT 					{"ESEiot/DNS"};
 
