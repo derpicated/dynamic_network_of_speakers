@@ -87,7 +87,7 @@ DNS = (function (global) {
             console.log("Already connected");
             return;
         };
-        client = new Messaging.Client(broker_mqtt.url, broker_mqtt.port,generate_name());
+        client = new Paho.MQTT.Client(broker_mqtt.url, broker_mqtt.port,generate_name());
         client.onMessageArrived = message_recieve;
         client.onConnectionLost = conn_lost_MQTT;
         client.connect(connect_options);
@@ -137,7 +137,7 @@ DNS = (function (global) {
         }
     };
     var send = function (topic, payload, retain = false) {
-        message = new Messaging.Message(String(payload));
+        message = new Paho.MQTT.Message(String(payload));
         message.destinationName = String(topic);
         message.retained = !!retain;
         client.send(message);
@@ -156,7 +156,7 @@ DNS = (function (global) {
         subscribe(topic.info_music_volume);
 
         subscribe(topic.answer+'/#');
-        //subscribe(topic.root+'/#');
+        subscribe(topic.ese+'/#');
     };
 
     /* Random gen */
