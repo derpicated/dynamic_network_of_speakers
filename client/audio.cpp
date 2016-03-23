@@ -1,11 +1,11 @@
 #include "audio.hpp"
 
-audio_player::audio_player(std::string file_name) : file_name(file_name){
+audio_player::audio_player(std::string file_name) :
+    file_name(file_name),
+    child_pid((pid_t) 0){
 }
 
 void audio_player::play(unsigned int time /*= 0*/){
-    int status;
-
     child_pid = fork();
     switch (child_pid)
     {
@@ -18,10 +18,8 @@ void audio_player::play(unsigned int time /*= 0*/){
         perror("execl");
         exit(1);
 
-        default: // parent process, pid now contains the child pid
-        ;
+        default: ; // parent process, pid now contains the child pid
     }
-
     return;
 }
 
