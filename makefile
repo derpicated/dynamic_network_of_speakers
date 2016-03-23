@@ -37,7 +37,7 @@ $(rel_wf_lib_out): $(rel_wf_lib_src)
 audio_test_src=	./test/audio_test.cpp \
 				./client/audio.cpp
 # Target / executable
-audio_test_out=audio_test_src
+audio_test_out=audio_test
 $(audio_test_out): $(audio_test_src)
 	$(CHECK_BUILD)
 	$(CXX) $(CXXFLAGS) $(audio_test_src) -o $(BUILD_DIR)/$(audio_test_out)
