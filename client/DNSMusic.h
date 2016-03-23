@@ -3,6 +3,7 @@
 
 #include "Topic.h"
 #include "../libs/rwf/relative_weight_factor.hpp"
+#include "audio.hpp"
 
 #include <mosquittopp.h>
 #include <atomic>
@@ -19,7 +20,6 @@
 
 class DNSMusic : public mosqpp::mosquittopp
 {
-public:
 public:
   DNSMusic(	const std::string& appname,
            	const std::string& clientname,
@@ -38,13 +38,15 @@ protected:
 
   float Position, Angle;
   int Volume;
-  bool Stop, Play;
+  bool Stop, Play, Pause;
   std::string JsonDataString;
 
   std::condition_variable _cv;
   std::mutex _mtx;
   std::atomic<bool> _running;
-  std::thread _thread;
+  std::thread _thread_data, _thread_music;
+ 
+
 
   // C++11 override (compiler check)
   virtual void on_connect(int rc) override;
@@ -57,8 +59,9 @@ protected:
 
 private:
   void processData();
+  void MusicPlayer(); 
 };
 
-
+//,   audio_player {("/media/brian/Downloads/Spotnet/MUZIEK/Mumford & Sons - Wilder MInd (Deluxe Edition) 2015")}
 
 #endif
