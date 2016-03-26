@@ -7,28 +7,39 @@
 #include <stdexcept>
 #include <assert.h>
 
+/* Debug MACRO */
+//#define MAIN_DEBUG
+#ifdef MAIN_DEBUG
+#define D(call) (call)
+#else
+#define D(call)
+#endif
+
 
 DNSMusic::DNSMusic(	const std::string& appname,
                    	const std::string& clientname,
                     const std::string& host,
-                    int port)
+                    int port,
+                    const std::string musicfile)
 :  	mosqpp::mosquittopp {(CLIENT_XXX + appname + clientname).c_str()}
 , 	_appname {appname}
 , 	_clientname {clientname}
+, 	_musicfile	{musicfile}
 , 	_topicRoot {"ESEiot"}
 ,	_dataStore {}
-, 	Position {0}
-, 	Angle {0}
-, 	Volume{0}
-, 	Stop {true}
-, 	Play {false}
-, 	Pause {false}
-, 	JsonDataString {""}
+, 	_distance {0}
+, 	_angle {0}
+, 	_volume{0}
+, 	_stop {true}
+, 	_play {false}
+, 	_pause {false}
+, 	_jsondatastring {""}
 , 	_cv {}
 ,	_mtx {}
 , 	_running {true}
 , 	_thread_data {&DNSMusic::processData, this}
 , 	_thread_music {&DNSMusic::MusicPlayer, this}
+, 	_player(musicfile)
 
 {
 	_topicRoot.add("DNS");
@@ -69,14 +80,12 @@ void DNSMusic::on_connect(int rc)
   	{
   		publish(nullptr, MQTT_TOPIC_INFO_CLIENT_ONLINE.c_str(), CLIENT_XXX.size(), 
   					CLIENT_XXX.c_str(), MQTT_QoS_0);
-
   		subscribe(nullptr, MQTT_TOPIC_REQUEST_ONLINE.c_str(), MQTT_QoS_0);
   		subscribe(nullptr, MQTT_TOPIC_CLIENTID_OBJECTID.c_str(), MQTT_QoS_0);
   		subscribe(nullptr, MQTT_TOPIC_INFO_MUSIC_VOLUME.c_str(), MQTT_QoS_0);
   		subscribe(nullptr, MQTT_TOPIC_INFO_MUSIC_PS.c_str(), MQTT_QoS_0);
   	}
 }
-
 
 void DNSMusic::on_disconnect(int rc)
 {
@@ -88,14 +97,13 @@ void DNSMusic::on_disconnect(int rc)
 	std::cerr << "---- DNSMusic disconnected with rc = " << rc << std::endl;
 }
 
-
 void DNSMusic::on_message(const mosquitto_message *message)
 {
 	std::unique_lock<std::mutex> lk {_mtx};
 	std::string topic {message->topic};
 
-	std::cerr 	<< "DATA received by a topic + message: " << topic << " "
-            	<< (char*)message->payload << std::endl;
+	D(std::cerr 	<< "DATA received by a topic + message: " << topic << " "
+            	<< (char*)message->payload << std::endl;);
 
 	std::cerr 	<< "Value of the struct mosquitto_message" 	<< std::endl
 				<< "Mid: " 		<< message->mid 			<< std::endl
@@ -110,51 +118,16 @@ void DNSMusic::on_message(const mosquitto_message *message)
 	  	 		CLIENT_XXX.c_str(), MQTT_QoS_0);
 	}
 
-	if (topic.compare(MQTT_TOPIC_INFO_MUSIC_VOLUME) == 0){
-		try{
-				size_t size {0};
-				std::string sVolume = {(char*)message->payload};
-				Volume = stoi(sVolume, &size);
-				if(sVolume.size() != size)
-				{
-					std::cerr << "wrong volume value" << std::endl;
-				}
-		}
-		catch(std::invalid_argument& e)
-		{
-		  std::cerr << std::endl << "## EXCEPTION s40 invalid_argument: " << e.what() << std::endl;
-		}
-		catch(std::out_of_range& e)
-		{
-		  std::cerr << std::endl << "## EXCEPTION s40 out_of_range: " << e.what() << std::endl;
-		}
+	if (topic.compare(MQTT_TOPIC_INFO_MUSIC_VOLUME) == 0){	
+		setVolume(std::string {(char*)message->payload});
 	}
 
-	if (topic.compare(MQTT_TOPIC_INFO_MUSIC_PS) == 0){
-			std::string PS = {(char*)message->payload};
-			if (!PS.compare("p") || !PS.compare("play"))
-			{
-				Play = true;
-				Pause = false;
-				Stop = false;
-			}
-			if (!PS.compare("pa") || !PS.compare("pause"))
-			{
-				Play = false;
-				Pause = true;
-				Stop = false;
-			}
-			if (!PS.compare("s") || !PS.compare("stop"))
-			{
-				Play = false;
-				Pause = false;
-				Stop = true;
-			}
-
+	if (topic.compare(MQTT_TOPIC_INFO_MUSIC_PS) == 0){	
+		setPPS(std::string {(char*)message->payload});
 	}
 
 	if (topic.compare(MQTT_TOPIC_CLIENTID_OBJECTID) == 0){
-		JsonDataString = (char*)message->payload;  		
+		_jsondatastring = (char*)message->payload;  		
 	}
 }
 
@@ -178,59 +151,98 @@ void  DNSMusic::on_error()
 	std::cerr << "**** DNSMusic ERROR" << std::endl;
 }
 
+void DNSMusic::setVolume(std::string volume)
+{
+	try{
+		size_t size {0};
+		_volume = stoi(volume, &size);
+		if(volume.size() != size)
+		{
+			D(std::cerr << "wrong volume value" << std::endl;);
+		}
+	}
+	catch(std::invalid_argument& e)
+	{
+	  D(std::cerr << std::endl << "## EXCEPTION s40 invalid_argument: " << e.what() << std::endl;);
+	}
+	catch(std::out_of_range& e)
+	{
+	  D(std::cerr << std::endl << "## EXCEPTION s40 out_of_range: " << e.what() << std::endl;);
+	}
+	_player.set_volume(_volume);
+}
+
+void DNSMusic::setPPS(std::string pps)
+{
+	if (!pps.compare("p") || !pps.compare("play"))
+	{
+		_play = true;
+		_pause = false;
+		_stop = false;
+	}
+	if (!pps.compare("pa") || !pps.compare("pause"))
+	{
+		_play = false;
+		_pause = true;
+		_stop = false;
+	}
+	if (!pps.compare("s") || !pps.compare("stop"))
+	{
+		_play = false;
+		_pause = false;
+		_stop = true;
+	}
+}
+
 
 
 void DNSMusic::processData()
 {
 	std::chrono::milliseconds Tms {5000};
+
+	//relative_weight_factor::rwf<double> rwf_double({1,1,1,1,1,1,1,}, 100); 
+	
+
 	while(_running)
 	{
+		_jsonreader.readDataFromString(_jsondatastring);
+		_distance = _jsonreader._distance;
+		_angle = _jsonreader._angle;
 
-		std::cerr << "this is the thread for calculating the RWF" <<  "Client name: " << CLIENT_XXX << std::endl;
-		std::cerr << "JsonDataString" << JsonDataString << std::endl; 
+		std::cerr 	<< "distance: " << _distance << " " 
+					<< "angle: " << _angle << " "
+					<< "speakerid" << _jsonreader._speakerid << std::endl;
+
+		D(std::cerr << "this is the thread for calculating the RWF" <<  "Client name: " << CLIENT_XXX << std::endl;);
+		D(std::cerr << "JsonDataString" << _jsondatastring << std::endl;);
+
+
 
 		std::this_thread::sleep_for(Tms);
 	}
 }
-
-
 
 void DNSMusic::MusicPlayer()
 {
 	std::chrono::milliseconds Tms {1000};
 	std::chrono::milliseconds Tstartup {5000};
 	std::this_thread::sleep_for(Tstartup);
-	audio_player player("/home/brian/Mumford_&_Sons-The_Wolf_(Live).mp3");
 	bool playing = false; 
-	//player.play();
 
 	while(_running)
 	{
 		if (playing == false)
 		{
-			if(Play == true) 	{ player.play(); playing = true; }
+			if(_play == true) 	{ _player.play(); playing = true; }
 		}
 		if(playing == true)
 		{
-			if(Stop == true) 	{ player.stop(); playing = false; }
+			if(_stop == true) 	{ _player.stop(); playing = false; }
 		}
-
-		// if (playing == false)
-		// {
-
-		// 	if(Play == true) 	{ player.play(); playing = true; }
-		// 	if(Stop == true) 	{ player.stop(); playing = false; }
-		// }
-		// if (playing == true)
-		// {
-		// 	if(Play == true) 	{ player.play(); playing = true; }
-		// 	if(Stop == true) 	{ player.stop(); playing = false; }
-		// }
-		player.set_volume(Volume);
-		
-		std::cerr << "this the thread for playing music " << std::endl;
-		std::cerr << "volume = " << std::setprecision(3)<< Volume << std::endl;
-		std::cerr << "Play " << Play << "  " << "Pause " << Pause << " " << "Stop " << Stop << std::endl;
+		D(std::cerr << "this the thread for playing music " << std::endl
+					<< "volume = " << std::setprecision(3)<< _volume << std::endl
+					<< "Play " << _play << "  " << "Pause " << _pause << " " 
+					<< "Stop " << _stop << std::endl;);
 		std::this_thread::sleep_for(Tms);
 	}
 }

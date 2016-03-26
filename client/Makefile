@@ -3,8 +3,10 @@ CXXFLAGS = -std=c++11 -Wall -Wextra -Weffc++ -Os -D_GLIBCXX_USE_NANOSLEEP -pthre
 LDFLAGS = -lmosquittopp -L/usr/local/lib
 
 EXECUTABLE = DNSMusic
-SOURCES = ${wildcard *.cpp}
-HEADERS = ${wildcard *.h}
+SOURCES = ${wildcard *.cpp}\
+		  ../libs/rwf/relative_weight_factor.cpp
+HEADERS = ${wildcard *.h}\
+		  ../libs/rwf/relative_weight_factor.hpp 
 OBJECTS = ${SOURCES:.cpp=.o}
 
 

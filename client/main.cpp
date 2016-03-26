@@ -4,6 +4,7 @@
 
 #include <signal.h>
 #include <iostream>
+#include <mosquittopp.h>
 
 using namespace std;
 
@@ -31,7 +32,10 @@ int main(int argc, char *argv[])
   try
   {
     //TemperatureConverter tempconv("fccf", "tempconv", MQTT_BROKER, 1883);
-    DNSMusic  tempDNS("DNSMusic", "tempDNS", MQTT_BROKER, 1883);
+    DNSMusic  tempDNS("DNSMusic", "tempDNS", MQTT_BROKER, 1883, 
+                      "/home/brian/around_the_world.mp3");
+    /*de music file moet nog via de commandline ingevoerd worden*/
+
     auto clients {static_cast<mosqpp::mosquittopp*>(&tempDNS)};
 
     while (!receivedSIGINT)

@@ -4,6 +4,8 @@
 #include "Topic.h"
 #include "../libs/rwf/relative_weight_factor.hpp"
 #include "audio.hpp"
+#include "DNSDataParser.hpp"
+
 
 #include <mosquittopp.h>
 #include <atomic>
@@ -21,10 +23,12 @@
 class DNSMusic : public mosqpp::mosquittopp
 {
 public:
-  DNSMusic(	const std::string& appname,
-           	const std::string& clientname,
-           	const std::string& host,
-           	int port);
+  DNSMusic(	  const std::string& appname
+           	, const std::string& clientname
+           	, const std::string& host
+           	, int port
+            , const std::string musicfile);
+
   DNSMusic(const DNSMusic& other) = delete;
   DNSMusic& operator=(const DNSMusic& other) = delete;
   virtual ~DNSMusic();
@@ -33,13 +37,15 @@ public:
 protected:
   std::string _appname;
   std::string _clientname;
+  std::string _musicfile;
   Topic _topicRoot;
   std::map<std::string, std::pair<std::chrono::system_clock::time_point, int>> _dataStore;
 
-  float Position, Angle;
-  int Volume;
-  bool Stop, Play, Pause;
-  std::string JsonDataString;
+  float _distance, _angle;
+  int _volume;
+  bool _stop, _play, _pause;
+  std::string _jsondatastring;
+
 
   std::condition_variable _cv;
   std::mutex _mtx;
@@ -58,10 +64,12 @@ protected:
 
 
 private:
+  audio_player _player;
+  DNSDataParser _jsonreader;
+  void setVolume(std::string svolume);
+  void setPPS(std::string pps);
   void processData();
-  void MusicPlayer(); 
+  void MusicPlayer();
 };
-
-//,   audio_player {("/media/brian/Downloads/Spotnet/MUZIEK/Mumford & Sons - Wilder MInd (Deluxe Edition) 2015")}
 
 #endif
