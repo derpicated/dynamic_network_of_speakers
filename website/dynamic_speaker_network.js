@@ -25,8 +25,8 @@ include('./objects.js');
 DNS = (function (global) {
     /* Broker settings */
     var broker_mqtt = {
-        url: "test.mosquitto.org",
-        port: 8080
+        url: "iot.eclipse.org",//test.mosquitto.org
+        port: 80 //8080
     };
     var connected = false;
     var connect_options = {

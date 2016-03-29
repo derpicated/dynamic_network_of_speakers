@@ -16,7 +16,8 @@ const int MQTT_QoS_2 {2};
 const bool MQTT_RETAIN_OFF {false};
 const bool MQTT_RETAIN_ON {true};
 
-const std::string MQTT_BROKER {"test.mosquitto.org"};
+const std::string MQTT_BROKER {"iot.eclipse.org"};//default: test.mosquitto.org
+const int MQTT_BROKER_PORT = 1883;//default: 1883
 
 const std::string MUSIC_LOCATION {"/home/brian/Mumford_&_Sons-The_Wolf_(Live).mp3"};
 
@@ -34,7 +35,7 @@ const std::string MQTT_TOPIC_INFO_MUSIC_PS 			{"ESEiot/DNS/info/music/status"};
 
 
 const std::string MQTT_TOPIC_CLIENTID_OBJECTID 		{"ESEiot/DNS/client/speakers/"+ CLIENT_XXX +"/objects"};
- 
+
 // /*json data */
 // {
 //   "clientid": { "objectid":  	{"distance": 0, "angle": 0 },
@@ -47,14 +48,3 @@ const std::string MQTT_TOPIC_CLIENTID_OBJECTID 		{"ESEiot/DNS/client/speakers/"+
 
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
