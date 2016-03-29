@@ -1,23 +1,23 @@
 #ifndef AUDIO_HPP
 #define AUDIO_HPP
 
-#include <unistd.h>
 #include <signal.h>
-#include <wait.h>
 #include <string>
+#include <unistd.h>
+#include <wait.h>
 
-class audio_player{
+class audio_player {
     std::string file_name;
     pid_t child_pid;
-    const std::string player_cmd = "mpg123";
-    const std::string mixer_cmd = "amixer";
-    const std::string mixer_options = "-q sset Master";
 
-public:
-   audio_player(std::string file_name);
-   void play(unsigned int time = 0);
-   void stop();
-   void set_volume(unsigned int volume);
+    void call_player (unsigned int time);
+    void call_mixer (unsigned int volume);
+
+    public:
+    audio_player (std::string file_name);
+    void play (unsigned int time = 0);
+    int stop ();
+    void set_volume (unsigned int volume);
 };
 
-#endif //AUDIO_HPP
+#endif // AUDIO_HPP
