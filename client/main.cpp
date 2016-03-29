@@ -2,68 +2,80 @@
 #include "Config.h"
 #include "DNSMusic.h"
 
-#include <signal.h>
 #include <iostream>
 #include <mosquittopp.h>
+#include <signal.h>
+#include <sys/stat.h>
 
 using namespace std;
 
-volatile bool receivedSIGINT {false};
+volatile bool receivedSIGINT{ false };
 
-void handleSIGINT(int )
-{
-  cerr << "revieced signal for signalhandler" << endl;
-  receivedSIGINT = true;
+void handleSIGINT (int) {
+    cerr << "revieced signal for signalhandler" << endl;
+    receivedSIGINT = true;
 }
 
-int main(int argc, char *argv[])
-{
-  signal(SIGINT, handleSIGINT);
+void handleSIGCHLD (int) {
+    /*TODO implement SIGCHLD handler*/
+    int status;
+    pid_t pid = wait (&status);
+    /*lookup pid in map to find function
+    remove pid entry from map
+    call function
+    */
+}
 
-  int major {0};
-  int minor {0};
-  int revision {0};
+int main (int argc, char* argv[]) {
+    signal (SIGINT, handleSIGINT);
+    signal (SIGCHLD, handleSIGCHLD);
 
-  cout << "-- MQTT application: " << APPNAME_VERSION << "  ";
-  mosqpp::lib_init();
-  mosqpp::lib_version(&major, &minor, &revision);
-  cout << "uses Mosquitto lib version "
-       << major << '.' << minor << '.' << revision << endl;
-  try
-  {
-    //TemperatureConverter tempconv("fccf", "tempconv", MQTT_BROKER, 1883);
-    DNSMusic  tempDNS("DNSMusic", "tempDNS", MQTT_BROKER, 1883, 
-                      "/home/brian/around_the_world.mp3");
-    /*de music file moet nog via de commandline ingevoerd worden*/
+    int major{ 0 };
+    int minor{ 0 };
+    int revision{ 0 };
 
-    auto clients {static_cast<mosqpp::mosquittopp*>(&tempDNS)};
-
-    while (!receivedSIGINT)
-    {
-      for (auto client: clients)
-      {
-        int rc = client->loop();
-        if (rc)
-        {
-          cerr << "-- MQTT reconnect" << std::endl;
-          client->reconnect();
-        }
-      }
-
+    // temp test
+    if (argc != 2) {
+        std::cout << "usage: audio_test file.ogg" << std::endl;
+        return 1;
     }
-  }
-  catch(exception& e)
-  {
-    cerr << "Exception " << e.what() << std::endl;
-  }
-  catch(...)
-  {
-    cerr << "UNKNOWN EXCEPTION \n";
-  }
 
-  cout << "-- MQTT application: " << APPNAME_VERSION << " stopped"
-       << endl << endl;
-  mosqpp::lib_cleanup();
+    std::string music_file = argv[1];
 
-  return 0;
+    struct stat buffer;
+    if (stat (music_file.c_str (), &buffer) != 0) {
+        std::perror ("error, file:");
+    }
+    // end temp
+
+    cout << "-- MQTT application: " << APPNAME_VERSION << "  ";
+    mosqpp::lib_init ();
+    mosqpp::lib_version (&major, &minor, &revision);
+    cout << "uses Mosquitto lib version " << major << '.' << minor << '.'
+         << revision << endl;
+    try {
+        DNSMusic client ("DNSMusic", "tempDNS", MQTT_BROKER, 1883, music_file);
+
+        // auto clients{ static_cast<mosqpp::mosquittopp*> (&tempDNS) };
+
+        while (!receivedSIGINT) {
+            // for (auto client : clients) {
+            int rc = client.loop ();
+            if (rc) {
+                cerr << "-- MQTT reconnect" << std::endl;
+                client.reconnect ();
+            }
+            //}
+        }
+    } catch (exception& e) {
+        cerr << "Exception " << e.what () << std::endl;
+    } catch (...) {
+        cerr << "UNKNOWN EXCEPTION \n";
+    }
+
+    cout << "-- MQTT application: " << APPNAME_VERSION << " stopped" << endl
+         << endl;
+    mosqpp::lib_cleanup ();
+
+    return 0;
 }
