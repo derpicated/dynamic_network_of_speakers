@@ -10,4 +10,3 @@
 #define APPNAME_VERSION APPNAME " v" VERSION
 
 #endif
-
