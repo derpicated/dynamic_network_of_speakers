@@ -16,11 +16,15 @@ Music found in the `./misc/music/` folder. These music files are for testing and
 
 **Kevin MacLeod**
 
-> Who Likes to Party Kevin MacLeod (incompetech.com)<br> Licensed under Creative Commons: By Attribution 3.0 License<br> <http://creativecommons.org/licenses/by/3.0/>
+> Who Likes to Party Kevin MacLeod (incompetech.com)  
+> Licensed under Creative Commons: By Attribution 3.0 License  
+> <http://creativecommons.org/licenses/by/3.0/>
 
 **The Free Software Song**
 
-> The Free Software Song<br>Richard Stallman and the Free Software Foundation claim no copyright on this song.  <http://www.gnu.org/music/free-software-song.en.html>
+> The Free Software Song  
+> Richard Stallman and the Free Software Foundation claim no copyright on this song. 
+> <http://www.gnu.org/music/free-software-song.en.html>
 
 # License
 
