@@ -14,6 +14,10 @@ MKDIR_P = mkdir -p
 dns_client_src=./client/Config.cpp \
 				./client/DNSMusic.cpp \
 				./client/main.cpp \
+				./client/audio.cpp\
+				./client/download.cpp\
+				./client/Jzon.cpp\
+				./client/DNSDataParser.cpp\
 				./client/Tokenizer.cpp \
 				./client/Topic.cpp \
 				./libs/rwf/relative_weight_factor.cpp
@@ -36,11 +40,20 @@ $(rel_wf_lib_out): $(rel_wf_lib_src)
 # Audio Output
 audio_test_src=	./test/audio_test.cpp \
 				./client/audio.cpp
-# Target / executable
+
 audio_test_out=audio_test
 $(audio_test_out): $(audio_test_src)
 	$(CHECK_BUILD)
 	$(CXX) $(CXXFLAGS) $(audio_test_src) -o $(BUILD_DIR)/$(audio_test_out)
+
+# Download test
+download_test_src=	./test/download_test.cpp \
+					./client/download.cpp
+
+download_test_out=download_test
+$(download_test_out): $(download_test_src)
+	$(CHECK_BUILD)
+	$(CXX) $(CXXFLAGS) $(download_test_src) -o $(BUILD_DIR)/$(download_test_out)
 
 # Clean build dir
 clean:
