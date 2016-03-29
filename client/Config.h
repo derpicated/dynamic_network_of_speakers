@@ -16,7 +16,10 @@ const int MQTT_QoS_2{ 2 };
 const bool MQTT_RETAIN_OFF{ false };
 const bool MQTT_RETAIN_ON{ true };
 
-const std::string MQTT_BROKER{ "test.mosquitto.org" };
+const std::string MQTT_BROKER{
+    "iot.eclipse.org"
+};                                 // default: test.mosquitto.org
+const int MQTT_BROKER_PORT = 1883; // default: 1883
 
 const std::string MUSIC_LOCATION{
     "/home/brian/Mumford_&_Sons-The_Wolf_(Live).mp3"
