@@ -36,7 +36,7 @@ int main (int argc, char* argv[]) {
 
     // temp test
     if (argc != 2) {
-        std::cout << "usage: audio_test file.ogg" << std::endl;
+        std::cout << "usage: " << argv[0] << " file.ogg" << std::endl;
         return 1;
     }
 
@@ -45,6 +45,7 @@ int main (int argc, char* argv[]) {
     struct stat buffer;
     if (stat (music_file.c_str (), &buffer) != 0) {
         std::perror ("error, file:");
+        return 1;
     }
     // end temp
 
