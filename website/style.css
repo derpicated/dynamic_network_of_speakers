@@ -208,6 +208,7 @@ a:active{
     border: none;
     color: white;
     padding: 15px 32px;
+    margin: 2px;
     text-align: center;
     text-decoration: none;
     display: inline-block;

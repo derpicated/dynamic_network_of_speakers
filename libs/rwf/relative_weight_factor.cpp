@@ -1,11 +1,8 @@
 #include "relative_weight_factor.hpp"
-#include <iostream>
-#include <stdio.h>
-#include <vector>
 
 /* Debug MACRO */
-//#define MAIN_DEBUG
-#ifdef MAIN_DEBUG
+//#define DEBUG_RWF
+#ifdef DEBUG_RWF
 #define D(call) (call)
 #else
 #define D(call)

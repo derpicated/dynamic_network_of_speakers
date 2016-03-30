@@ -64,7 +64,7 @@ DNS = (function (global) {
         this.info_music_time_position   = this.info_music_time+'/position';
         this.info_music_status          = this.info_music+'/status';
         this.info_music_volume          = this.info_music+'/volume';
-        /* Stream topics */
+        this.info_music_source          = this.info_music+'/source';
         this.info_client                = this.info+'/client';
         this.info_client_online         = this.info_client+'/online';
         this.info_client_offline        = this.info_client+'/offline';
@@ -124,6 +124,14 @@ DNS = (function (global) {
                 console.log("Volume: "+message.payloadString);
                 $("#volume_slider").val(message.payloadString);//set slider value
                 break;
+            case topic.info_music_source:
+                //console.log("Music Source: "+message.payloadString);
+                var info_music_source = JSON.parse(message.payloadString);
+                console.log("Music Source: "+info_music_source.uri);
+                console.log("Music Name: "+info_music_source.name);
+                $('#music_uri').val(info_music_source.uri);
+                $('#music_name').val(info_music_source.name);
+                break;
             default:
                 if(message.destinationName.indexOf(topic.request)>-1){//request topic
                     console.log("Request: "+message.destinationName);
@@ -147,6 +155,16 @@ DNS = (function (global) {
         client.send(message);
     };
 
+    var send_sound_source = function (uri, name='DNS_Music') {
+        var sound_source =
+        "{"+
+          "\"uri\":\""+String(uri)+"\","+
+          "\"name\":\""+String(name)+"\""+
+      "}";
+      console.log("Send Sound Source: "+sound_source);
+      DNS.send(topic.info_music_source, sound_source, true);
+    };
+
     var subscribe = function (topic) {
         client.subscribe(topic, {qos: 1});//qos Quality of Service
     };
@@ -158,8 +176,10 @@ DNS = (function (global) {
         subscribe(topic.info_client_online);
         subscribe(topic.info_client_offline);
         subscribe(topic.info_music_volume);
+        subscribe(topic.info_music_source);
 
         subscribe(topic.answer+'/#');
+        //subscribe(topic.root+'/#'); // Debug for message check
     };
 
     /* Random gen */
@@ -173,6 +193,7 @@ DNS = (function (global) {
         init: init,
         deinit: deinit,
         topic: topic,
-        send: send
+        send: send,
+        send_sound_source:send_sound_source
     };
 })(window);

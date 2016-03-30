@@ -52,7 +52,9 @@
                 </div>
                 <div id='misc' class='left'>
                     <p>
-                        Misc controls like streaming
+                        <input type="text" id="music_uri" value="" placeholder="Stream Link" style="width: 80%; height: 30px; padding: 2px; margin: 2px; border: 1px solid black">
+                        <input type="text" id="music_name" value="" placeholder="Name of the song" style="width: calc(80% - 88px); height: 30px; padding: 2px; margin: 2px; border: 1px solid black">
+                        <button class="fa fa-upload button" onclick="DNS.send_sound_source($('#music_uri').val(), $('#music_name').val())"></button>
                     </p>
                 </div>
             </div>
