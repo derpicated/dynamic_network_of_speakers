@@ -1,8 +1,17 @@
 #include "audio.hpp"
 
+audio_player::audio_player ()
+: file_name ("")
+, child_pid ((pid_t)0) {
+}
+
 audio_player::audio_player (std::string file_name)
 : file_name (file_name)
 , child_pid ((pid_t)0) {
+}
+
+void audio_player::set_file (std::string file_name) {
+    this->file_name = file_name;
 }
 
 void audio_player::play (unsigned int time /*= 0*/) {
