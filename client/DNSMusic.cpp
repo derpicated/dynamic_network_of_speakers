@@ -1,20 +1,4 @@
 #include "DNSMusic.h"
-#include "Config.h"
-#include <assert.h>
-#include <iomanip>
-#include <iostream>
-#include <mosquittopp.h>
-#include <stdexcept>
-#include <string>
-
-/* Debug MACRO */
-//#define MAIN_DEBUG
-#ifdef MAIN_DEBUG
-#define D(call) (call)
-#else
-#define D(call)
-#endif
-
 
 DNSMusic::DNSMusic (const std::string& appname,
 const std::string& clientname,
@@ -23,10 +7,11 @@ int port,
 const std::string musicfile)
 : mosqpp::mosquittopp{ (CLIENT_XXX + appname + clientname).c_str () },
   _appname{ appname }, _clientname{ clientname }, _musicfile{ musicfile },
-  _topicRoot{ "ESEiot" }, _dataStore{}, _distance{ 0 }, _angle{ 0 }, _volume{ 0 },
+  _topicRoot{ "ESEiot" }, _speaker_data (), _distances{}, _volume{ 0 },
   _stop{ true }, _play{ false }, _pause{ false }, _jsondatastring{ "" }, _cv{},
-  _mtx{}, _running{ true }, _thread_data{ &DNSMusic::processData, this },
-  _thread_music{ &DNSMusic::MusicPlayer, this }, _player (musicfile)
+  _mtx{}, _running{ true },
+  /*_thread_data{ &DNSMusic::processClientData, this },
+  _thread_music{ &DNSMusic::MusicPlayer, this },*/ _player (musicfile)
 
 {
     _topicRoot.add ("DNS");
@@ -47,12 +32,12 @@ DNSMusic::~DNSMusic () {
 
 void DNSMusic::stop () {
     _running = false;
-    if (_thread_music.joinable ()) {
+    /*if (_thread_music.joinable ()) {
         _thread_music.join ();
     }
     if (_thread_data.joinable ()) {
         _thread_data.join ();
-    }
+    }*/
 }
 
 
@@ -64,6 +49,7 @@ void DNSMusic::on_connect (int rc) {
         subscribe (nullptr, MQTT_TOPIC_CLIENTID_OBJECTID.c_str (), MQTT_QoS_0);
         subscribe (nullptr, MQTT_TOPIC_INFO_MUSIC_VOLUME.c_str (), MQTT_QoS_0);
         subscribe (nullptr, MQTT_TOPIC_INFO_MUSIC_PS.c_str (), MQTT_QoS_0);
+        subscribe (nullptr, MQTT_TOPIC_INFO_MUSIC_SOURCE.c_str (), MQTT_QoS_0);
     }
 }
 
@@ -104,8 +90,12 @@ void DNSMusic::on_message (const mosquitto_message* message) {
         setPPS (std::string{ (char*)message->payload });
     }
 
+    if (topic.compare (MQTT_TOPIC_INFO_MUSIC_SOURCE) == 0) {
+        processMusicSourceData (std::string{ (char*)message->payload });
+    }
+
     if (topic.compare (MQTT_TOPIC_CLIENTID_OBJECTID) == 0) {
-        _jsondatastring = (char*)message->payload;
+        processClientData (std::string{ (char*)message->payload });
     }
 }
 
@@ -144,48 +134,40 @@ void DNSMusic::setVolume (std::string volume) {
 
 void DNSMusic::setPPS (std::string pps) {
     if (!pps.compare ("p") || !pps.compare ("play")) {
-        _play  = true;
-        _pause = false;
-        _stop  = false;
+        _player.play ();
     }
     if (!pps.compare ("pa") || !pps.compare ("pause")) {
-        _play  = false;
-        _pause = true;
-        _stop  = false;
+        _player.stop ();
     }
     if (!pps.compare ("s") || !pps.compare ("stop")) {
-        _play  = false;
-        _pause = false;
-        _stop  = true;
+        _player.stop ();
     }
 }
 
+void DNSMusic::processMusicSourceData (std::string json_str) {
+    audioSourceData _source_data = _data_parser.parseAudioSourceData (json_str);
 
-void DNSMusic::processData () {
-    std::chrono::milliseconds Tms{ 5000 };
-
-    // relative_weight_factor::rwf<double> rwf_double({1,1,1,1,1,1,1,}, 100);
-
-
-    while (_running) {
-        _jsonreader.readDataFromString (_jsondatastring);
-        _distance = _jsonreader._distance;
-        _angle    = _jsonreader._angle;
-
-        std::cerr << "distance: " << _distance << " "
-                  << "angle: " << _angle << " "
-                  << "speakerid" << _jsonreader._speakerid << std::endl;
-
-        D (std::cerr << "this is the thread for calculating the RWF"
-                     << "Client name: " << CLIENT_XXX << std::endl;);
-        D (std::cerr << "JsonDataString" << _jsondatastring << std::endl;);
-
-
-        std::this_thread::sleep_for (Tms);
-    }
+    download::download (_source_data.uri, _source_data.name);
 }
 
-void DNSMusic::MusicPlayer () {
+
+void DNSMusic::processClientData (std::string json_str) {
+    // while (_running) {
+    // TODO pass semaphore?
+    speakerData _speaker_data = _data_parser.parseClientData (_jsondatastring);
+
+    std::cerr << "distance: " << _speaker_data.distance << " "
+              << "angle: " << _speaker_data.angle << " "
+              << "speakerid" << _speaker_data.speakerid << std::endl;
+
+    // relative_weight_factor::rwf<int> rwf_int ();
+    D (std::cerr << "this is the thread for calculating the RWF"
+                 << "Client name: " << CLIENT_XXX << std::endl;);
+    D (std::cerr << "JsonDataString" << _jsondatastring << std::endl;);
+    //}
+}
+
+/*void DNSMusic::MusicPlayer () {
     std::chrono::milliseconds Tms{ 1000 };
     std::chrono::milliseconds Tstartup{ 5000 };
     std::this_thread::sleep_for (Tstartup);
@@ -205,10 +187,11 @@ void DNSMusic::MusicPlayer () {
             }
         }
         D (std::cerr << "this the thread for playing music " << std::endl
-                     << "volume = " << std::setprecision (3) << _volume << std::endl
+                     << "volume = " << std::setprecision (3) << _volume <<
+std::endl
                      << "Play " << _play << "  "
                      << "Pause " << _pause << " "
                      << "Stop " << _stop << std::endl;);
         std::this_thread::sleep_for (Tms);
     }
-}
+}*/

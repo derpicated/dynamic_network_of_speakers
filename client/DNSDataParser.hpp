@@ -1,32 +1,35 @@
 #ifndef DNS_DATAPARSER_HPP
 #define DNS_DATAPARSER_HPP
 
-#include "Jzon.h"
+#include <iostream>
+#include <sstream>
 #include <string>
 
-struct speakerdata {
+#include "Jzon.h"
+
+class speakerData {
+    public:
+    speakerData ();
+
+    int speakerid;
     int distance;
     int angle;
 };
 
-
-class DNSDataParser {
-    private:
-    Jzon::Parser _filereader;
-
-    protected:
+class audioSourceData {
     public:
-    DNSDataParser ();
-    ~DNSDataParser ();
+    audioSourceData ();
 
-    void readDataFromString (std::string jsonstring);
-
-
-    /*data variables*/
-    int _speakerid;
-    int _distance;
-    int _angle;
+    std::string name;
+    std::string uri;
 };
 
+class dataParser {
+    Jzon::Parser _filereader;
+
+    public:
+    speakerData parseClientData (std::string jsonstring);
+    audioSourceData parseAudioSourceData (std::string jsonstring);
+};
 
 #endif

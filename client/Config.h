@@ -43,6 +43,11 @@ const std::string MQTT_TOPIC_INFO_CLIENT_LASTWILL{
 const std::string MQTT_TOPIC_INFO_MUSIC_VOLUME{
     "ESEiot/DNS/info/music/volume"
 };
+
+const std::string MQTT_TOPIC_INFO_MUSIC_SOURCE{
+    "ESEiot/DNS/info/music/source"
+};
+
 const std::string MQTT_TOPIC_INFO_MUSIC_PS{ "ESEiot/DNS/info/music/status" };
 
 

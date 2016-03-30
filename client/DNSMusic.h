@@ -1,23 +1,35 @@
 #ifndef DNS_MUSIC_H
 #define DNS_MUSIC_H
 
-#include "../libs/rwf/relative_weight_factor.hpp"
-#include "DNSDataParser.hpp"
-#include "Topic.h"
-#include "audio.hpp"
-
-
+#include <assert.h>
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
 #include <deque>
+#include <iomanip>
+#include <iostream>
 #include <map>
 #include <mosquittopp.h>
+#include <stdexcept>
 #include <stdlib.h>
 #include <string>
 #include <thread>
 #include <utility>
 
+#include "../libs/rwf/relative_weight_factor.hpp"
+#include "Config.h"
+#include "DNSDataParser.hpp"
+#include "Topic.h"
+#include "audio.hpp"
+#include "download.hpp"
+
+/* Debug MACRO */
+//#define MAIN_DEBUG
+#ifdef MAIN_DEBUG
+#define D(call) (call)
+#else
+#define D(call)
+#endif
 
 class DNSMusic : public mosqpp::mosquittopp {
     public:
@@ -37,18 +49,18 @@ class DNSMusic : public mosqpp::mosquittopp {
     std::string _clientname;
     std::string _musicfile;
     Topic _topicRoot;
-    std::map<std::string, std::pair<std::chrono::system_clock::time_point, int>> _dataStore;
+    dataParser _data_parser;
+    audioSourceData _speaker_data;
+    std::vector<int> _distances;
 
-    float _distance, _angle;
     int _volume;
     bool _stop, _play, _pause;
     std::string _jsondatastring;
 
-
     std::condition_variable _cv;
     std::mutex _mtx;
     std::atomic<bool> _running;
-    std::thread _thread_data, _thread_music;
+    // std::thread _thread_data, _thread_music;
 
 
     // C++11 override (compiler check)
@@ -62,10 +74,10 @@ class DNSMusic : public mosqpp::mosquittopp {
 
     private:
     audio_player _player;
-    DNSDataParser _jsonreader;
     void setVolume (std::string svolume);
     void setPPS (std::string pps);
-    void processData ();
+    void processMusicSourceData (std::string json_str);
+    void processClientData (std::string json_str);
     void MusicPlayer ();
 };
 
