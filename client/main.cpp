@@ -19,7 +19,7 @@ void handleSIGINT (int) {
 void handleSIGCHLD (int) {
     /*TODO implement SIGCHLD handler*/
     int status;
-    pid_t pid = wait (&status);
+    wait (&status); // pid_t pid =
     /*lookup pid in map to find function
     remove pid entry from map
     call function
@@ -44,7 +44,7 @@ int main (int argc, char* argv[]) {
 
     struct stat buffer;
     if (stat (music_file.c_str (), &buffer) != 0) {
-        std::perror ("error, file:");
+        std::perror ("error, file");
         return 1;
     }
     // end temp
