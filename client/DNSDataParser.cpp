@@ -1,9 +1,14 @@
 #include "DNSDataParser.hpp"
 
-speakerData::speakerData () : speakerid (0), distance (0), angle (0) {
+speakerData::speakerData ()
+: speakerid (0)
+, distance (0)
+, angle (0) {
 }
 
-audioSourceData::audioSourceData () : name (""), uri ("") {
+audioSourceData::audioSourceData ()
+: name ("")
+, uri ("") {
 }
 
 speakerData dataParser::parseClientData (std::string jsonstring) {

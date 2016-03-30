@@ -5,13 +5,22 @@ const std::string& clientname,
 const std::string& host,
 int port,
 const std::string musicfile)
-: mosqpp::mosquittopp{ (CLIENT_XXX + appname + clientname).c_str () },
-  _appname{ appname }, _clientname{ clientname }, _musicfile{ musicfile },
-  _topicRoot{ "ESEiot" }, _speaker_data (), _distances{}, _volume{ 0 },
-  _stop{ true }, _play{ false }, _pause{ false }, _jsondatastring{ "" }, _cv{},
-  _mtx{}, _running{ true },
-  /*_thread_data{ &DNSMusic::processClientData, this },
-  _thread_music{ &DNSMusic::MusicPlayer, this },*/ _player (musicfile)
+: mosqpp::mosquittopp{ (CLIENT_XXX + appname + clientname).c_str () }
+, _appname{ appname }
+, _clientname{ clientname }
+, _musicfile{ musicfile }
+, _topicRoot{ "ESEiot" }
+, _speaker_data ()
+, _distances{}
+, _volume{ 0 }
+, _stop{ true }
+, _play{ false }
+, _pause{ false }
+, _jsondatastring{ "" }
+, _cv{}
+, _mtx{}
+, _running{ true }
+, _player (musicfile)
 
 {
     _topicRoot.add ("DNS");
