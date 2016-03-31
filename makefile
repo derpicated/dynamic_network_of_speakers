@@ -25,7 +25,7 @@ dns_client_src=./client/main.cpp \
 dns_client_src_out=dns_client
 $(dns_client_src_out): $(dns_client_src)
 	$(CHECK_BUILD)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(dns_client_src) -o $(BUILD_DIR)/$(dns_client_src_out)
+	$(CXX) $(CXXFLAGS)  $(dns_client_src) $(LDFLAGS) -o $(BUILD_DIR)/$(dns_client_src_out)
 
 # Lib testing
 # Relative Weight Factor
