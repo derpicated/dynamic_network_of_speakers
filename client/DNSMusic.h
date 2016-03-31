@@ -16,12 +16,12 @@
 #include <thread>
 #include <utility>
 
-#include "../libs/rwf/relative_weight_factor.hpp"
 #include "Config.h"
 #include "DNSDataParser.hpp"
-#include "Topic.h"
-#include "audio.hpp"
-#include "download.hpp"
+#include "libs/audio/audio.hpp"
+#include "libs/download/download.hpp"
+#include "libs/rwf/relative_weight_factor.hpp"
+#include "libs/topic/Topic.h"
 
 /* Debug MACRO */
 //#define MAIN_DEBUG

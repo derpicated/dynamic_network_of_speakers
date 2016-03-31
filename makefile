@@ -11,16 +11,16 @@ CHECK_BUILD=if [ ! -d "./$(BUILD_DIR)" ];then	\
 MKDIR_P = mkdir -p
 
 # Client
-dns_client_src=./client/Config.cpp \
+dns_client_src=./client/main.cpp \
+				./client/Config.cpp \
 				./client/DNSMusic.cpp \
-				./client/main.cpp \
-				./client/audio.cpp\
-				./client/download.cpp\
-				./client/Jzon.cpp\
 				./client/DNSDataParser.cpp\
-				./client/Tokenizer.cpp \
-				./client/Topic.cpp \
-				./libs/rwf/relative_weight_factor.cpp
+				./client/libs/audio/audio.cpp\
+				./client/libs/download/download.cpp\
+				./client/libs/jzon/Jzon.cpp\
+				./client/libs/topic/Tokenizer.cpp \
+				./client/libs/topic/Topic.cpp \
+				./client/libs/rwf/relative_weight_factor.cpp
 # Target / executable
 dns_client_src_out=dns_client
 $(dns_client_src_out): $(dns_client_src)
@@ -30,7 +30,7 @@ $(dns_client_src_out): $(dns_client_src)
 # Lib testing
 # Relative Weight Factor
 rel_wf_lib_src=	./test/relative_weight_factor.cpp \
-				./libs/rwf/relative_weight_factor.cpp
+				./client/libs/rwf/relative_weight_factor.cpp
 # Target / executable
 rel_wf_lib_out=rel_wf_lib
 $(rel_wf_lib_out): $(rel_wf_lib_src)
@@ -39,7 +39,7 @@ $(rel_wf_lib_out): $(rel_wf_lib_src)
 
 # Audio Output
 audio_test_src=	./test/audio_test.cpp \
-				./client/audio.cpp
+				./client/libs/audio/audio.cpp
 
 audio_test_out=audio_test
 $(audio_test_out): $(audio_test_src)
@@ -48,7 +48,7 @@ $(audio_test_out): $(audio_test_src)
 
 # Download test
 download_test_src=	./test/download_test.cpp \
-					./client/download.cpp
+					./client/libs/download/download.cpp
 
 download_test_out=download_test
 $(download_test_out): $(download_test_src)

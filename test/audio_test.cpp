@@ -2,7 +2,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "../client/audio.hpp"
+#include "../client/libs/audio/audio.hpp"
 
 int main (int argc, char const* argv[]) {
     if (argc != 2) {

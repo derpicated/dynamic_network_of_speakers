@@ -3,7 +3,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "../client/download.hpp"
+#include "../client/libs/download/download.hpp"
 
 int main (int argc, char const* argv[]) {
     if (argc != 3) {
