@@ -14,7 +14,9 @@ class audio_player {
     void call_mixer (unsigned int volume);
 
     public:
+    audio_player ();
     audio_player (std::string file_name);
+    void set_file (std::string file_name);
     void play (unsigned int time = 0);
     int stop ();
     void set_volume (unsigned int volume);
