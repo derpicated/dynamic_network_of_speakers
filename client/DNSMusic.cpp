@@ -10,17 +10,16 @@ const std::string musicfile)
 , _clientname{ clientname }
 , _musicfile{ musicfile }
 , _topicRoot{ "ESEiot" }
-, _speaker_data ()
 , _distances{}
 , _volume{ 0 }
 , _stop{ true }
 , _play{ false }
 , _pause{ false }
 , _jsondatastring{ "" }
-, _cv{}
 , _mtx{}
-, _running{ true }
 , _player (musicfile)
+, _speaker_data ()
+, _data_parser ()
 
 {
     _topicRoot.add ("DNS");
@@ -35,20 +34,8 @@ DNSMusic::~DNSMusic () {
     std::cerr << "---- ** disconnecting DNSMusic" << std::endl;
     publish (nullptr, MQTT_TOPIC_INFO_CLIENT_OFFLINE.c_str (),
     CLIENT_XXX.size (), CLIENT_XXX.c_str (), MQTT_QoS_0);
-    stop ();
     disconnect ();
 }
-
-void DNSMusic::stop () {
-    _running = false;
-    /*if (_thread_music.joinable ()) {
-        _thread_music.join ();
-    }
-    if (_thread_data.joinable ()) {
-        _thread_data.join ();
-    }*/
-}
-
 
 void DNSMusic::on_connect (int rc) {
     if (rc == 0) {
@@ -104,7 +91,8 @@ void DNSMusic::on_message (const mosquitto_message* message) {
     }
 
     if (topic.compare (MQTT_TOPIC_CLIENTID_OBJECTID) == 0) {
-        processClientData (std::string{ (char*)message->payload });
+        _jsondatastring = (char*)message->payload;
+        processClientData ((char*)message->payload);
     }
 }
 
@@ -161,46 +149,14 @@ void DNSMusic::processMusicSourceData (std::string json_str) {
 
 
 void DNSMusic::processClientData (std::string json_str) {
-    // while (_running) {
-    // TODO pass semaphore?
-    speakerData _speaker_data = _data_parser.parseClientData (_jsondatastring);
+    _data_parser.parseClientData (json_str);
+    int numberofobjects = _data_parser.getnumberofObjects();
 
-    std::cerr << "distance: " << _speaker_data.distance << " "
-              << "angle: " << _speaker_data.angle << " "
-              << "speakerid" << _speaker_data.speakerid << std::endl;
-
-    // relative_weight_factor::rwf<int> rwf_int ();
-    D (std::cerr << "this is the thread for calculating the RWF"
-                 << "Client name: " << CLIENT_XXX << std::endl;);
-    D (std::cerr << "JsonDataString" << _jsondatastring << std::endl;);
-    //}
-}
-
-/*void DNSMusic::MusicPlayer () {
-    std::chrono::milliseconds Tms{ 1000 };
-    std::chrono::milliseconds Tstartup{ 5000 };
-    std::this_thread::sleep_for (Tstartup);
-    bool playing = false;
-
-    while (_running) {
-        if (playing == false) {
-            if (_play == true) {
-                _player.play ();
-                playing = true;
-            }
-        }
-        if (playing == true) {
-            if (_stop == true) {
-                _player.stop ();
-                playing = false;
-            }
-        }
-        D (std::cerr << "this the thread for playing music " << std::endl
-                     << "volume = " << std::setprecision (3) << _volume <<
-std::endl
-                     << "Play " << _play << "  "
-                     << "Pause " << _pause << " "
-                     << "Stop " << _stop << std::endl;);
-        std::this_thread::sleep_for (Tms);
+    for (int i = 0; i < numberofobjects; ++i)
+    {
+      std::cerr << "speakerid: "<< _data_parser.speaker[i].speakerid << std::endl
+                << "distance: " << _data_parser.speaker[i].distance  << std::endl
+                << "angle: "    << _data_parser.speaker[i].angle     << std::endl;
     }
-}*/
+    // // relative_weight_factor::rwf<int> rwf_int ();
+}

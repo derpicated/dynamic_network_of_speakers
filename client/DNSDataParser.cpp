@@ -1,24 +1,33 @@
 #include "DNSDataParser.hpp"
 
-speakerData::speakerData ()
-: speakerid (0)
-, distance (0)
-, angle (0) {
-}
-
 audioSourceData::audioSourceData ()
 : name ("")
-, uri ("") {
+, uri ("")
+{}
+
+
+dataParser::dataParser()
+: numberofObject(0) 
+, _filereader ()
+{}
+
+void dataParser::parseClientData (std::string jsonstring) {
+    Jzon::Node rootNode = _filereader.parseString (jsonstring);
+
+    numberofObject = rootNode.get("objects").toInt();
+    std::string objectid {"objectid0"};
+
+    for(int i = 0; i< numberofObject; ++i){
+        objectid = objectid.replace(8,1,std::to_string(i+1));
+        speaker[i].speakerid = rootNode.get(objectid).get("speakerid").toString();
+        speaker[i].distance  = rootNode.get(objectid).get("distance").toFloat();
+        speaker[i].angle     = rootNode.get(objectid).get("angle").toFloat();                                          
+    }
 }
 
-speakerData dataParser::parseClientData (std::string jsonstring) {
-    speakerData ret;
-    Jzon::Node tempNode = _filereader.parseString (jsonstring);
-
-    ret.speakerid = tempNode.get ("speakerid").toInt ();
-    ret.distance  = tempNode.get ("distance").toInt ();
-    ret.angle     = tempNode.get ("angle").toInt ();
-    return ret;
+int dataParser::getnumberofObjects()
+{
+  return numberofObject;
 }
 
 audioSourceData dataParser::parseAudioSourceData (std::string jsonstring) {
