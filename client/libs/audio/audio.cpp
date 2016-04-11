@@ -47,7 +47,6 @@ int audio_player::stop () {
 }
 
 void audio_player::set_volume (unsigned int volume) {
-    int status;
     pid_t pid = fork ();
     switch (pid) {
         case -1: // error
@@ -66,9 +65,9 @@ void audio_player::set_volume (unsigned int volume) {
 void audio_player::call_mixer (unsigned int volume) {
     std::string vol_str = std::to_string (volume) + "%";
 #ifdef DEBUG_AUDIO
-    execlpx ("amixer", "amixer", "sset", "Master", vol_str.c_str (), (char*)NULL);
+    execlp ("amixer", "amixer", "sset", "Master", vol_str.c_str (), (char*)NULL);
 #else
-    execlpx ("amixer", "amixer", "sset", "Master", vol_str.c_str (), (char*)NULL);
+    execlp ("amixer", "amixer", "sset", "Master", vol_str.c_str (), (char*)NULL);
 #endif
     std::perror ("error executing amixer");
 }
