@@ -20,6 +20,7 @@ const std::string musicfile)
 , _cv{}
 , _mtx{}
 , _running{ true }
+, _cache_path (".cache/")
 , _player (musicfile)
 
 {
@@ -155,8 +156,20 @@ void DNSMusic::setPPS (std::string pps) {
 
 void DNSMusic::processMusicSourceData (std::string json_str) {
     audioSourceData _source_data = _data_parser.parseAudioSourceData (json_str);
+    std::string local            = _source_data.name;
 
-    download::download (_source_data.uri, _source_data.name);
+    for (auto c : local) { // check the given file name for safety
+        if (!isalpha (c)) {
+            if (c != '.') {
+                c = '_';
+            }
+        }
+    }
+
+    local = _cache_path + local;
+
+    download::download (_source_data.uri, local);
+    _player.set_file (local);
 }
 
 

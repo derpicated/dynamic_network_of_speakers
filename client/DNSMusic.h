@@ -73,6 +73,7 @@ class DNSMusic : public mosqpp::mosquittopp {
 
 
     private:
+    const std::string _cache_path;
     audio_player _player;
     void setVolume (std::string svolume);
     void setPPS (std::string pps);
