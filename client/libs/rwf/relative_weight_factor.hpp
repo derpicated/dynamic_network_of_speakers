@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <vector>
 
-namespace relative_weight_factor {
+namespace rwf {
 template <class T> class rwf {
     private:
     /* data */
@@ -25,7 +25,7 @@ template <class T> class rwf {
 } /* relative_weight_factor */
 
 /* explicit instantiation declaration*/
-template class relative_weight_factor::rwf<int>;
-template class relative_weight_factor::rwf<double>;
-template class relative_weight_factor::rwf<long double>;
+template class rwf::rwf<int>;
+template class rwf::rwf<double>;
+template class rwf::rwf<long double>;
 #endif // relative_weight_factor_HPP

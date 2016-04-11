@@ -29,13 +29,13 @@ $(dns_client_src_out): $(dns_client_src)
 
 # Lib testing
 # Relative Weight Factor
-rel_wf_lib_src=	./test/relative_weight_factor.cpp \
+rwf_lib_src=	./test/relative_weight_factor.cpp \
 				./client/libs/rwf/relative_weight_factor.cpp
 # Target / executable
-rel_wf_lib_out=rel_wf_lib
-$(rel_wf_lib_out): $(rel_wf_lib_src)
+rwf_lib_src_out=rwf_lib
+$(rwf_lib_src_out): $(rwf_lib_src)
 	$(CHECK_BUILD)
-	$(CXX) $(CXXFLAGS) $(rel_wf_lib_src) -o $(BUILD_DIR)/$(rel_wf_lib_out)
+	$(CXX) $(CXXFLAGS) $(rwf_lib_src) -o $(BUILD_DIR)/$(rwf_lib_src_out)
 
 # Audio Output
 audio_test_src=	./test/audio_test.cpp \

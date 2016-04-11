@@ -9,15 +9,15 @@
 #endif
 
 template <class T>
-relative_weight_factor::rwf<T>::rwf (std::vector<T> vec, int head, int tail)
+rwf::rwf<T>::rwf (std::vector<T> vec, int head, int tail)
 : _factors (vec), _steps (head - tail) {
 }
 
-template <class T> relative_weight_factor::rwf<T>::~rwf () {
+template <class T> rwf::rwf<T>::~rwf () {
 }
 
 template <class T>
-std::vector<T> relative_weight_factor::rwf<T>::get_relative_weight_factor () {
+std::vector<T> rwf::rwf<T>::get_relative_weight_factor () {
     std::vector<T> vec;
     T sum          = _sum (_factors);
     T sum_inv      = _sum_inv (_factors);
@@ -32,7 +32,7 @@ std::vector<T> relative_weight_factor::rwf<T>::get_relative_weight_factor () {
     return vec;
 }
 
-template <class T> T relative_weight_factor::rwf<T>::_sum (std::vector<T> vec) {
+template <class T> T rwf::rwf<T>::_sum (std::vector<T> vec) {
     T sum = 0;
     for (auto i : vec) {
         sum += i;
@@ -42,7 +42,7 @@ template <class T> T relative_weight_factor::rwf<T>::_sum (std::vector<T> vec) {
 }
 
 template <class T>
-T relative_weight_factor::rwf<T>::_sum_inv (std::vector<T> vec) {
+T rwf::rwf<T>::_sum_inv (std::vector<T> vec) {
     T sum     = _sum (vec);
     T sum_inv = 0;
     for (auto i : vec) {
@@ -53,11 +53,11 @@ T relative_weight_factor::rwf<T>::_sum_inv (std::vector<T> vec) {
 }
 
 template <class T>
-void relative_weight_factor::rwf<T>::set_head_tail (int head, int tail) {
+void rwf::rwf<T>::set_head_tail (int head, int tail) {
     _steps = head - tail;
 }
 
 template <class T>
-void relative_weight_factor::rwf<T>::set_factors (std::vector<T> vec) {
+void rwf::rwf<T>::set_factors (std::vector<T> vec) {
     _factors = vec;
 }
