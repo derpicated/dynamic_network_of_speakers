@@ -8,9 +8,13 @@ void download::download (std::string remote_uri, std::string locale_name) {
             break;
 
         case 0: // child process
+#ifdef DEBUG_DOWNLOAD
+            execlp ("wget", "wget", "-O", locale_name.c_str (),
+            remote_uri.c_str (), (char*)NULL);
+#else
             execlp ("wget", "wget", "-q", "-O", locale_name.c_str (),
             remote_uri.c_str (), (char*)NULL);
-
+#endif
             std::perror ("error executing wget");
             exit (1);
 
