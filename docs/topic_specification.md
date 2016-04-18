@@ -29,8 +29,7 @@ The request topic is a topic where all the requests to devices are handled.
 
 - `request/online`: Request a message from all the online devices, the message payload is the topic location to respond to. The preferred location for the answer would be `info/client/online`.
 - `request/distance/objectid`: Request the distance from all devices relative to the object [objectid]. Payload is topic to publish to. If a location is unknown to a device, they don't respond.
-- `request/information/client`: Request all the devices to send their device specific information to a topic. Payload is topic to publish to. All devices respond with the JSON string that they have. If a device has no information, It wont respond.
-- `request/updated/rwf`: Request all devices to update their Relative Weight Factor for all their designated objects. All the devices will use the `request/distance/objectid` request for an update. This command can be used be a device, but this will usually be the website.
+- `request/info/clients`: Request all the devices to send their device specific information to a topic. Payload is topic to publish to. All devices respond with the JSON string that they have.(See [client](#client)) If a device has no information, It wont respond. This command is mostly useful for the website to build up it's online device listing and parameter listing.
 
 ### Client
 
@@ -61,17 +60,61 @@ A general information topic.
 
 #### Music status
 
-- `info/music/time/position`: The position of the song in the time. If send, the speaker will adapt their time to this value. If a speaker gets the play command but doesn't know the time, a value of `0` will be used. [in `sec` format or `mm:ss`, not yet decided]
-- `info/music/status`: The state of the playing music. [`play`/`p`] / [`s`/`stop`] If a speaker joins, they will wait for a command before they start doing anything.
-- `info/music/source`: Contains the uri to the music file and a name in JSON format. The client will download this file from the *uri* and store it as the given *name*.
+- `info/music/time`: When a device needs to play a music file, it will send the following information to this topic. The name is the name of the music file (see `info/music/sources`) and the number is the total playtime of this music file in *seconds*.
 ```
 {
-  "uri": "http://www.example.org",
-  "name": "name"
+  "name": 0
 }
 ```
-
+- `info/music/time/position`: The position of the song in the time. If send, the speaker will adapt their time to this value. If a speaker gets the play command but doesn't know the time, a value of `0` will be used. [in `sec` format or `mm:ss`, not yet decided]
+- `info/music/status`: The state of the playing music. [`play`/`p`] / [`s`/`stop`] If a speaker joins, they will wait for a command before they start doing anything.
+- `info/music/sources`: Contains the URIs to the music files in JSON format. The client will download these files. The identifier is the `objectid`, because the sound is bound to an object. The name also will be the filename on the local file system.
+```
+{
+    "name": "uri"
+}
+```
+```
+{
+    "name_is_objectid": "uri_is_uri"
+}
+```
+```
+{
+    "object_1": "http://www.example.org",
+    "object_2": "http://www.example.com",
+    ...
+    "object_5": "http://www.example.org"
+}
+```
 - `info/music/volume`: The master volume. This value will be of a value between `100` or `0`. [For now just use `100` as the value. This could later be in a request format to the website]
+- `info/clients`: global data for sending information of all the clients which are **participating** in the audio network. Some devices can be online and *not* participate in the active network, these devices won't be in this global data list.
+```
+{
+  "clientid_1": {
+    "objectid_1": {
+      "distance": 0,
+      "angle": 0
+    },
+    "objectid_2": {
+      "distance": 0,
+      "angle": 0
+    }
+  },
+  "clientid_2": {
+    "objectid_1": {
+      "distance": 0,
+      "angle": 0
+    }
+  },
+  "clientid_3": {
+    "objectid_2": {
+      "distance": 0,
+      "angle": 0
+    }
+  }
+}
+```
 
 #### Device status
 
