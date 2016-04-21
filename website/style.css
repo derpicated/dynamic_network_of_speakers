@@ -75,13 +75,28 @@ body {
 }
 
 @font-face {
-    font-family: 'Arial Rounded MT Bold';
-    src: url('./../misc/fonts/Arial Rounded MT Bold Bold.ttf');
+    font-family: 'Xolonium';
+    src: url('./../misc/fonts/xolonium/Xolonium-Regular.otf');
+}
+@font-face {
+    font-family: "Xolonium";
+    src: url('./../misc/fonts/xolonium/Xolonium-Bold.otf');
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: 'nimbus-sans-l';
+    src: url('./../misc/fonts/nimbus-sans-l/nimbus-sans-l_regular.ttf');
+}
+@font-face {
+    font-family: 'nimbus-sans-l';
+    src: url('./../misc/fonts/nimbus-sans-l/nimbus-sans-l_bold.ttf');
+    font-weight: bold;
 }
 
 p {
     margin: 5px;
-    font-family: arial;
+    font-family: 'nimbus-sans-l';
 }
 
 h1 {
@@ -89,30 +104,30 @@ h1 {
     vertical-align: middle;
     text-align: center;
     margin: 5px;
-    font-family: 'Arial Rounded MT Bold', 'arial';
+    font-family: 'Xolonium', 'nimbus-sans-l';
 }
 
 a:link {
     color:#151515;
-    font-family:"arial";
+    font-family:"nimbus-sans-l";
     font-size: 15px;
 }
 
 a:visited {
     color:#000000;
-    font-family:"arial";
+    font-family:"nimbus-sans-l";
     font-size: 15px;
 }
 
 a:hover {
     color:#FF0000;
-    font-family:"arial";
+    font-family:"nimbus-sans-l";
     font-size: 15px;
 }
 
 a:active{
     color:#FF0000;
-    font-family:"arial";
+    font-family:"nimbus-sans-l";
     font-size: 15px;
 }
 
