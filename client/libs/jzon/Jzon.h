@@ -19,6 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+#pragma GCC diagnostic ignored "-Weffc++"
 #ifndef Jzon_h__
 #define Jzon_h__
 
@@ -62,11 +63,14 @@ class JZON_API Node {
     public:
     class iterator : public std::iterator<std::input_iterator_tag, NamedNode> {
         public:
-        iterator () : p (0) {
+        iterator ()
+        : p (0) {
         }
-        iterator (NamedNode* o) : p (o) {
+        iterator (NamedNode* o)
+        : p (o) {
         }
-        iterator (const iterator& it) : p (it.p) {
+        iterator (const iterator& it)
+        : p (it.p) {
         }
 
         iterator& operator++ () {
@@ -98,11 +102,14 @@ class JZON_API Node {
     };
     class const_iterator : public std::iterator<std::input_iterator_tag, const NamedNode> {
         public:
-        const_iterator () : p (0) {
+        const_iterator ()
+        : p (0) {
         }
-        const_iterator (const NamedNode* o) : p (o) {
+        const_iterator (const NamedNode* o)
+        : p (o) {
         }
-        const_iterator (const const_iterator& it) : p (it.p) {
+        const_iterator (const const_iterator& it)
+        : p (it.p) {
         }
 
         const_iterator& operator++ () {
@@ -342,3 +349,4 @@ class JZON_API Parser {
 }
 
 #endif // Jzon_h__
+#pragma GCC diagnostic warning "-Weffc++"

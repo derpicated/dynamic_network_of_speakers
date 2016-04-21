@@ -19,8 +19,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 #ifdef JZON_DLL
-#if defined _WIN32 || defined __CYGWIN__
+#if defined _WIN32 || defined __CYGWIN__1
 #define JZON_API __declspec(dllexport)
 #define JZON_STL_EXTERN
 #endif
@@ -34,6 +35,7 @@ THE SOFTWARE.
 #include <sstream>
 #include <stack>
 
+#pragma GCC diagnostic ignored "-Weffc++"
 namespace Jzon {
 namespace {
 inline bool isWhitespace (char c) {
@@ -68,46 +70,59 @@ char getUnescaped (const char c1, const char c2) {
 }
 }
 
-Node::Node () : data (NULL) {
+Node::Node ()
+: data (NULL) {
 }
-Node::Node (Type type) : data (NULL) {
+Node::Node (Type type)
+: data (NULL) {
     if (type != T_INVALID) {
         data = new Data (type);
     }
 }
-Node::Node (const Node& other) : data (other.data) {
+Node::Node (const Node& other)
+: data (other.data) {
     if (data != NULL) {
         data->addRef ();
     }
 }
-Node::Node (Type type, const std::string& value) : data (new Data (T_NULL)) {
+Node::Node (Type type, const std::string& value)
+: data (new Data (T_NULL)) {
     set (type, value);
 }
-Node::Node (const std::string& value) : data (new Data (T_STRING)) {
+Node::Node (const std::string& value)
+: data (new Data (T_STRING)) {
     set (value);
 }
-Node::Node (const char* value) : data (new Data (T_STRING)) {
+Node::Node (const char* value)
+: data (new Data (T_STRING)) {
     set (value);
 }
-Node::Node (int value) : data (new Data (T_NUMBER)) {
+Node::Node (int value)
+: data (new Data (T_NUMBER)) {
     set (value);
 }
-Node::Node (unsigned int value) : data (new Data (T_NUMBER)) {
+Node::Node (unsigned int value)
+: data (new Data (T_NUMBER)) {
     set (value);
 }
-Node::Node (long long value) : data (new Data (T_NUMBER)) {
+Node::Node (long long value)
+: data (new Data (T_NUMBER)) {
     set (value);
 }
-Node::Node (unsigned long long value) : data (new Data (T_NUMBER)) {
+Node::Node (unsigned long long value)
+: data (new Data (T_NUMBER)) {
     set (value);
 }
-Node::Node (float value) : data (new Data (T_NUMBER)) {
+Node::Node (float value)
+: data (new Data (T_NUMBER)) {
     set (value);
 }
-Node::Node (double value) : data (new Data (T_NUMBER)) {
+Node::Node (double value)
+: data (new Data (T_NUMBER)) {
     set (value);
 }
-Node::Node (bool value) : data (new Data (T_BOOL)) {
+Node::Node (bool value)
+: data (new Data (T_BOOL)) {
     set (value);
 }
 Node::~Node () {
@@ -394,11 +409,15 @@ bool Node::operator!= (const Node& other) const {
     return !(*this == other);
 }
 
-Node::Data::Data (Type type) : refCount (1), type (type) {
+Node::Data::Data (Type type)
+: refCount (1)
+, type (type) {
 }
 Node::Data::Data (const Data& other)
-: refCount (1), type (other.type), valueStr (other.valueStr),
-  children (other.children) {
+: refCount (1)
+, type (other.type)
+, valueStr (other.valueStr)
+, children (other.children) {
 }
 Node::Data::~Data () {
     assert (refCount == 0);
@@ -885,3 +904,4 @@ bool Parser::interpretValue (const std::string& value, DataQueue& data) {
     return true;
 }
 }
+#pragma GCC diagnostic warning "-Weffc++"
