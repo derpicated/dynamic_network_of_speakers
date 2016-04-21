@@ -14,7 +14,6 @@
     </head>
     <body onload="DNS.init();">
         <div id='page'>
-
             <div id='banner'>
                 <div id='banner-logo'>
                     <img src="./../misc/logo/dynamic_network_of_speakers.png" alt="DNS" height="100%"/>
@@ -23,7 +22,6 @@
                     <h1>Dynamic Network of Speakers</h1>
                 </div>
             </div>
-
             <div id='top'>
                 <div id='speaker_list' class='right'>
                     <p>
@@ -52,9 +50,9 @@
                 </div>
                 <div id='misc' class='left'>
                     <p>
-                        <input type="text" id="music_uri" value="" placeholder="Stream Link" style="width: 80%; height: 30px; padding: 2px; margin: 2px; border: 1px solid black">
                         <input type="text" id="music_name" value="" placeholder="Name of the song" style="width: calc(80% - 88px); height: 30px; padding: 2px; margin: 2px; border: 1px solid black">
                         <button class="fa fa-upload button" onclick="DNS.send_sound_source($('#music_uri').val(), $('#music_name').val())"></button>
+                        <input type="text" id="music_uri" value="" placeholder="Stream Link" style="width: 80%; height: 30px; padding: 2px; margin: 2px; border: 1px solid black">
                     </p>
                 </div>
             </div>
