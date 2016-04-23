@@ -24,15 +24,21 @@ include('./objects.js');
 
 DNS = (function (global) {
     /* Broker settings */
+    // Check broker CONFIG
+    if (CONFIG.use_broker < 1 || CONFIG.use_broker > Object.keys(CONFIG.broker).length) {
+        console.log("Config error, bad USE_BROKER parameter. Using default broker instead");
+        CONFIG.use_broker = 1;
+    }
     var broker_mqtt = {
-        url: "iot.eclipse.org",//test.mosquitto.org
-        port: 80 //8080
+        url: CONFIG.broker[CONFIG.use_broker].uri,
+        port: CONFIG.broker[CONFIG.use_broker].port_ws
     };
     var connected = false;
     var connect_options = {
         timeout: 3,
         onSuccess: function () {
             console.log("MQTT Connected as: "+client._getClientId());
+            console.log("MQTT Connected with: "+CONFIG.broker[CONFIG.use_broker].broker);
             connected = true;
             subscribe_list();// Connection succeeded; subscribe to our topics
             DNS.send(DNS.topic.request_online, '1');    //get initial devices
@@ -105,7 +111,8 @@ DNS = (function (global) {
     };
     /* Welcome message */
     var welcome = function () {
-        console.log("DNS v"+window.DNS_VERSION.major+"."+window.DNS_VERSION.minor+"."+window.DNS_VERSION.revison);
+        //var temp = JSON.parse(CONFIG);
+        console.log(CONFIG.name_short+" v"+CONFIG.version.major+"."+CONFIG.version.minor+"."+CONFIG.version.revision);
     };
     /* Call when mess is recieved */
     var message_recieve = function (message) {
