@@ -111,7 +111,6 @@ DNS = (function (global) {
     };
     /* Welcome message */
     var welcome = function () {
-        //var temp = JSON.parse(CONFIG);
         console.log(CONFIG.name_short+" v"+CONFIG.version.major+"."+CONFIG.version.minor+"."+CONFIG.version.revision);
     };
     /* Call when mess is recieved */
