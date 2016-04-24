@@ -2,16 +2,8 @@
 #include <random>
 #include <unistd.h>
 
-static const int MAXSIZE_HOSTNAME{ 25 };
-
-const char* getBBBid () {
-    static char hostname[MAXSIZE_HOSTNAME] = { '\0' };
-    gethostname (hostname, MAXSIZE_HOSTNAME);
-    return hostname;
-}
-
 const char* getClientID () {
-    std::string clientid{ "speak_" };
+    std::string clientid{ "speaker_" };
     std::random_device rd;
     int result;
     std::uniform_int_distribution<int> distribution (0, 999);
