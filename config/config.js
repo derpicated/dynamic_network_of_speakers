@@ -7,6 +7,8 @@ var CONFIG =
     "minor": 0,
     "revision": 1
   },
+  "name_speaker": "speaker_",
+  "name_website": "site_",
   "use_broker": 1,
   "broker": {
     1: {
@@ -38,7 +40,6 @@ var CONFIG =
       "port": 1883,
       "port_ws": 80
     }
-  },
-  "debug_level": 0
+  }
 }
 ;

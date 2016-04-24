@@ -193,7 +193,7 @@ DNS = (function (global) {
         return Math.floor(Math.random()*(max-min+1)+min);
     };
     var generate_name = function () {
-        return "site_"+parseInt(rand(1, 999));
+        return CONFIG.name_website+parseInt(rand(1, 999));
     };
     return {
         init: init,
