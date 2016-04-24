@@ -2,6 +2,9 @@
  * Global Object storage
  *
  * This Holds all the Objects that are placed on the website
+ * The format is
+ * ObjName : URI
+ * The URI is an URI to an music file of some sort.
  */
 
 /* Debug text */
@@ -9,12 +12,10 @@
 
 OBJECT = (function (global) {
     var OBJECTS = {};
-    /* Add object */
-    var add = function (objectid) {
-        if(OBJECTS[objectid] == null){
-            OBJECTS[objectid]={};
-            console.log("Object "+objectid+" added");
-        }
+    /* Add/set object */
+    var set = function (objectid, uri) {
+        OBJECTS[objectid]=uri;
+        console.log("Object "+objectid+" : "+uri+" set");
     };
     /* Delete object */
     var del = function (objectid) {
@@ -34,14 +35,6 @@ OBJECT = (function (global) {
         if (get_objects()[objectid] == null){return -1;}
         return (get_objects()[objectid]);
     };
-    /* Set object information */
-    var set_location = function (objectid, x=0, y=0) {
-        add(objectid);
-        OBJECTS[objectid]['location']={
-            'x': x,
-            'y': y
-        };
-    };
 
     /* Debug print */
     var debug_print = function () {
@@ -51,11 +44,10 @@ OBJECT = (function (global) {
 
     /* Outside interface */
     return {
-        add: add,
+        set: set,
         del: del,
         get_objects: get_objects,
         get_object: get_object,
-        set_location: set_location,
         debug: debug_print
     };
 })(window);

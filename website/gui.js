@@ -18,7 +18,7 @@ GUI = (function (global) {
     var draw_area = $("#draw_area");
 
     var init = function () {
-        draw_speakers();
+        draw_speakers_from_data();
     };
     var draw_speakers = function () {
         clear();
@@ -39,6 +39,39 @@ GUI = (function (global) {
         clear_speaker_list();
         clear_draw_area();
     };
+    /* Draw speakers from CLIENT data */
+    var draw_speakers_from_data = function () {
+        //draw_speakers();
+        //
+        //get all draws speakers
+        //Delete unused speakers
+        $('.speaker').each(function(key, value){
+            if (!(CLIENT.get_online()[$(this).attr('id')])) {
+                console.log("Deleting unused drawn: "+$(this).attr('id'));
+                $(this).remove();
+            }
+        });
+        //Loop all speakers
+        $.each(CLIENT.get_online(), function(key, value){
+            //has object(s)?
+            if (!isEmpty(value)) { // Has object(s)
+                console.log("Has object?");
+                //do things
+            } else { // Has no objects
+                console.log("Has no object");
+                if (isEmpty($('#'+key))) {//not drawn
+                    console.log('Speaker not drawn: '+key);
+                    //draw in speaker list
+                    draw_speaker(key, speaker_list, calc_next_speaker_list_pos().left, calc_next_speaker_list_pos().top);
+                } //if already drawn, just leave!!!
+            }
+        });
+    };
+    /* Make CLIENT data from drawing */
+    var make_data_from_drawing = function () {
+
+    };
+    /* Draw single speaker */
     var draw_speaker = function (speaker_name, destination, off_left=0, off_top=0) {
         var speaker_class = "<div class='speaker' id='"+speaker_name+"'>"+speaker_name.replace(CONFIG.name_speaker, '')+"</div>";
         destination.append( speaker_class );
@@ -71,7 +104,8 @@ GUI = (function (global) {
             }
         });
     };
-    var del_speaker_list = function (speaker) {
+    /* Delete single speaker */
+    var del_speaker = function (speaker) {
         $('#'+speaker).remove();
     };
     var clear_speaker_list = function () {
@@ -161,6 +195,7 @@ GUI = (function (global) {
     return {
         init: init,
         draw_speakers: draw_speakers,
+        draw_speakers_from_data: draw_speakers_from_data,
         clear: clear,
         polar: polar,
         calc_next_speaker_list_pos:calc_next_speaker_list_pos,

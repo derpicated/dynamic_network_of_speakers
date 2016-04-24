@@ -240,7 +240,8 @@ a:active{
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 3px solid #000;
+    border: 3px solid #424242;
     position:absolute;
     float:left;
+    background-color: #E4E4E4;
 }

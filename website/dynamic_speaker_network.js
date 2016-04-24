@@ -119,12 +119,12 @@ DNS = (function (global) {
             case topic.info_client_online:
                 //console.log("Client send ID: "+message.payloadString);
                 CLIENT.online(message.payloadString);
-                GUI.draw_speakers();
+                GUI.draw_speakers_from_data();
                 break;
             case topic.info_client_offline:
                 //console.log("Client send ID: "+message.payloadString);
                 CLIENT.offline(message.payloadString);
-                GUI.draw_speakers();
+                GUI.draw_speakers_from_data();
                 break;
             case topic.info_music_volume:
                 console.log("Volume: "+message.payloadString);
