@@ -133,10 +133,11 @@ DNS = (function (global) {
             case topic.info_music_source:
                 //console.log("Music Source: "+message.payloadString);
                 var info_music_source = JSON.parse(message.payloadString);
-                console.log("Music Source: "+info_music_source.uri);
-                console.log("Music Name: "+info_music_source.name);
-                $('#music_uri').val(info_music_source.uri);
-                $('#music_name').val(info_music_source.name);
+                for (first in info_music_source) break; // Temp fix, this will be changed later on
+                console.log("Music Name: "+first);
+                console.log("Music Source: "+info_music_source[first]);
+                $('#music_name').val(first);
+                $('#music_uri').val(info_music_source[first]);
                 break;
             default:
                 if(message.destinationName.indexOf(topic.request)>-1){//request topic
@@ -164,9 +165,8 @@ DNS = (function (global) {
     var send_sound_source = function (uri, name='DNS_Music') {
         var sound_source =
         "{"+
-          "\"uri\":\""+String(uri)+"\","+
-          "\"name\":\""+String(name)+"\""+
-      "}";
+          "\""+String(name)+"\":\""+String(uri)+"\""+
+        "}";
       console.log("Send Sound Source: "+sound_source);
       DNS.send(topic.info_music_source, sound_source, true);
     };
