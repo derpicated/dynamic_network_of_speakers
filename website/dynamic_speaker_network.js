@@ -55,22 +55,16 @@ DNS = (function (global) {
         this.root                       = this.ese+'/DNS';
         this.request                    = this.root+'/request';
         this.request_online             = this.request+'/online';
-        this.request_distance           = this.request+'/distance';
-        this.request_distance_objectid  = this.request_distance+'/objectid';
-        this.request_information        = this.request+'/information';
-        this.request_information_client = this.request_information+'/client';
-        this.request_update             = this.request+'/update';
-        this.request_updated_rwf        = this.request_update+'/rwf';
-        this.client                     = this.root+'/client';
-        this.client_speaker             = this.client+'/speaker';
-        this._objects                   = '/objects';
+        this.request_info               = this.request+'/info';
+        this.request_info_clients       = this.request_info+'/clients';
         this.info                       = this.root+'/info';
         this.info_music                 = this.info+'/music';
         this.info_music_time            = this.info_music+'/time';
         this.info_music_time_position   = this.info_music_time+'/position';
         this.info_music_status          = this.info_music+'/status';
+        this.info_music_sources         = this.info_music+'/sources';
         this.info_music_volume          = this.info_music+'/volume';
-        this.info_music_source          = this.info_music+'/source';
+        this.info_clients               = this.info+'/clients';
         this.info_client                = this.info+'/client';
         this.info_client_online         = this.info_client+'/online';
         this.info_client_offline        = this.info_client+'/offline';
@@ -130,7 +124,7 @@ DNS = (function (global) {
                 console.log("Volume: "+message.payloadString);
                 $("#volume_slider").val(message.payloadString);//set slider value
                 break;
-            case topic.info_music_source:
+            case topic.info_music_sources:
                 //console.log("Music Source: "+message.payloadString);
                 var info_music_source = JSON.parse(message.payloadString);
                 for (first in info_music_source) break; // Temp fix, this will be changed later on
@@ -150,7 +144,7 @@ DNS = (function (global) {
                     //console.log("Answer!! "+tmp);
                     //tmp=tmp.replace(topic.answer+'/distance/', '');
                     //console.log("Answer!! "+tmp);
-                    return;
+                    //return;
                 }
                 console.log("Got unfiltred message from: "+message.destinationName+" | "+message.payloadString);
         }
@@ -167,8 +161,8 @@ DNS = (function (global) {
         "{"+
           "\""+String(name)+"\":\""+String(uri)+"\""+
         "}";
-      console.log("Send Sound Source: "+sound_source);
-      DNS.send(topic.info_music_source, sound_source, true);
+        console.log("Send Sound Source: "+sound_source);
+        DNS.send(topic.info_music_sources, sound_source, true);
     };
 
     var subscribe = function (topic) {
@@ -182,10 +176,10 @@ DNS = (function (global) {
         subscribe(topic.info_client_online);
         subscribe(topic.info_client_offline);
         subscribe(topic.info_music_volume);
-        subscribe(topic.info_music_source);
+        subscribe(topic.info_music_sources);
 
         subscribe(topic.answer+'/#');
-        //subscribe(topic.root+'/#'); // Debug for message check
+        subscribe(topic.root+'/#'); // Debug for message check
     };
 
     /* Random gen */

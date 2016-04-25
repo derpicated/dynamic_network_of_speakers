@@ -41,6 +41,9 @@ CLIENT = (function (global) {
         };
         $.extend( true, CLIENTS[clientid], tmp_obj );
     };
+    var set_all = function (clients) {
+        CLIENTS = clients;
+    };
     /* Delete single object from client */
     var del_object = function (clientid, objectid) {
         if (get_objects(clientid)[objectid] == null){return -1;}
@@ -76,6 +79,7 @@ CLIENT = (function (global) {
         offline_all: offline_all,
         get_online: get_online,
         set_object: set_object,
+        set_all: set_all,
         del_object: del_object,
         del_objects: del_objects,
         get_objects: get_objects,

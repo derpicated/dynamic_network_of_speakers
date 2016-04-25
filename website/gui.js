@@ -23,6 +23,47 @@ GUI = (function (global) {
     var scale_virt=1;
     var init = function () {
         draw_speakers_from_data();
+        /* Update the data after every x px moved while clicked and dragged */
+        var draw_update_move_every=50;//px
+        var draw_update_move_default=draw_update_move_every;
+        var list_update_move_every=draw_update_move_default*4;//px
+        var list_update_move_default=list_update_move_every;
+        draw_area.mousemove(function( event ) {
+            if (event.buttons) {
+                draw_update_move_every--;
+                if (draw_update_move_every==0) {
+                    console.log('100px!');
+                    //make_data_from_drawing();
+                    //console.log(make_data_from_drawing());
+                    update_speaker_list();
+                    draw_update_move_every=draw_update_move_default;
+                }
+                //console.log(event);
+                console.log('fire!');
+            }
+
+        });
+        speaker_list.mousemove(function( event ) {
+            if (event.buttons) {
+                list_update_move_every--;
+                if (list_update_move_every==0) {
+                    console.log('100px!');
+                    //make_data_from_drawing();
+                    //console.log(make_data_from_drawing());
+                    update_speaker_list();
+                    list_update_move_every=list_update_move_default;
+                }
+                //console.log(event);
+                console.log('fire!');
+            }
+
+        });
+    };
+    var update_speaker_list = function () {
+        CLIENT.set_all(make_data_from_drawing());
+        console.log('Updating speaker list!');
+        console.log(CLIENT.get_online());
+        DNS.send(DNS.topic.info_clients, JSON.stringify(CLIENT.get_online()));
     };
     var draw_speakers = function () {
         clear();
@@ -43,6 +84,7 @@ GUI = (function (global) {
         empty_speaker_list();
         empty_draw_area();
     };
+
     /* Draw speakers from CLIENT data */
     var draw_speakers_from_data = function () {
         empty_draw_area(); // Clear the draw area
@@ -150,6 +192,7 @@ GUI = (function (global) {
                 var speak_obj= $(ui.helper[0]);
                 speak_obj.detach().appendTo(draw_area);
                 speak_obj.offset({ top: off.top, left: off.left});
+                update_speaker_list();
               }
         });
         speaker_list.droppable({
@@ -158,6 +201,7 @@ GUI = (function (global) {
                 var speak_obj= $(ui.helper[0]);
                 speak_obj.detach().appendTo(speaker_list);
                 speak_obj.offset({ top: off.top, left: off.left});
+                update_speaker_list();
             }
         });
     };
@@ -198,7 +242,7 @@ GUI = (function (global) {
             distance:0,
             angle:0
         };
-        console.log('polar: x:'+x+' y:'+y);
+        //console.log('polar: x:'+x+' y:'+y);
         polar.distance = Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2)); // sqrt(x² + y²)
         polar.angle = Math.degrees(Math.atan2(y, x)); // tan⁻¹(Y/X)
         return polar;
