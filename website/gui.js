@@ -64,24 +64,17 @@ GUI = (function (global) {
             //has object(s)?
             var speaker_name = key;
             if (!isEmpty(value)) { // Has object(s)
-                console.log("Has object");
-                //do things
                 //loop objects
                 nr_of_objects=0;
                 $.each(CLIENT.get_online()[key], function(obj, obj_value){
                     if (!nr_of_objects) {
                         //first object
-                        console.log("First object");
                         //already drawn?
                         if (isEmpty($('#'+obj))) {
                             //No, speaker not yet drawn
                             //- draw object in center of draw area
                             //- draw speaker from that x and y axis
-                            console.log('obj '+obj+' not drawn');
-                            //var width=speaker_list.width();
-                            //var height=speaker_list.height();
                             draw_object(obj, ((draw_area.width()-object_width)/2), ((draw_area.height()-object_height)/2));
-                            //var speaker_width=parseInt($('.speaker').css('width').replace('px',''));
                         }
                         //draw speaker from object
                         del_speaker(speaker_name); //delete speaker
@@ -89,26 +82,22 @@ GUI = (function (global) {
                         var top  =$('#'+obj).offset().top-draw_area.offset().top+rectangular(obj_value.distance, obj_value.angle).y;
                         draw_speaker(speaker_name, draw_area, left, top); //draw speaker
                     } else {
-                        //not first obj
+                        //not first object?
                         //object already drawn?
                         //yes, do nothing (speaker is alrady drwn in field)
                         //no: draw the object seen from the speaker
-                        if (isEmpty($('#'+obj))) {
+                        if (isEmpty($('#'+obj))) { // Object not drawn
                             //draw the object from speaker
-                            //del_object(obj);//delete object
+                            del_object(obj);//delete object
                             var left =$('#'+speaker_name).offset().left-draw_area.offset().left+rectangular(obj_value.distance, obj_value.angle).x;
                             var top  =$('#'+speaker_name).offset().top-draw_area.offset().top-rectangular(obj_value.distance, obj_value.angle).y;
                             draw_object(obj, left, top); //draw object
                         }
                     }
-                    console.log(obj);
-                    console.log(obj_value);
                     nr_of_objects++;
                 }, speaker_name);
             } else { // Has no objects
-                console.log("Has no object");
                 if (isEmpty($('#'+key))) {//not drawn
-                    console.log('Speaker not drawn: '+key);
                     //draw in speaker list
                     draw_speaker(key, speaker_list, calc_next_speaker_list_pos().left, calc_next_speaker_list_pos().top);
                 } //if already drawn, just leave!!!
@@ -117,7 +106,27 @@ GUI = (function (global) {
     };
     /* Make CLIENT data from drawing */
     var make_data_from_drawing = function () {
-
+        var speakers = {};
+        var left, top;
+        var object, speaker;
+        // Loop all speakers
+        $('#draw_area .speaker').each(function(i, speaker_obj){
+            speaker = $(speaker_obj);
+            speakers[speaker.attr('id')] = {};
+            // Loop all objects
+            $('#draw_area .object').each(function(j, object_obj){
+                object = $(object_obj);
+                speakers[speaker.attr('id')][object.attr('id')] = {
+                    distance: -1,
+                    angle: -1
+                };
+                left = object.offset().left-speaker.offset().left;
+                top = speaker.offset().top-object.offset().top;
+                speakers[speaker.attr('id')][object.attr('id')].distance=polar(left, top).distance;
+                speakers[speaker.attr('id')][object.attr('id')].angle=polar(left, top).angle;
+            }, speaker);
+        });
+        return speakers;
     };
     /* Draw single speaker */
     var draw_speaker = function (speaker_name, destination, off_left=0, off_top=0) {
@@ -189,6 +198,7 @@ GUI = (function (global) {
             distance:0,
             angle:0
         };
+        console.log('polar: x:'+x+' y:'+y);
         polar.distance = Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2)); // sqrt(x² + y²)
         polar.angle = Math.degrees(Math.atan2(y, x)); // tan⁻¹(Y/X)
         return polar;
@@ -270,6 +280,7 @@ GUI = (function (global) {
         draw_speakers: draw_speakers,
         draw_object:draw_object,
         draw_speakers_from_data: draw_speakers_from_data,
+        make_data_from_drawing:make_data_from_drawing,
         clear: clear,
         polar: polar,
         calc_next_speaker_list_pos:calc_next_speaker_list_pos,
