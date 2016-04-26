@@ -29,7 +29,6 @@ This is a global topic listing. All the headers are a topic that will follow aft
 The request topic is a topic where all the requests to devices are handled.
 
 - `request/online`: Request a message from all the online devices. The devices respond with their `clientid` to `info/client/online`.
-- `request/distance/objectid`: Request the distance from all devices relative to the object `objectid`. Payload is topic to publish to. If a location is unknown to a device, they don't respond.
 - `request/info/clients`: Request all the devices to send their device specific information to a topic. Payload is topic to publish to. All devices respond with the JSON string that they have. (See below) If a device has no information, It wont respond. This command is mostly useful for the website to build up the device information list.
 
 ```
@@ -137,8 +136,8 @@ A general information topic.
 
 #### Device status
 
-- `info/client/online`: If a clients comes online, it will post its `clientid`.
-- `info/client/offline`: If a client goes offline, it will post its `clientid`.
+- `info/clients/online`: If a clients comes online, it will post its `clientid`.
+- `info/clients/offline`: If a client goes offline, it will post its `clientid`.
 
 # General notes
 

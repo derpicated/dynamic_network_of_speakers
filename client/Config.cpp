@@ -2,6 +2,8 @@
 #include <random>
 #include <unistd.h>
 
+const std::string CLIENT_XXX{ getClientID () };
+
 const char* getClientID () {
     std::string clientid{ "speaker_" };
     std::random_device rd;

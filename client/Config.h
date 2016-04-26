@@ -6,7 +6,7 @@
 const char* getBBBid ();
 const char* getClientID ();
 
-const std::string CLIENT_XXX{ getClientID () };
+extern const std::string CLIENT_XXX;
 
 const int MQTT_KEEP_ALIVE{ 60 };
 const int MQTT_QoS_0{ 0 };
