@@ -13,14 +13,14 @@ CLIENT = (function (global) {
     /* client online */
     var online = function (clientid) {
         if(CLIENTS[clientid] == null){
-            console.log("Client "+clientid+" came online");
+            //console.log("Client "+clientid+" came online");
             CLIENTS[clientid]={};
         }
     };
     /* client offline */
     var offline = function (clientid) {
         if(CLIENTS[clientid] == null){return -1;}
-        console.log("Client "+clientid+" went offline");
+        //console.log("Client "+clientid+" went offline");
         delete CLIENTS[clientid];
     };
     var offline_all = function () {
@@ -72,17 +72,16 @@ CLIENT = (function (global) {
         console.log(CLIENTS);
     };
 
-    /* Outside interface */
-    return {
-        online: online,
-        offline: offline,
-        offline_all: offline_all,
-        get_online: get_online,
-        set_object: set_object,
-        set_all: set_all,
-        del_object: del_object,
-        del_objects: del_objects,
-        get_objects: get_objects,
-        debug: debug_print
+    return { // Bind functions to the outside world
+        online      : online,
+        offline     : offline,
+        offline_all : offline_all,
+        get_online  : get_online,
+        set_object  : set_object,
+        set_all     : set_all,
+        del_object  : del_object,
+        del_objects : del_objects,
+        get_objects : get_objects,
+        debug       : debug_print
     };
 })(window);

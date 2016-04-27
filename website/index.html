@@ -51,8 +51,9 @@
                 </div>
                 <div id='misc' class='left'>
                     <p>
-                        <input type="text" id="music_name" value="" placeholder="Name of the song" style="width: calc(80% - 88px); height: 30px; padding: 2px; margin: 2px; border: 1px solid black">
-                        <button class="fa fa-upload button" onclick="DNS.send_sound_source($('#music_uri').val(), $('#music_name').val())"></button>
+                        <input type="text" id="music_name" value="" placeholder="Name of the song" style="width: calc(80% - 172px); height: 30px; padding: 2px; margin: 2px; border: 1px solid black">
+                        <button class="fa fa-upload button" onclick="GUI.save_object_properties()"></button>
+                        <button class="fa fa-trash-o button" onclick="GUI.delete_object_button($('#music_name').val())"></button>
                         <input type="text" id="music_uri" value="" placeholder="Stream Link" style="width: 80%; height: 30px; padding: 2px; margin: 2px; border: 1px solid black">
                     </p>
                 </div>

@@ -31,9 +31,16 @@ DNS = (function (global) {
     }
     var broker_mqtt = {
         url: CONFIG.broker[CONFIG.use_broker].uri,
-        port: CONFIG.broker[CONFIG.use_broker].port_ws
+        port: CONFIG.broker[CONFIG.use_broker].port_ws,
+        client_name: ''
     };
-    var connected = false;
+    /* Random name generator */
+    function rand(min,max) {return Math.floor(Math.random()*(max-min+1)+min);};
+    var generate_name = function () {
+        return CONFIG.name_website+parseInt(rand(1, 999));
+    };
+    broker_mqtt.client_name=generate_name(); // Set site name
+    var connected = false; // Connection status
     var connect_options = {
         timeout: 3,
         onSuccess: function () {
@@ -49,10 +56,10 @@ DNS = (function (global) {
             console.log("MQTT Connection failed: " + message.errorMessage);
         }
     };
-    /* Topic settings */
+    /* MQTT Topics (See: topic spec sheet)*/
     var topic = new function() {
-        this.ese                        = 'ESEiot';
-        this.root                       = this.ese+'/DNS';
+        this._                          = 'ESEiot';
+        this.root                       = this._+'/DNS';
         this.request                    = this.root+'/request';
         this.request_online             = this.request+'/online';
         this.request_info               = this.request+'/info';
@@ -65,6 +72,9 @@ DNS = (function (global) {
         this.info_music_sources         = this.info_music+'/sources';
         this.info_music_volume          = this.info_music+'/volume';
         this.info_clients               = this.info+'/clients';
+        this.info_clients_site          = this.info_clients+'/'+broker_mqtt.client_name;
+        this.info_clients_startdraw     = this.info_clients+'/startdraw';
+        this.info_clients_startdraw_site= this.info_clients_startdraw+'/'+broker_mqtt.client_name;
         this.info_client                = this.info+'/client';
         this.info_client_online         = this.info_client+'/online';
         this.info_client_offline        = this.info_client+'/offline';
@@ -74,9 +84,9 @@ DNS = (function (global) {
     var client; // MQTT Client
     /* Init the DNS */
     var init = function () {
-        welcome();
-        connect_MQTT();
-        GUI.init();
+        welcome();      // Say hello!
+        connect_MQTT(); // Connect to the broker
+        GUI.init();     // initialize the GUI
         return 0;
     };
     /* stops the DNS */
@@ -89,7 +99,9 @@ DNS = (function (global) {
             console.log("Already connected");
             return;
         };
-        client = new Paho.MQTT.Client(broker_mqtt.url, broker_mqtt.port,generate_name());
+        client = new Paho.MQTT.Client(broker_mqtt.url,
+                                      broker_mqtt.port,
+                                      broker_mqtt.client_name);
         client.onMessageArrived = message_recieve;
         client.onConnectionLost = conn_lost_MQTT;
         client.connect(connect_options);
@@ -102,72 +114,80 @@ DNS = (function (global) {
     /* Connection lost MQTT */
     var conn_lost_MQTT = function (responseObject) {
         console.log("connection lost: " + responseObject.errorMessage);
+        /* Todo: add a reconnect system/proper disconnect */
     };
     /* Welcome message */
     var welcome = function () {
-        console.log(CONFIG.name_short+" v"+CONFIG.version.major+"."+CONFIG.version.minor+"."+CONFIG.version.revision);
+        console.log(CONFIG.name_short+" v"+
+                    CONFIG.version.major+"."+
+                    CONFIG.version.minor+"."+
+                    CONFIG.version.revision);
     };
-    /* Call when mess is recieved */
+    /* Call when message is recieved */
     var message_recieve = function (message) {
         switch (message.destinationName) {
             case topic.info_client_online:
-                //console.log("Client send ID: "+message.payloadString);
                 CLIENT.online(message.payloadString);
                 GUI.draw_speakers_from_data();
+                //console.log("Client online: "+message.payloadString);
                 break;
             case topic.info_client_offline:
-                //console.log("Client send ID: "+message.payloadString);
                 CLIENT.offline(message.payloadString);
                 GUI.draw_speakers_from_data();
+                //console.log("Client offline: "+message.payloadString);
                 break;
             case topic.info_music_volume:
-                console.log("Volume: "+message.payloadString);
                 $("#volume_slider").val(message.payloadString);//set slider value
+                //console.log("Volume: "+message.payloadString);
                 break;
             case topic.info_music_sources:
-                //console.log("Music Source: "+message.payloadString);
-                var info_music_source = JSON.parse(message.payloadString);
-                for (first in info_music_source) break; // Temp fix, this will be changed later on
-                console.log("Music Name: "+first);
-                console.log("Music Source: "+info_music_source[first]);
+                var info_music_sources = JSON.parse(message.payloadString);
+                //console.log("Music Sources: ");console.log(info_music_sources);
+                OBJECT.set_all(info_music_sources);
+                for (first in info_music_sources) break; // Temp fix, this will be changed later on
+                //console.log("Music Name: "+first);
+                //console.log("Music Source: "+info_music_sources[first]);
                 $('#music_name').val(first);
-                $('#music_uri').val(info_music_source[first]);
+                $('#music_uri').val(info_music_sources[first]);
+                break;
+            case topic.info_clients:
+                break;
+            case topic.info_clients_site: //data that this website send, just ignore.
                 break;
             default:
-                if(message.destinationName.indexOf(topic.request)>-1){//request topic
+                if(message.destinationName.indexOf(topic.request)>-1){ // Request topic
                     console.log("Request: "+message.destinationName);
                     return;
-                } else if(message.destinationName.indexOf(topic.answer)>-1){//answer topic
+                } else if(message.destinationName.indexOf(topic.answer)>-1){ // Got answer
                     //one for the distance answer
                     //one for the angle answer
                     //var tmp = message.destinationName;
                     //console.log("Answer!! "+tmp);
                     //tmp=tmp.replace(topic.answer+'/distance/', '');
                     //console.log("Answer!! "+tmp);
-                    //return;
+                    return;
+                } else if (message.destinationName.indexOf(topic.info_clients+'/')>-1) { // Got new clients data
+                    var info_clients = JSON.parse(message.payloadString);
+                    CLIENT.set_all(info_clients); // Set date
+                    GUI.draw_speakers_from_data(); // Redraw
+                    //console.log('New clients data');
+                    return;
                 }
                 console.log("Got unfiltred message from: "+message.destinationName+" | "+message.payloadString);
         }
     };
+    /* Send message over MQTT */
     var send = function (topic, payload, retain = false) {
         message = new Paho.MQTT.Message(String(payload));
         message.destinationName = String(topic);
         message.retained = !!retain;
         client.send(message);
     };
-
-    var send_sound_source = function (uri, name='DNS_Music') {
-        var sound_source =
-        "{"+
-          "\""+String(name)+"\":\""+String(uri)+"\""+
-        "}";
-        console.log("Send Sound Source: "+sound_source);
-        DNS.send(topic.info_music_sources, sound_source, true);
-    };
-
+    /* Subscribe to a topic */
     var subscribe = function (topic) {
         client.subscribe(topic, {qos: 1});//qos Quality of Service
     };
+    /* Unsubscribe from a topic */
     var unsubscribe = function (topic) {
         client.unsubscribe(topic, {});
     };
@@ -177,23 +197,17 @@ DNS = (function (global) {
         subscribe(topic.info_client_offline);
         subscribe(topic.info_music_volume);
         subscribe(topic.info_music_sources);
+        subscribe(topic.info_clients+'/+');
 
         subscribe(topic.answer+'/#');
-        subscribe(topic.root+'/#'); // Debug for message check
+        //subscribe(topic.root+'/#'); // Debug for message check
     };
 
-    /* Random gen */
-    function rand(min,max) {
-        return Math.floor(Math.random()*(max-min+1)+min);
-    };
-    var generate_name = function () {
-        return CONFIG.name_website+parseInt(rand(1, 999));
-    };
-    return {
-        init: init,
-        deinit: deinit,
-        topic: topic,
-        send: send,
-        send_sound_source:send_sound_source
+    return { // Bind functions to the outside world
+        init        : init,
+        deinit      : deinit,
+        topic       : topic,
+        subscribe   : subscribe,
+        send        : send
     };
 })(window);

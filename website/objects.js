@@ -16,6 +16,11 @@ OBJECT = (function (global) {
     var set = function (objectid, uri) {
         OBJECTS[objectid]=uri;
         console.log("Object "+objectid+" : "+uri+" set");
+        //send new data
+        DNS.send(DNS.topic.info_music_sources, JSON.stringify(get_objects()));
+    };
+    var set_all = function (objects) {
+        OBJECTS=objects;
     };
     /* Delete object */
     var del = function (objectid) {
@@ -42,12 +47,13 @@ OBJECT = (function (global) {
         console.log(OBJECTS);
     };
 
-    /* Outside interface */
-    return {
-        set: set,
-        del: del,
-        get_objects: get_objects,
-        get_object: get_object,
-        debug: debug_print
+    return { // Bind functions to the outside world
+        set         : set,
+        set_all     : set_all,
+        del         : del,
+        del_all     : del_all,
+        get_objects : get_objects,
+        get_object  : get_object,
+        debug       : debug_print
     };
 })(window);
