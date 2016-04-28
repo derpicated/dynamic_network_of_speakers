@@ -3,7 +3,7 @@ CC=gcc
 CXX=g++
 LDFLAGS = -lmosquittopp -L/usr/local/lib
 RM=rm -f
-CXXFLAGS= -std=c++11 -Wall -Wextra -Weffc++ -Os -D_GLIBCXX_USE_NANOSLEEP -pthread
+CXXFLAGS= -g -std=c++11 -Wall -Wextra -Weffc++ -Os -D_GLIBCXX_USE_NANOSLEEP -pthread
 BUILD_DIR=build
 CHECK_BUILD=if [ ! -d "./$(BUILD_DIR)" ];then	\
 				mkdir $(BUILD_DIR);     		\
@@ -54,6 +54,19 @@ download_test_out=download_test
 $(download_test_out): $(download_test_src)
 	$(CHECK_BUILD)
 	$(CXX) $(CXXFLAGS) $(download_test_src) -o $(BUILD_DIR)/$(download_test_out)
+
+# Data Parser test
+dataparser_test_src=	./test/dataparser_test.cpp \
+					./client/DNSDataParser.cpp \
+					./client/libs/jzon/Jzon.cpp \
+					./client/Config.cpp
+
+dataparser_test_out=dataparser_test
+$(dataparser_test_out): $(dataparser_test_src)
+	$(CHECK_BUILD)
+	$(CXX) $(CXXFLAGS) $(dataparser_test_src) -o $(BUILD_DIR)/$(dataparser_test_out)
+	cp ./test/test_client_data.json $(BUILD_DIR)
+	cp ./test/test_source_data.json $(BUILD_DIR)
 
 # Clean build dir
 clean:

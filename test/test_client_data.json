@@ -1,0 +1,32 @@
+{
+  "clientid1": {
+    "objectid1": {
+      "distance": 1,
+      "angle": 2
+    },
+    "objectid2": {
+      "distance": 3,
+      "angle": 4
+    }
+  },
+  "clientid2": {
+    "objectid1": {
+      "distance": 1,
+      "angle": 90
+    },
+    "objectid2": {
+      "distance": 42,
+      "angle": 3.15
+    }
+  },
+  "clientid3": {
+    "objectid1": {
+      "distance": 5,
+      "angle": 6
+    },
+    "objectid2": {
+      "distance": 7,
+      "angle": 8
+    }
+  }
+}

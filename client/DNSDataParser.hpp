@@ -2,59 +2,46 @@
 #define DNS_DATAPARSER_HPP
 
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <string>
-#include <tuple>
-/*look at this headerfile*/
+#include <vector>
 
+
+#include "Config.h"
 #include "libs/jzon/Jzon.h"
 
-struct speakerData {
-    std::string speakerid;
+
+class audioObject {
+    public:
+    audioObject ();
+
     float distance;
     float angle;
-    
 };
 
-class audioSourceData {
-public:
-    audioSourceData ();
+class speakerData {
+    public:
+    speakerData ();
 
-    std::string name;
-    std::string uri;
+    std::string speakerid;
+    std::map<std::string, audioObject> objects;
 };
 
 class dataParser {
-private:
-    int numberofObject;
+    private:
     Jzon::Parser _filereader;
-public:
-    dataParser();
-    int getnumberofObjects();
-    void parseClientData (std::string jsonstring);
-    audioSourceData parseAudioSourceData (std::string jsonstring);
+    Jzon::Writer _filewriter;
 
-    speakerData speaker[10];
+    public:
+    dataParser ();
+    speakerData parseClientData (std::string jsonstring,
+    std::map<std::string, std::vector<float>>& objects);
+
+    std::map<std::string, std::string> parseAudioSourceData (std::string jsonstring);
+
+    std::string composeClientData (speakerData speaker);
+    std::string composeAudioSourceData (std::map<std::string, std::string> audioSources);
 };
 
 #endif
-
-// jzon string 
-// {
-//      "objects": 3 ,
-//      "objectid1":{
-//         "speakerid":  "speaker010", 
-//         "distance": 10, 
-//         "angle": 20
-//         },
-//      "objectid2":{
-//         "speakerid":  "speaker020", 
-//         "distance": 30, 
-//         "angle": 40
-//         },
-//      "objectid3":{
-//         "speakerid":  "speaker030", 
-//         "distance": 50, 
-//         "angle": 60
-//         },
-//  }
