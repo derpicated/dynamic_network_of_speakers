@@ -37,7 +37,6 @@ DNF_PACKAGE_NAMES=(
     texlive-euenc
     texlive-collection-fontsrecommended
     pandoc
-    xpdf
 )
 # apt-get
 DEB_PACKAGE_NAMES=(
@@ -48,7 +47,6 @@ DEB_PACKAGE_NAMES=(
     texlive-xetex
     biber
     pandoc
-    xpdf
 )
 
 if [[ ! -z $DNF_CMD ]]; then
