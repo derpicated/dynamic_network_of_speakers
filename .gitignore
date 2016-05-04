@@ -32,6 +32,7 @@
 
 # Buildfolder
 build/*
+docs/build*
 
 # Cache
 .cache/*
