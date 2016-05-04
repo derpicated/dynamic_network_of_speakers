@@ -35,11 +35,12 @@ class DNSMusic : public mosqpp::mosquittopp {
     public:
     DNSMusic (const std::string& appname,
     const std::string& clientname,
+    const std::string& clientid,
     const std::string& host,
     int port);
 
     DNSMusic (const DNSMusic& other) = delete;
-    DNSMusic& operator= (const DNSMusic& other) = delete;
+    DNSMusic& operator=(const DNSMusic& other) = delete;
     virtual ~DNSMusic ();
 
     protected:
@@ -50,7 +51,6 @@ class DNSMusic : public mosqpp::mosquittopp {
 
     std::vector<int> _distances;
 
-    bool _stop, _play, _pause;
     std::string _jsondatastring;
     std::mutex _mtx;
 
@@ -63,6 +63,7 @@ class DNSMusic : public mosqpp::mosquittopp {
     virtual void on_error () override;
 
     private:
+    const std::string _client_id; //{ getClientID () };
     const std::string _cache_path;
     int _master_volume;
     std::map<std::string, int> _rwf_volumes;      // key = object name

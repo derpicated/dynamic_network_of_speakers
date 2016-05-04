@@ -3,10 +3,7 @@
 
 #include <string>
 
-const char* getBBBid ();
 const char* getClientID ();
-
-extern const std::string CLIENT_XXX;
 
 const int MQTT_KEEP_ALIVE{ 60 };
 const int MQTT_QoS_0{ 0 };
@@ -16,7 +13,7 @@ const bool MQTT_RETAIN_OFF{ false };
 const bool MQTT_RETAIN_ON{ true };
 
 const std::string MQTT_BROKER{
-    "iot.eclipse.org"
+    "test.mosquitto.org"
 };                                 // default: test.mosquitto.org
 const int MQTT_BROKER_PORT = 1883; // default: 1883
 
@@ -45,7 +42,6 @@ const std::string MQTT_TOPIC_INFO_MUSIC_SOURCE{
 };
 const std::string MQTT_TOPIC_INFO_MUSIC_PS{ "ESEiot/DNS/info/music/status" };
 
-const std::string MQTT_TOPIC_CLIENTID_OBJECTID{ "ESEiot/DNS/client/speakers/" +
-    CLIENT_XXX + "/objects" };
+const std::string MQTT_TOPIC_CLIENTID_OBJECTID{ "info/clients/+" };
 
 #endif

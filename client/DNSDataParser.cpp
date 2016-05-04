@@ -16,13 +16,13 @@ dataParser::dataParser ()
 }
 
 speakerData dataParser::parseClientData (std::string jsonstring,
+std::string client_id,
 std::map<std::string, std::vector<float>>& objects) {
     Jzon::Node rootNode = _filereader.parseString (jsonstring);
     speakerData ret_speaker;
 
     for (Jzon::NamedNode node : rootNode) {
-        if (node.first == CLIENT_XXX) {
-
+        if (node.first == client_id) {
             ret_speaker.speakerid = node.first;
             for (Jzon::NamedNode sub_node : node.second) {
                 audioObject object;
@@ -31,7 +31,6 @@ std::map<std::string, std::vector<float>>& objects) {
                 object.angle             = sub_node.second.get ("angle").toFloat ();
                 ret_speaker.objects[key] = object;
             }
-
         } else {
             for (Jzon::NamedNode sub_node : node.second) {
                 std::string key = sub_node.first;
@@ -42,6 +41,7 @@ std::map<std::string, std::vector<float>>& objects) {
             }
         }
     }
+
     return ret_speaker;
 }
 

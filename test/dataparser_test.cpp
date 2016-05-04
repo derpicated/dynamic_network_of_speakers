@@ -22,6 +22,7 @@ int main () {
 }
 
 void test_prarse_client_data () {
+    std::string _client_id = "bipedy_bopedy";
     dataParser dp;
     std::ifstream client_data_file ("test_client_data.json");
     if (!client_data_file.is_open ()) {
@@ -37,17 +38,17 @@ void test_prarse_client_data () {
     std::string search_str = "clientid2";
     int pos = json_str.find (search_str);
     if (pos != (-1)) {
-        json_str.replace (pos, search_str.length (), CLIENT_XXX);
+        json_str.replace (pos, search_str.length (), _client_id);
     } else {
         std::cout << "Defective file test_client_data.json, altered string" << std::endl;
     }
 
     // parse json string
     std::map<std::string, std::vector<float>> objects;
-    speakerData local_speaker = dp.parseClientData (json_str, objects);
+    speakerData local_speaker = dp.parseClientData (json_str, _client_id, objects);
 
     // check the returned data
-    assert (local_speaker.speakerid == CLIENT_XXX);
+    assert (local_speaker.speakerid == _client_id);
     assert (local_speaker.objects.size () == 2);
     assert (local_speaker.objects["objectid1"].distance == 1);
     assert (local_speaker.objects["objectid1"].angle == 90);

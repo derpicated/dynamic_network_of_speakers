@@ -36,6 +36,7 @@ class dataParser {
     public:
     dataParser ();
     speakerData parseClientData (std::string jsonstring,
+    std::string client_id,
     std::map<std::string, std::vector<float>>& objects);
 
     std::map<std::string, std::string> parseAudioSourceData (std::string jsonstring);
