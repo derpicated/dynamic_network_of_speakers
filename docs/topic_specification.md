@@ -4,7 +4,7 @@ The topics and messages used in this project are described here.
 
 ## Public MQTT Brokers
 
-Details to brokers used in this project.
+Details of brokers used in this project are listed in the table below. Encrypted ports are marked with `*` and encrypted where a client certificate is required are marked with `**` in the table below.
 
 ID | Server             | Broker    | Port                    | Web socket
 -- | ------------------ | --------- | ----------------------- | --------------
@@ -13,8 +13,8 @@ ID | Server             | Broker    | Port                    | Web socket
 03 | broker.hivemq.com  | HiveMQ    | 1883                    | 8000
 04 | test.mosca.io      | mosca     | 1883                    | 80
 
-`*`: encrypted<br>
-`**`: encrypted, client certificate required
+Table: Public MQTT Brokers.  
+
 
 ## Root topic
 
@@ -28,7 +28,7 @@ This is a global topic listing. All the headers are a topic that will follow aft
 
 The request topic is a topic where all the requests to devices are handled.
 
-- `request/online`: Request a message from all the online devices. The devices respond with their `clientid` to `info/client/online`.
+- `request/online`: Request a message from all the online devices. The devices respond with their `clientid` to `info/clients/online`.
 - `request/info/clients`: Request all the devices to send their device specific information to a topic. Payload is topic to publish to. All devices respond with the JSON string that they have. (See below) If a device has no information, It wont respond. This command is mostly useful for the website to build up the device information list.
 
 ```
@@ -97,7 +97,7 @@ A general information topic.
 
 #### Clients
 
-- `info/clients`: Global data for sending information of all the online clients to all devices. Clients that are online and are not **participating** in the audio network, carry the value `-1` for the distance and angle. Because this is a 2D field, all the clients will contain all the objects. See below:
+- `info/clients/xxx`: Global data for sending information of all the online clients to all devices. `xxx` is the name of the website that is sending the data. This is not important for clients, the website uses this to filter it's own data. The client can subscribe with `info/clients/+`. Clients that are online and are not **participating** in the active audio network, won't be in this list. Because this is a 2D field, all the clients will contain all the objects. See below:
 
 ```
 {
