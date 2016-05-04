@@ -1,4 +1,4 @@
-\listfiles % List packages used in log file
+%\listfiles % List packages used in log file
 \documentclass[11pt]{report}
 \usepackage[english]{babel} % language selection
 \usepackage[utf8]{inputenc} % Accept different input encodings
@@ -283,12 +283,12 @@
     \listoftables                   % Generate and include a LoT
     %\thispagestyle{empty}           % Disable header and footer on LoT
 
-    \clearpage      % Clear page for LoT
+    \clearpage      % Clear page for LoF
     \phantomsection % For hyperreflinking
     \addcontentsline{toc}{chapter}{\listfigurename} % Add LoF to ToC
     \listoffigures                  % Generate and include a LoF
 
     \printbibliography[heading=bibintoc] % Generate and include bibliography if needed
-    %\thispagestyle{empty}           % Disable header and footer on LoT
+    %\thispagestyle{empty}           % Disable header and footer on bibliography
 
 \end{document}

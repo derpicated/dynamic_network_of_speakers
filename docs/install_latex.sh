@@ -41,10 +41,12 @@ DNF_PACKAGE_NAMES=(
 # apt-get
 DEB_PACKAGE_NAMES=(
     texlive
+    texlive-latex-extra
     texlive-fonts-recommended
-    lmodern
     texlive-bibtex-extra
     texlive-xetex
+    latex-xcolor
+    lmodern
     biber
     pandoc
 )
