@@ -24,17 +24,17 @@ const std::string MQTT_TOPIC_ROOT{ "ESEiot/DNS" };
 
 const std::string MQTT_TOPIC_REQUEST_ONLINE{ "ESEiot/DNS/request/online" };
 const std::string MQTT_TOPIC_REQUEST_INFORMATION_CLIENT{
-    "ESEiot/DNS/request/information/client"
+    "ESEiot/DNS/request/information/clients"
 };
 
 const std::string MQTT_TOPIC_INFO_CLIENT_ONLINE{
-    "ESEiot/DNS/info/client/online"
+    "ESEiot/DNS/info/clients/online"
 };
 const std::string MQTT_TOPIC_INFO_CLIENT_OFFLINE{
-    "ESEiot/DNS/info/client/offline"
+    "ESEiot/DNS/info/clients/offline"
 };
 const std::string MQTT_TOPIC_INFO_CLIENT_LASTWILL{
-    "ESEiot/DNS/info/client/lastwill"
+    "ESEiot/DNS/info/clients/lastwill"
 };
 const std::string MQTT_TOPIC_INFO_MUSIC_VOLUME{
     "ESEiot/DNS/info/music/volume"
