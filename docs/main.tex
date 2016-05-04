@@ -1,0 +1,294 @@
+\listfiles % List packages used in log file
+\documentclass[11pt]{report}
+\usepackage[english]{babel} % language selection
+\usepackage[utf8]{inputenc} % Accept different input encodings
+\usepackage{csquotes}       % Context sensitive quotation facilities
+\usepackage[style=apa,
+            backend=biber]
+            {biblatex}      % APA style bibliography support
+\DeclareLanguageMapping{english}{english-apa}    % Language mapping
+\addbibresource[datatype=bibtex]{references.bib} % Use a bibtex bibliography file
+\usepackage[a4paper,
+            total={6in, 8in},
+            headheight=110pt]{geometry} % Set to a4 paper
+\usepackage{graphicx}                   % Include graphics
+\graphicspath{{./images}
+              {../misc/logo/}}          % Graphics paths
+\usepackage{titling}                    % Title page
+\usepackage{fancyhdr}                   % Make header end footer
+\usepackage{tocloft}                    % Control table of contents, figures, etc
+\usepackage{changepage}                 % for the adjustwidth environment
+\usepackage[quiet]{fontspec}            % load custom fonts
+\usepackage{titlesec}                   % set format per section type
+\usepackage{fancyvrb}                   % Sophisticated verbatim text
+\usepackage{longtable}                  % Longtable support
+\usepackage{booktabs}                   % toprule problem
+\usepackage{bookmark}                   % Generate bookmarks
+\usepackage{hyperref}                   % Generate links
+\usepackage{xcolor}                     % Color for links etc
+\usepackage{etoolbox}                   %e-TEX tools for LATEX
+\usepackage{caption}                    % Customising captions in floating environments
+\usepackage{subcaption}                 % Support for sub-captions
+%\usepackage{lipsum}                     % For sample text
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Setup main document parameters
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Main title
+\def \title {Dynamic Network of Speakers}
+% Sub title
+\def \subtitle {With MQTT}
+% Institution
+\def \institution {HAN University of Applied Sciences}
+% Sub department
+\def \subdepartment {Embedded Systems Engineering}
+% Author(s)
+\author{
+    Ingmar Delsink
+    \and\\
+    Menno van der Graaf
+    \and\\
+    Brian van Zwam
+}
+% Puplish data
+\date{April 2016}
+% Version number
+\def \version{0.1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%    Styling
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Hyperlinks formatting
+\hypersetup{
+    colorlinks=true,            % Colors the text of links and anchors.
+    pdfborderstyle={/S/U/W 1},  % underline links instead of boxes
+    linkcolor=[RGB]{50,50,50},  % Color for normal internal links.
+    anchorcolor=red,            % Color for anchor text.
+    citecolor=red,              % Color for bibliographical citations in text.
+    filecolor=magenta,          % Color for URLs which open local files.
+    menucolor=red,              % Color for Acrobat menu items.
+    runcolor=red,               % Color for run links (launch annotations).
+    urlcolor=[RGB]{50,50,50},   % Color for linked URLs.
+    bookmarks=true,             % A set of Acrobat bookmarks are written
+    bookmarksnumbered=true,     % If Acrobat bookmarks are requested, include section numbers.
+    citebordercolor=red,        % The color of the box around citations
+    filebordercolor=red,        % The color of the box around links to files
+    linkbordercolor=red,        % The color of the box around normal links
+    menubordercolor=red,        % The color of the box around Acrobat menu links
+    urlbordercolor=red,         % The color of the box around links to URLs
+    runbordercolor=red,         % Color of border around ‘run’ links
+    pdfinfo={                   % Global PDF info
+        Title={\title},
+        Subject={\subtitle},
+        Author={\theauthor},
+        Institution={\institution},
+        Subdepartment={\subdepartment},
+        Version={\version}
+    }
+}
+% Load custom fonts
+\newfontfamily\xolonium[
+    Path = {../misc/fonts/xolonium/} ,
+    Extension = .otf ,
+    UprightFont = *-Regular ,
+    BoldFont = *-Bold
+    ]{Xolonium}
+\newfontfamily\nimbus[
+    Path = {../misc/fonts/nimbus-sans-l/} ,
+    Extension = .ttf ,
+    UprightFont = *_regular ,
+    ItalicFont = *_italic ,
+    BoldFont = *_bold ,
+    BoldItalicFont = *_bold-italic
+    ]{nimbus-sans-l}
+%%%%%%%%%%%%%%%%%%%%%%
+%% Table of Content
+%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\cftbeforetoctitleskip}{0ex} % Set ToC before height
+\setcounter{tocdepth}{2}                % Set depth of entries
+\setcounter{secnumdepth}{2}             % Section number dept (subsection)
+\addtocontents{toc}{                    % Add "Page" on top of ToC #
+    ~\hfill{\xolonium Page}\par
+}
+% Indent size {<entry>}{<indent>}{<numwidth>}
+\cftsetindents{chapter}{0em}{2.5em}
+\cftsetindents{section}{1em}{2.5em}
+\cftsetindents{subsection}{1.8em}{3.2em}
+\cftsetindents{subsubsection}{6.0em}{5em}
+\cftsetindents{paragraph}{7.0em}{5.0em}
+\cftsetindents{subparagraph}{12.0em}{6.0em}
+% sectional unit title format per section
+\renewcommand{\cfttoctitlefont}{\Huge\xolonium}     % ToC title
+\renewcommand{\cftchapfont}{\normalsize\xolonium}   % chapter
+\renewcommand{\cftsecfont}{\normalsize\nimbus}      % section
+\renewcommand{\cftsubsecfont}{\normalsize\nimbus}   % subsection
+% Page number format per section
+%% Skip distance
+\renewcommand\cftchapafterpnum{\vskip6pt}   % chapter page
+\renewcommand\cftsecafterpnum{\vskip6pt}    % section page
+\renewcommand\cftsubsecafterpnum{\vskip6pt} % subsection page
+%% Font
+\renewcommand{\cftchappagefont}{\small\xolonium}  % chapter page font
+\renewcommand{\cftsecpagefont}{\small\nimbus}     % section page font
+\renewcommand{\cftsubsecpagefont}{\small\nimbus}  % subsection page font
+%%%%%%%%%%%%%%%%%%%%%%
+%% List of Tables
+%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\cftbeforelottitleskip}{0ex} % Set LoT before height
+\setcounter{lotdepth}{2}                % Set depth of entries
+\addtocontents{lot}{                    % Add "Page" on top of LoT #
+    ~\hfill{\xolonium Page}\par
+}
+% sectional unit title format per section
+\renewcommand{\cftlottitlefont}{\Huge\xolonium}     % LoT title
+\renewcommand{\cfttabfont}{\normalsize\nimbus{Table }}  % LoF entries
+% Page number format per section
+%% Skip distance
+\renewcommand\cfttabafterpnum{\vskip6pt}        % figure page
+%% Font
+\renewcommand{\cfttabpagefont}{\small\nimbus}   % figure page font
+%%%%%%%%%%%%%%%%%%%%%%
+%% List of Figures
+%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\cftbeforeloftitleskip}{0ex} % Set LoF before height
+\setcounter{lofdepth}{2}                % Set depth of entries
+\addtocontents{lof}{                    % Add "Page" on top of LoF #
+    ~\hfill{\xolonium Page}\par
+}
+% sectional unit title format per section
+\renewcommand{\cftloftitlefont}{\Huge\xolonium} % LoF title
+\renewcommand{\cftfigfont}{\normalsize\nimbus{Figure }}  % LoF entries
+% Page number format per section
+%% Skip distance
+\renewcommand\cftfigafterpnum{\vskip6pt}        % figure page
+%% Font
+\renewcommand{\cftfigpagefont}{\small\nimbus}   % figure page font
+%%%%%%%%%%%%%%%%%%%%%%
+%% Bibliography
+%%%%%%%%%%%%%%%%%%%%%%
+\def\bibfont{\nimbus}   % Set font
+
+%%%%%%%%%%%%%%%%%%%%%%
+%% Format per section
+%%%%%%%%%%%%%%%%%%%%%%
+% Chapter
+\titleformat{\chapter}
+    {\Large\xolonium}         % format
+    {\xolonium\thechapter }   % label
+    {1.5em}                   % seperation
+    {\huge}                   % before-code
+\titlespacing{\chapter}
+    {0em}  % from left
+    {0ex}   % above header
+    {2ex}  % Below header
+% Section
+\titleformat{\section}
+    {\xolonium}
+    {\xolonium\thesection}
+    {1em}
+    {}
+% Subsection
+\titleformat{\subsection}
+    {\xolonium}
+    {\xolonium\thesection}
+    {1em}
+    {}
+% Subsubsection
+\titleformat{\subsubsection}
+    {\xolonium}
+    {\xolonium\thesection}
+    {1em}
+    {}
+% Paragraph
+\titleformat{\paragraph}
+    {\normalfont\normalsize\xolonium\color{cyan}}
+    {\theparagraph}
+    {1em}
+    {}
+%%%%%%%%%%%%%%%%%%%%%%
+%% Format captions
+%%%%%%%%%%%%%%%%%%%%%%
+% Tables
+\renewcommand{\thetable}{\arabic{table}}        % numbering:  1, 2 etc
+\DeclareCaptionFormat{tabcapfont}
+    {\nimbus \small\textit{\textbf{#1#2}}#3}    % caption format
+\captionsetup[table]{format=tabcapfont}         % set defined caption
+% Sub Tables
+\renewcommand{\thesubtable}{\alph{subtable}}   % a, b etc
+% Figures
+\renewcommand{\thefigure}{\arabic{figure}}      % numbering:  1, 2 etc
+\DeclareCaptionFormat{figcapfont}
+    {\nimbus \small\textit{\textbf{#1#2}}#3}    % caption format
+\captionsetup[figure]{format=figcapfont}        % set defined caption
+% Sub figures
+\renewcommand{\thesubfigure}{\alph{subfigure}}  % a, b etc
+%%%%%%%%%%%%%%%%%%%%%%
+%% Header and Footer
+%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{fancy}           % Set default style
+\fancyhf{}                  % Clear all header and footer fields
+\lhead{\nimbus\thedate}     % Left head
+\rhead{\nimbus\thesection}  % Right head
+\rfoot{\nimbus\thepage}     % Right foot
+% Redefine the plain page style
+\fancypagestyle{plain}{ % Used at start of chapter
+    \fancyhf{} % clear all header and footer fields
+    \lhead{\nimbus\title}
+    \rhead{\nimbus\nouppercase\leftmark}
+    \lfoot{\nimbus\thedate}
+    \rfoot{\nimbus\thepage}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%    Start document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+    \nimbus % Set global font
+
+    \input{./chapters/titlepage}    % Include the titlepage
+
+    \chapter*{Summery}              % Summery
+    \input{./chapters/summery}
+
+    \clearpage
+    \renewcommand{\contentsname}{Table of Contents} % Set title
+    \tableofcontents                % Generate and include a table of contents
+
+    \chapter{Introduction}          % Introduction
+    \input{./chapters/introduction}
+
+    \chapter{Topics}                % Topic spec sheet
+    \input{./chapters/topics}
+    % Convert topic spec sheet from markdown to LaTeX
+    \immediate\write18{
+        pandoc                              % Converter
+        ./topic_specification.md            % Source
+        -f markdown -t latex                % Type specification
+        -o build/topic_specification.tex    % Destination/output
+    }
+    \input{./build/topic_specification.tex} % Include generated file
+
+    \chapter{Client}                % Client
+    \input{./chapters/client}
+
+    \chapter{Website}               % Website
+    \input{./chapters/website}
+
+    \chapter{Conclusion}            % Conclusion
+    \input{./chapters/conclusion}
+
+    \clearpage      % Clear page for LoT
+    \phantomsection % For hyperreflinking
+    \addcontentsline{toc}{chapter}{\listtablename}  % Add LoT to ToC
+    \listoftables                   % Generate and include a LoT
+    %\thispagestyle{empty}           % Disable header and footer on LoT
+
+    \clearpage      % Clear page for LoT
+    \phantomsection % For hyperreflinking
+    \addcontentsline{toc}{chapter}{\listfigurename} % Add LoF to ToC
+    \listoffigures                  % Generate and include a LoF
+
+    \printbibliography[heading=bibintoc] % Generate and include bibliography if needed
+    %\thispagestyle{empty}           % Disable header and footer on LoT
+
+\end{document}
