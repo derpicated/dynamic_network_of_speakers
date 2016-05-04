@@ -52,12 +52,4 @@ const std::string MQTT_TOPIC_INFO_MUSIC_SOURCES{ MQTT_TOPIC_INFO_MUSIC +
                 "/sources" };
 const std::string MQTT_TOPIC_INFO_MUSIC_VOLUME{ MQTT_TOPIC_INFO_MUSIC +
                 "/volume" };
-
-
-// const std::string MQTT_TOPIC_INFO_MUSIC_PS{ "ESEiot/DNS/info/music/status" };
-
-// const std::string MQTT_TOPIC_CLIENTID_OBJECTID{ "ESEiot/DNS/client/speakers/"
-// +
-//    CLIENT_XXX + "/objects" };
-
 #endif
