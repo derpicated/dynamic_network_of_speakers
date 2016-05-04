@@ -75,9 +75,8 @@ DNS = (function (global) {
         this.info_clients_site          = this.info_clients+'/'+broker_mqtt.client_name;
         this.info_clients_startdraw     = this.info_clients+'/startdraw';
         this.info_clients_startdraw_site= this.info_clients_startdraw+'/'+broker_mqtt.client_name;
-        this.info_client                = this.info+'/client';
-        this.info_client_online         = this.info_client+'/online';
-        this.info_client_offline        = this.info_client+'/offline';
+        this.info_clients_online        = this.info_clients+'/online';
+        this.info_clients_offline       = this.info_clients+'/offline';
         /* personnal request topics */
         this.answer                     = this.root+'/answer/site';
     };
@@ -126,12 +125,12 @@ DNS = (function (global) {
     /* Call when message is recieved */
     var message_recieve = function (message) {
         switch (message.destinationName) {
-            case topic.info_client_online:
+            case topic.info_clients_online:
                 CLIENT.online(message.payloadString);
                 GUI.draw_speakers_from_data();
                 //console.log("Client online: "+message.payloadString);
                 break;
-            case topic.info_client_offline:
+            case topic.info_clients_offline:
                 CLIENT.offline(message.payloadString);
                 GUI.draw_speakers_from_data();
                 //console.log("Client offline: "+message.payloadString);
@@ -193,8 +192,8 @@ DNS = (function (global) {
     };
     /* Initial subscribed topics */
     var subscribe_list = function () {
-        subscribe(topic.info_client_online);
-        subscribe(topic.info_client_offline);
+        subscribe(topic.info_clients_online);
+        subscribe(topic.info_clients_offline);
         subscribe(topic.info_music_volume);
         subscribe(topic.info_music_sources);
         subscribe(topic.info_clients+'/+');
