@@ -1,11 +1,11 @@
-#include "AppInfo.h"
-#include "Config.h"
-#include "DNSMusic.h"
-
 #include <iostream>
 #include <mosquittopp.h>
 #include <signal.h>
 #include <sys/stat.h>
+
+#include "AppInfo.h"
+#include "Config.h"
+#include "DNSMusic.h"
 
 using namespace std;
 
@@ -26,7 +26,7 @@ void handleSIGCHLD (int) {
     */
 }
 
-int main (int argc, char* argv[]) {
+int main (void /*int argc, char* argv[]*/) {
     signal (SIGINT, handleSIGINT);
     signal (SIGCHLD, handleSIGCHLD);
 
@@ -35,7 +35,7 @@ int main (int argc, char* argv[]) {
     int revision{ 0 };
 
     // temp test
-    if (argc != 2) {
+    /*if (argc != 1) {
         std::cout << "usage: " << argv[0] << " file.ogg" << std::endl;
         return 1;
     }
@@ -46,7 +46,7 @@ int main (int argc, char* argv[]) {
     if (stat (music_file.c_str (), &buffer) != 0) {
         std::perror ("error, file");
         return 1;
-    }
+    }*/
     // end temp
 
     cout << "-- MQTT application: " << APPNAME_VERSION << "  ";
@@ -55,7 +55,7 @@ int main (int argc, char* argv[]) {
     cout << "uses Mosquitto lib version " << major << '.' << minor << '.'
          << revision << endl;
     try {
-        DNSMusic client ("DNSMusic", "tempDNS", MQTT_BROKER, MQTT_BROKER_PORT, music_file);
+        DNSMusic client ("DNSMusic", "tempDNS", getClientID ());
 
         // auto clients{ static_cast<mosqpp::mosquittopp*> (&tempDNS) };
 

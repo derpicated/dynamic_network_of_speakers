@@ -33,26 +33,20 @@
 
 class DNSMusic : public mosqpp::mosquittopp {
     public:
-    DNSMusic (  const std::string& appname,
-                const std::string& clientname,
-                const std::string& host,
-                int port,
-                const std::string musicfile);
-    
+    DNSMusic (const std::string& appname, const std::string& clientname, const std::string& clientid);
+
     DNSMusic (const DNSMusic& other) = delete;
-    DNSMusic& operator= (const DNSMusic& other) = delete;
+    DNSMusic& operator=(const DNSMusic& other) = delete;
     virtual ~DNSMusic ();
 
     protected:
     std::string _appname;
     std::string _clientname;
-    std::string _musicfile;
+    // std::string _musicfile;
     Topic _topicRoot;
 
     std::vector<int> _distances;
 
-    int _volume;
-    bool _stop, _play, _pause;
     std::string _jsondatastring;
     std::mutex _mtx;
 
@@ -65,12 +59,15 @@ class DNSMusic : public mosqpp::mosquittopp {
     virtual void on_error () override;
 
     private:
+    const std::string _client_id; //{ getClientID () };
     const std::string _cache_path;
-    audio_player _player;
-    audioSourceData _speaker_data;
+    int _master_volume;
+    std::map<std::string, int> _rwf_volumes;      // key = object name
+    std::map<std::string, audio_player> _players; // key = object name
+    speakerData _speaker_data;
     dataParser _data_parser;
 
-    void setVolume (std::string svolume);
+    void setMasterVolume (std::string volume);
     void setPPS (std::string pps);
     void processMusicSourceData (std::string json_str);
     void processClientData (std::string json_str);
