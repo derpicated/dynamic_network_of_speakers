@@ -55,7 +55,7 @@ int main (void /*int argc, char* argv[]*/) {
     cout << "uses Mosquitto lib version " << major << '.' << minor << '.'
          << revision << endl;
     try {
-        DNSMusic client ("DNSMusic", getClientID (), "tempDNS", MQTT_BROKER, MQTT_BROKER_PORT);
+        DNSMusic client ("DNSMusic", "tempDNS", getClientID ());
 
         // auto clients{ static_cast<mosqpp::mosquittopp*> (&tempDNS) };
 

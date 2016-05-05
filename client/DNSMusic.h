@@ -33,11 +33,7 @@
 
 class DNSMusic : public mosqpp::mosquittopp {
     public:
-    DNSMusic (const std::string& appname,
-    const std::string& clientname,
-    const std::string& clientid,
-    const std::string& host,
-    int port);
+    DNSMusic (const std::string& appname, const std::string& clientname, const std::string& clientid);
 
     DNSMusic (const DNSMusic& other) = delete;
     DNSMusic& operator=(const DNSMusic& other) = delete;
