@@ -244,6 +244,7 @@ a:active{
     position:absolute;
     float:left;
     background-color: #E4E4E4;
+    font-family: 'nimbus-sans-l';
 }
 .object {
     width: 50px;
@@ -256,6 +257,7 @@ a:active{
     position:absolute;
     float:left;
     background-color: #E4E4E4;
+    font-family: 'nimbus-sans-l';
 }
 
 .object.active {

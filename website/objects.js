@@ -15,9 +15,8 @@ OBJECT = (function (global) {
     /* Add/set object */
     var set = function (objectid, uri) {
         OBJECTS[objectid]=uri;
-        console.log("Object "+objectid+" : "+uri+" set");
-        //send new data
-        DNS.send(DNS.topic.info_music_sources, JSON.stringify(get_objects()));
+        //console.log("Object "+objectid+" : "+uri+" set");
+        send_objects(); // Send new data
     };
     var set_all = function (objects) {
         OBJECTS=objects;
@@ -26,7 +25,8 @@ OBJECT = (function (global) {
     var del = function (objectid) {
         if(OBJECTS[objectid] == null){return -1;}
         delete OBJECTS[objectid];
-        console.log("Object "+objectid+" deleted");
+        //console.log("Object "+objectid+" deleted");
+        send_objects(); // Send new data
     };
     var del_all = function () {
         OBJECTS = {};
@@ -41,11 +41,18 @@ OBJECT = (function (global) {
         return (get_objects()[objectid]);
     };
 
+    /* Send the sources */
+    var send_objects = function () {
+        DNS.send(DNS.topic.info_music_sources, JSON.stringify(get_objects()), true);
+    };
+
     /* Debug print */
     var debug_print = function () {
         console.log("OBJECT DEBUG PRINT");
         console.log(OBJECTS);
     };
+
+
 
     return { // Bind functions to the outside world
         set         : set,
@@ -54,6 +61,7 @@ OBJECT = (function (global) {
         del_all     : del_all,
         get_objects : get_objects,
         get_object  : get_object,
+        send_objects: send_objects,
         debug       : debug_print
     };
 })(window);

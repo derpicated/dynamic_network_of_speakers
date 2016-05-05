@@ -142,12 +142,12 @@ DNS = (function (global) {
             case topic.info_music_sources:
                 var info_music_sources = JSON.parse(message.payloadString);
                 //console.log("Music Sources: ");console.log(info_music_sources);
-                OBJECT.set_all(info_music_sources);
-                for (first in info_music_sources) break; // Temp fix, this will be changed later on
+                //OBJECT.set_all(info_music_sources);
+                //for (first in info_music_sources) break; // Temp fix, this will be changed later on
                 //console.log("Music Name: "+first);
                 //console.log("Music Source: "+info_music_sources[first]);
-                $('#music_name').val(first);
-                $('#music_uri').val(info_music_sources[first]);
+                //$('#music_name').val(first);
+                //$('#music_uri').val(info_music_sources[first]);
                 break;
             case topic.info_clients:
                 break;

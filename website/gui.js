@@ -73,7 +73,7 @@ GUI = (function (global) {
         //Delete unused speakers
         $('.speaker').each(function(key, value){
             if (!(CLIENT.get_online()[$(this).attr('id')])) {
-                console.log("Deleting unused drawn: "+$(this).attr('id'));
+                //console.log("Deleting unused drawn: "+$(this).attr('id'));
                 $(this).remove();
             }
         });
@@ -89,18 +89,17 @@ GUI = (function (global) {
                             draw_object(object_name, ((draw_area.width()-object_width)/2), ((draw_area.height()-object_height)/2));
                         }
                         // Draw speaker from object
-                        del_speaker(speaker_name); // Delete speaker
+                        //var speaker_uri=OBJECT.get_object(speaker_name);
+                        //del_speaker(speaker_name); // Delete speaker
                         var left =$('#'+object_name).offset().left-draw_area.offset().left-rectangular(obj_value.distance, obj_value.angle).x;
                         var top  =$('#'+object_name).offset().top-draw_area.offset().top+rectangular(obj_value.distance, obj_value.angle).y;
+                        //OBJECT.
                         draw_speaker(speaker_name, draw_area, left, top); // Draw speaker
                     } else { // Not first object of speaker
-                        if (isEmpty($('#'+object_name))) { // Object not drawn, so draw it.
-                            // Draw the object from speaker
-                            del_object(object_name);//delete object
-                            var left =$('#'+speaker_name).offset().left-draw_area.offset().left+rectangular(obj_value.distance, obj_value.angle).x;
-                            var top  =$('#'+speaker_name).offset().top-draw_area.offset().top-rectangular(obj_value.distance, obj_value.angle).y;
-                            draw_object(object_name, left, top); //draw object
-                        }
+                        // Draw the object from speaker
+                        var left =$('#'+speaker_name).offset().left-draw_area.offset().left+rectangular(obj_value.distance, obj_value.angle).x;
+                        var top  =$('#'+speaker_name).offset().top-draw_area.offset().top-rectangular(obj_value.distance, obj_value.angle).y;
+                        draw_object(object_name, left, top); //draw object
                     }
                     nr_of_objects++;
                 }, speaker_name);
@@ -154,11 +153,14 @@ GUI = (function (global) {
     };
     /* Draw single speaker */
     var draw_speaker = function (speaker_name, destination, off_left=0, off_top=0) {
-        del_speaker(speaker_name); //Delete speaker, if it exists
-        var speaker_class = "<div class='speaker noselect' id='"+speaker_name+"'>"+speaker_name.replace(CONFIG.name_speaker, '')+"</div>";
-        destination.append(speaker_class);
         var speaker = $('#'+speaker_name);
-        speaker.offset({ top: destination.offset().top+off_top, left: destination.offset().left+off_left}); // Set speaker offset
+        if (speaker.length) { // Check if speaker exists
+            speaker.detach().appendTo(destination); // Add to x
+        } else { // Draw new speaker
+            var speaker_class = "<div class='speaker noselect' id='"+speaker_name+"'>"+speaker_name.replace(CONFIG.name_speaker, '')+"</div>";
+            destination.append(speaker_class);
+        }
+        speaker = $('#'+speaker_name); // Update reference to object
         speaker.draggable({ // Make speaker dragable in the list and draw area (top div)
             containment: "#top",
             scroll: false,
@@ -184,15 +186,20 @@ GUI = (function (global) {
                 update_speaker_list();
             }
         });
+        speaker.offset({ top: destination.offset().top+off_top, left: destination.offset().left+off_left}); // Set speaker offset
     };
     /* Delete single speaker */
     var del_speaker = function (speaker_name) {
         $('#'+speaker_name).remove();
     };
     var draw_object = function (object_name, off_left=0, off_top=0) {
-        del_object(object_name); // Delete object, if it exists
-        var object_class = "<div class='object noselect' id='"+object_name+"' onclick='GUI.load_object_properties(\""+object_name+"\")'>"+object_name+"</div>";
-        draw_area.append(object_class);
+        var object = $('#'+object_name);
+        if (object.length) { // Check if speaker exists
+            //object.detach().appendTo(draw_area); // Add to draw area
+        } else { // Draw new speaker
+            var object_class = "<div class='object noselect' id='"+object_name+"' onclick='GUI.load_object_properties(\""+object_name+"\")'>"+object_name+"</div>";
+            draw_area.append(object_class);
+        }
         var object = $('#'+object_name);
         object.offset({ top: draw_area.offset().top+off_top, left: draw_area.offset().left+off_left}); // Set offset
         object.draggable({ // Make dragable in the draw area
@@ -230,8 +237,9 @@ GUI = (function (global) {
     };
     /* Delete single object */
     var del_object = function (object_name) {
+        //console.log('deleting obj: '+object_name);
         $('#'+object_name).remove();
-        OBJECT.del[object_name];
+        OBJECT.del(object_name);
     };
     /* Clear objects and speakers respectively */
     var empty_speaker_list = function (not_x = '') {
