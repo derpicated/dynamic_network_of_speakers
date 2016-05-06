@@ -97,7 +97,7 @@ A general information topic.
 
 #### Clients
 
-- `info/clients/xxx`: Global data for sending information of all the online clients to all devices. `xxx` is the name of the website that is sending the data. This is not important for clients, the website uses this to filter it's own data. The client can subscribe with `info/clients/+`. Clients that are online and are not **participating** in the active audio network, won't be in this list. Because this is a 2D field, all the clients will contain all the objects. See below:
+- `info/clients/data/xxx`: Global data for sending information of all the online clients to all devices. `xxx` is the name of the website that is sending the data. This is not important for clients, the website uses this to filter it's own data. The client can subscribe with `info/clients/data/+`. Clients that are online and are not **participating** in the active audio network, won't be in this list. Because this is a 2D field, all the clients will contain all the objects. See below:
 
 ```
 {
