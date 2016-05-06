@@ -17,19 +17,21 @@ void audio_player::set_file (std::string file_name) {
 }
 
 void audio_player::play (unsigned int time /*= 0*/) {
-    pid_t pid = fork ();
-    switch (pid) {
-        case -1: // error
-            std::perror ("failed to start audio player");
-            break;
+    if (child_pid == 0) {
+        pid_t pid = fork ();
+        switch (pid) {
+            case -1: // error
+                std::perror ("failed to start audio player");
+                break;
 
-        case 0: // child process
-            call_player (time);
-            exit (1);
+            case 0: // child process
+                call_player (time);
+                exit (1);
 
-        default: // parent process, pid now contains the child pid
-            child_pid = pid;
-            std::cout << "starting: " << pid << std::endl;
+            default: // parent process, pid now contains the child pid
+                child_pid = pid;
+                std::cout << "starting: " << pid << std::endl;
+        }
     }
     return;
 }
@@ -45,8 +47,13 @@ void audio_player::call_player (unsigned int time) {
 }
 
 int audio_player::stop () {
-    std::cout << "killing: " << child_pid << std::endl;
-    return kill (child_pid, SIGKILL);
+    int status = -1;
+    if (child_pid != 0) {
+        std::cout << "killing: " << child_pid << std::endl;
+        status    = kill (child_pid, SIGKILL);
+        child_pid = 0;
+    }
+    return status;
 }
 
 void audio_player::set_volume (unsigned int volume) {
