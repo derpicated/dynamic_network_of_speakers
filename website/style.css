@@ -172,6 +172,7 @@ a:active{
 /* input styles */
 #volume_controls input[type=range] {
     -webkit-appearance: none;
+    -moz-appearance:none;
     -webkit-transform:rotate(-90deg);
     -moz-transform:rotate(-90deg);
     -o-transform:rotate(-90deg);
@@ -185,7 +186,14 @@ a:active{
 #volume_controls  input[type=range]:focus {
     outline: none;
 }
-#volume_controls  input[type=range]::-webkit-slider-runnable-track {
+#volume_controls  input[type=range]::-webkit-slider-runnable-track{
+    width: 100%;
+    height: 30px;
+    cursor: pointer;
+    background: #646464;
+    border-radius: 25px;
+}
+#volume_controls input[type=range]::-moz-range-track{
     width: 100%;
     height: 30px;
     cursor: pointer;
@@ -200,11 +208,13 @@ a:active{
     background: #808080;
     cursor: pointer;
     -webkit-appearance: none;
+    -moz-appearance:none;
     margin-top: 0px;
     margin-top: 0px;
 }
 #time_controls input[type=range] {
     -webkit-appearance: none;
+    -moz-appearance:none;
     position: relative;
     top: 10%;
     left: 5%;
@@ -260,6 +270,7 @@ a:active{
     float:left;
     background-color: #E4E4E4;
     font-family: 'nimbus-sans-l';
+    cursor: pointer;
 }
 .object {
     width: 50px;
@@ -273,6 +284,7 @@ a:active{
     float:left;
     background-color: #E4E4E4;
     font-family: 'nimbus-sans-l';
+    cursor: pointer;
 }
 
 .object.active {

@@ -49,6 +49,7 @@ DNS = (function (global) {
             connected = true;
             subscribe_list();// Connection succeeded; subscribe to our topics
             DNS.send(DNS.topic.request_online, '1');    //get initial devices
+            DNS.send(DNS.topic.request_info_clients, topic.answer);    //get initial devices parameters
             //update device info
         },
         onFailure: function (message) {
@@ -145,21 +146,20 @@ DNS = (function (global) {
                 OBJECT.set_all(info_music_sources);
                 GUI.draw_available_objects();
                 break;
-            case topic.info_clients:
-                break;
-            case topic.info_clients_site: //data that this website send, just ignore.
-                break;
             default:
                 if(message.destinationName.indexOf(topic.request)>-1){ // Request topic
-                    console.log("Request: "+message.destinationName);
+                    console.log("Request: "+message.destinationName+" | "+message.payloadString);
                     return;
                 } else if(message.destinationName.indexOf(topic.answer)>-1){ // Got answer
-                    //one for the distance answer
-                    //one for the angle answer
-                    //var tmp = message.destinationName;
-                    //console.log("Answer!! "+tmp);
-                    //tmp=tmp.replace(topic.answer+'/distance/', '');
-                    //console.log("Answer!! "+tmp);
+                    var device_date = JSON.parse(message.payloadString);
+                    for (var client_name in device_date) {
+                        if (!isEmpty(device_date[client_name])) { // Check if object is empty
+                            //CLIENT.set_objects(client_name, device_date[client_name]); // Set data of object
+                            //GUI.draw_speakers_from_data(); // Redraw
+                            console.log("Got personnal data from: "+client_name);
+                            console.log(device_date[client_name]);
+                        }
+                    }
                     return;
                 } else if (message.destinationName.indexOf(topic.info_clients+'/')>-1) { // Got new clients data
                     var info_clients = JSON.parse(message.payloadString);

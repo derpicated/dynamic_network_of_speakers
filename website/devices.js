@@ -41,6 +41,10 @@ CLIENT = (function (global) {
         };
         $.extend( true, CLIENTS[clientid], tmp_obj );
     };
+    /* Set all objects for a client */
+    var set_objects = function (clientid, objects) {
+        CLIENTS[clientid] = objects;
+    };
     var set_all = function (clients) {
         CLIENTS = clients;
     };
@@ -78,6 +82,7 @@ CLIENT = (function (global) {
         offline_all : offline_all,
         get_online  : get_online,
         set_object  : set_object,
+        set_objects : set_objects,
         set_all     : set_all,
         del_object  : del_object,
         del_objects : del_objects,

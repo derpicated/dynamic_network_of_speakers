@@ -17,6 +17,7 @@ GUI = (function (global) {
     var SPEAKER_LIST = $("#speaker_list");
     var DRAW_AREA = $("#draw_area");
     var OBJECT_LIST = $("#object_list");
+    var UPDATE_FREQ_MOVE = 100; // Send data when an obj/speaker has moved this amount of units
     /* Scale factor for In Real Life to Virtual
      * Default: 1:1
      */
@@ -24,35 +25,11 @@ GUI = (function (global) {
     var scale_virt=1;
     var init = function () {
         draw_speakers_from_data();
-        /* Update the data after every x px moved while clicked and dragged */
-        var draw_update_move_every=100;//px
-        var draw_update_move_default=draw_update_move_every;
-        var list_update_move_every=draw_update_move_default*4;//px
-        var list_update_move_default=list_update_move_every;
-        DRAW_AREA.mousemove(function( event ) {
-            if (event.buttons) {
-                draw_update_move_every--;
-                if (draw_update_move_every==0) {
-                    update_clients_data();
-                    draw_update_move_every=draw_update_move_default;
-                }
-            }
-        });
-        SPEAKER_LIST.mousemove(function( event ) {
-            if (event.buttons) {
-                list_update_move_every--;
-                if (list_update_move_every==0) {
-                    update_clients_data();
-                    list_update_move_every=list_update_move_default;
-                }
-            }
-        });
     };
     /* Update the local speaker list and send this */
     var update_clients_data = function () {
         CLIENT.set_all(make_data_from_drawing());
         console.log('Updating speaker list!');
-        //console.log(CLIENT.get_online());
         DNS.send(DNS.topic.info_clients_site, JSON.stringify(CLIENT.get_online()));
     };
     /* Clear the drawn speaker/objects
@@ -66,7 +43,7 @@ GUI = (function (global) {
     };
     /* Draw speakers from CLIENT data */
     var draw_speakers_from_data = function () {
-        empty_draw_area(); // Clear the draw area
+        empty_draw_area();
         var nr_of_objects=0;
         var object_tmp = $("<div class='object' id='object_tmp'></div>").hide().appendTo("body"); //add temp object
         var object_width = parseInt($('.object').css('width').replace('px',''));
@@ -93,19 +70,13 @@ GUI = (function (global) {
                 nr_of_objects=0;
                 $.each(CLIENT.get_online()[speaker_name], function(object_name, obj_value){
                     if (!nr_of_objects) { // First object
-                        //if (isEmpty($('#'+object_name))) { // Object not drawn.
-                            // Draw object in center of draw area
-                            draw_object(object_name, DRAW_AREA, ((DRAW_AREA.width()-object_width)/2), ((DRAW_AREA.height()-object_height)/2));
-                        //}
-                        // Draw speaker from object
-                        //var speaker_uri=OBJECT.get_object(speaker_name);
-                        //del_speaker(speaker_name); // Delete speaker
+                        draw_object(object_name, DRAW_AREA, ((DRAW_AREA.width()-object_width)/2), ((DRAW_AREA.height()-object_height)/2));
+                        // Draw speaker seen from object
                         var left =$('#'+object_name).offset().left-DRAW_AREA.offset().left-rectangular(obj_value.distance, obj_value.angle).x;
                         var top  =$('#'+object_name).offset().top-DRAW_AREA.offset().top+rectangular(obj_value.distance, obj_value.angle).y;
-                        //OBJECT.
                         draw_speaker(speaker_name, DRAW_AREA, left, top); // Draw speaker
-                    } else { // Not first object of speaker
-                        // Draw the object from speaker
+                    } else { // Not first object of speaker, so the speaker is already drawn
+                        // Draw the object seen from th speaker
                         var left =$('#'+speaker_name).offset().left-DRAW_AREA.offset().left+rectangular(obj_value.distance, obj_value.angle).x;
                         var top  =$('#'+speaker_name).offset().top-DRAW_AREA.offset().top-rectangular(obj_value.distance, obj_value.angle).y;
                         draw_object(object_name, DRAW_AREA, left, top); //draw object
@@ -114,12 +85,11 @@ GUI = (function (global) {
                 }, speaker_name);
             } else { // Speaker has no object(s)
                 if (isEmpty($('#'+speaker_name))) { // Speaker not drawn
-                    //draw in speaker list
                     draw_speaker(speaker_name, SPEAKER_LIST, calc_next_speaker_list_pos().left, calc_next_speaker_list_pos().top);
                 } // If already drawn, don't do anything
             }
         });
-        draw_available_objects();
+        draw_available_objects(); // Draw all the objects that are available but not used
     };
     /* Make CLIENT data from drawing */
     var make_data_from_drawing = function () {
@@ -141,7 +111,7 @@ GUI = (function (global) {
         speakers_keys.sort();
         objects_keys.sort();
         speakers_keys.forEach(function (speaker_name, index) { // Loop all speakers
-            speaker=$('#'+speaker_name);
+            speaker = $('#'+speaker_name);
             speakers[speaker.attr('id')] = {}; // Set empty object
             objects_keys.forEach(function (object_name, index) { // Loop all objects
                 object = $('#'+object_name);
@@ -167,16 +137,27 @@ GUI = (function (global) {
         if (speaker.length) { // Check if speaker exists
             speaker.detach().appendTo(destination); // Add to x
         } else { // Draw new speaker
-            var speaker_class = "<div class='speaker noselect' id='"+speaker_name+"'>"+speaker_name.replace(CONFIG.name_speaker, '')+"</div>";
+            var speaker_class = "<div class='speaker noselect' move_counter='0' id='"+speaker_name+"'>"+speaker_name.replace(CONFIG.name_speaker, '')+"</div>";
             destination.append(speaker_class);
         }
         speaker = $('#'+speaker_name); // Update reference to object
         speaker.draggable({ // Make speaker dragable in the list and draw area (top div)
             containment: "#top",
             revert: 'invalid',
+            stop: function (event, ui) {
+                update_clients_data();
+            },
+            stack: ".speaker, .object",
             scroll: false,
             snap: "#speaker_list",
-            snapMode: "both"
+            snapMode: "outer",
+            drag: function (event, ui) {
+                speaker.attr('move_counter', parseInt(speaker.attr('move_counter'))+1);
+                if(speaker.attr('move_counter')>UPDATE_FREQ_MOVE){
+                    speaker.attr('move_counter', 0);
+                    update_clients_data();
+                }
+            }
         });
         // Make speaker dropable in varius places
         DRAW_AREA.droppable({
@@ -185,7 +166,6 @@ GUI = (function (global) {
                 var speaker_object= $(ui.helper[0]);
                 speaker_object.detach().appendTo(DRAW_AREA);
                 speaker_object.offset({ top: offset.top, left: offset.left});
-                update_clients_data();
             }
         });
         SPEAKER_LIST.droppable({
@@ -195,7 +175,6 @@ GUI = (function (global) {
                 var speaker_object= $(ui.helper[0]);
                 speaker_object.detach().appendTo(SPEAKER_LIST);
                 speaker_object.offset({ top: offset.top, left: offset.left});
-                update_clients_data();
             }
         });
         speaker.offset({ top: destination.offset().top+off_top, left: destination.offset().left+off_left}); // Set speaker offset
@@ -209,16 +188,27 @@ GUI = (function (global) {
         if (object.length) { // Check if object exists
             object.detach().appendTo(destination); // Add to destination area
         } else { // Draw new object
-            var object_class = "<div class='object noselect' id='"+object_name+"' onclick='GUI.load_object_properties(\""+object_name+"\")'>"+object_name+"</div>";
+            var object_class = "<div class='object noselect' move_counter='0' id='"+object_name+"' onclick='GUI.load_object_properties(\""+object_name+"\")'>"+object_name+"</div>";
             destination.append(object_class);
         }
         object = $('#'+object_name);
         object.draggable({ // Make dragable in the draw area
             containment: '#top',
             revert: 'invalid',
+            stop: function (event, ui) {
+                update_clients_data();
+            },
+            stack: ".object, .speaker",
             scroll: false,
             snap: "#object_list",
-            snapMode: "both"
+            snapMode: "outer",
+            drag: function (event, ui) {
+                object.attr('move_counter', parseInt(object.attr('move_counter'))+1);
+                if(object.attr('move_counter')>UPDATE_FREQ_MOVE){
+                    object.attr('move_counter', 0);
+                    update_clients_data();
+                }
+            }
         });
         // Make speaker dropable in varius places
         DRAW_AREA.droppable({
@@ -227,7 +217,6 @@ GUI = (function (global) {
                 var object_object= $(ui.helper[0]);
                 object_object.detach().appendTo(DRAW_AREA);
                 object_object.offset({ top: offset.top, left: offset.left});
-                update_clients_data();
             }
         });
         OBJECT_LIST.droppable({
@@ -237,7 +226,6 @@ GUI = (function (global) {
                 var object_object= $(ui.helper[0]);
                 object_object.detach().appendTo(OBJECT_LIST);
                 object_object.offset({ top: offset.top, left: offset.left});
-                update_clients_data();
             }
         });
         object.offset({ top: destination.offset().top+off_top, left: destination.offset().left+off_left}); // Set offset
