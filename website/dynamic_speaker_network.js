@@ -164,7 +164,7 @@ DNS = (function (global) {
                         }
                     }
                     return;
-                } else if (message.destinationName.indexOf(topic.info_data_clients+'/')>-1) { // Got new clients data
+                } else if (message.destinationName.indexOf(topic.info_clients_data+'/')>-1) { // Got new clients data
                     var info_clients = JSON.parse(message.payloadString);
                     CLIENT.set_all(info_clients); // Set date
                     GUI.draw_speakers_from_data(); // Redraw
