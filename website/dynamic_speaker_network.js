@@ -141,6 +141,8 @@ DNS = (function (global) {
                 $("#volume_slider").val(message.payloadString);//set slider value
                 //console.log("Volume: "+message.payloadString);
                 break;
+            case topic.info_clients_data_site: // Filter own message
+                break;
             case topic.info_music_sources:
                 var info_music_sources = JSON.parse(message.payloadString);
                 console.log("Music Sources: ");console.log(info_music_sources);
@@ -162,7 +164,7 @@ DNS = (function (global) {
                         }
                     }
                     return;
-                } else if (message.destinationName.indexOf(topic.info_clients+'/')>-1) { // Got new clients data
+                } else if (message.destinationName.indexOf(topic.info_data_clients+'/')>-1) { // Got new clients data
                     var info_clients = JSON.parse(message.payloadString);
                     CLIENT.set_all(info_clients); // Set date
                     GUI.draw_speakers_from_data(); // Redraw
