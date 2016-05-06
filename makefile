@@ -67,6 +67,16 @@ $(dataparser_test_out): $(dataparser_test_src)
 	$(CXX) $(CXXFLAGS) $(dataparser_test_src) -o $(BUILD_DIR)/$(dataparser_test_out)
 	cp ./test/test_client_data.json $(BUILD_DIR)
 	cp ./test/test_source_data.json $(BUILD_DIR)
+	cp ./test/test_client_compose.json $(BUILD_DIR)
+
+# jzon test
+jzon_test_src=	./test/jzon_test.c \
+					./client/libs/jzon/Jzon.cpp
+
+jzon_test_out=jzon_test
+$(jzon_test_out): $(jzon_test_src)
+	$(CHECK_BUILD)
+	$(CXX) $(CXXFLAGS) $(jzon_test_src) -o $(BUILD_DIR)/$(jzon_test_out)
 
 # Clean build dir
 clean:

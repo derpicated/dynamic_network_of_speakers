@@ -79,9 +79,11 @@ std::map<std::string, std::string> dataParser::parseAudioSourceData (std::string
 
 std::string dataParser::composeClientData (speakerData speaker) {
     std::string ret_str;
-    Jzon::Node root_node, speaker_node, object_node;
+    Jzon::Node root_node    = Jzon::object ();
+    Jzon::Node speaker_node = Jzon::object ();
 
     for (auto object : speaker.objects) {
+        Jzon::Node object_node = Jzon::object ();
         object_node.add ("distance", object.second.distance);
         object_node.add ("angle", object.second.angle);
         speaker_node.add (object.first, object_node);
