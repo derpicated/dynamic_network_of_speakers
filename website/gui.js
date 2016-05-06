@@ -14,8 +14,9 @@ function include(filename) {
 include('./devices.js');
 
 GUI = (function (global) {
-    var speaker_list = $("#speaker_list");
-    var draw_area = $("#draw_area");
+    var SPEAKER_LIST = $("#speaker_list");
+    var DRAW_AREA = $("#draw_area");
+    var OBJECT_LIST = $("#object_list");
     /* Scale factor for In Real Life to Virtual
      * Default: 1:1
      */
@@ -28,27 +29,27 @@ GUI = (function (global) {
         var draw_update_move_default=draw_update_move_every;
         var list_update_move_every=draw_update_move_default*4;//px
         var list_update_move_default=list_update_move_every;
-        draw_area.mousemove(function( event ) {
+        DRAW_AREA.mousemove(function( event ) {
             if (event.buttons) {
                 draw_update_move_every--;
                 if (draw_update_move_every==0) {
-                    update_speaker_list();
+                    update_clients_data();
                     draw_update_move_every=draw_update_move_default;
                 }
             }
         });
-        speaker_list.mousemove(function( event ) {
+        SPEAKER_LIST.mousemove(function( event ) {
             if (event.buttons) {
                 list_update_move_every--;
                 if (list_update_move_every==0) {
-                    update_speaker_list();
+                    update_clients_data();
                     list_update_move_every=list_update_move_default;
                 }
             }
         });
     };
     /* Update the local speaker list and send this */
-    var update_speaker_list = function () {
+    var update_clients_data = function () {
         CLIENT.set_all(make_data_from_drawing());
         console.log('Updating speaker list!');
         //console.log(CLIENT.get_online());
@@ -60,6 +61,7 @@ GUI = (function (global) {
     var clear = function (not_x = '') {
         console.log(not_x);
         empty_speaker_list(not_x);
+        empty_objects_list(not_x);
         empty_draw_area(not_x);
     };
     /* Draw speakers from CLIENT data */
@@ -77,6 +79,13 @@ GUI = (function (global) {
                 $(this).remove();
             }
         });
+        //Delete unused objects
+        $('.object').each(function(key, value){
+            if (!(OBJECT.get_objects()[$(this).attr('id')])) {
+                //console.log("Deleting unused drawn: "+$(this).attr('id'));
+                $(this).remove();
+            }
+        });
         //Loop all speakers
         $.each(CLIENT.get_online(), function(speaker_name, value){
             // Has the speaker object(s)?
@@ -84,32 +93,33 @@ GUI = (function (global) {
                 nr_of_objects=0;
                 $.each(CLIENT.get_online()[speaker_name], function(object_name, obj_value){
                     if (!nr_of_objects) { // First object
-                        if (isEmpty($('#'+object_name))) { // Object not drawn.
+                        //if (isEmpty($('#'+object_name))) { // Object not drawn.
                             // Draw object in center of draw area
-                            draw_object(object_name, ((draw_area.width()-object_width)/2), ((draw_area.height()-object_height)/2));
-                        }
+                            draw_object(object_name, DRAW_AREA, ((DRAW_AREA.width()-object_width)/2), ((DRAW_AREA.height()-object_height)/2));
+                        //}
                         // Draw speaker from object
                         //var speaker_uri=OBJECT.get_object(speaker_name);
                         //del_speaker(speaker_name); // Delete speaker
-                        var left =$('#'+object_name).offset().left-draw_area.offset().left-rectangular(obj_value.distance, obj_value.angle).x;
-                        var top  =$('#'+object_name).offset().top-draw_area.offset().top+rectangular(obj_value.distance, obj_value.angle).y;
+                        var left =$('#'+object_name).offset().left-DRAW_AREA.offset().left-rectangular(obj_value.distance, obj_value.angle).x;
+                        var top  =$('#'+object_name).offset().top-DRAW_AREA.offset().top+rectangular(obj_value.distance, obj_value.angle).y;
                         //OBJECT.
-                        draw_speaker(speaker_name, draw_area, left, top); // Draw speaker
+                        draw_speaker(speaker_name, DRAW_AREA, left, top); // Draw speaker
                     } else { // Not first object of speaker
                         // Draw the object from speaker
-                        var left =$('#'+speaker_name).offset().left-draw_area.offset().left+rectangular(obj_value.distance, obj_value.angle).x;
-                        var top  =$('#'+speaker_name).offset().top-draw_area.offset().top-rectangular(obj_value.distance, obj_value.angle).y;
-                        draw_object(object_name, left, top); //draw object
+                        var left =$('#'+speaker_name).offset().left-DRAW_AREA.offset().left+rectangular(obj_value.distance, obj_value.angle).x;
+                        var top  =$('#'+speaker_name).offset().top-DRAW_AREA.offset().top-rectangular(obj_value.distance, obj_value.angle).y;
+                        draw_object(object_name, DRAW_AREA, left, top); //draw object
                     }
                     nr_of_objects++;
                 }, speaker_name);
             } else { // Speaker has no object(s)
                 if (isEmpty($('#'+speaker_name))) { // Speaker not drawn
                     //draw in speaker list
-                    draw_speaker(speaker_name, speaker_list, calc_next_speaker_list_pos().left, calc_next_speaker_list_pos().top);
+                    draw_speaker(speaker_name, SPEAKER_LIST, calc_next_speaker_list_pos().left, calc_next_speaker_list_pos().top);
                 } // If already drawn, don't do anything
             }
         });
+        draw_available_objects();
     };
     /* Make CLIENT data from drawing */
     var make_data_from_drawing = function () {
@@ -163,27 +173,29 @@ GUI = (function (global) {
         speaker = $('#'+speaker_name); // Update reference to object
         speaker.draggable({ // Make speaker dragable in the list and draw area (top div)
             containment: "#top",
+            revert: 'invalid',
             scroll: false,
             snap: "#speaker_list",
             snapMode: "both"
         });
         // Make speaker dropable in varius places
-        draw_area.droppable({
+        DRAW_AREA.droppable({
             drop: function( event, ui ) {
                 var offset = ui.offset;
                 var speaker_object= $(ui.helper[0]);
-                speaker_object.detach().appendTo(draw_area);
+                speaker_object.detach().appendTo(DRAW_AREA);
                 speaker_object.offset({ top: offset.top, left: offset.left});
-                update_speaker_list();
+                update_clients_data();
             }
         });
-        speaker_list.droppable({
+        SPEAKER_LIST.droppable({
+            accept:'.speaker',
             drop: function( event, ui ) {
                 var offset = ui.offset;
                 var speaker_object= $(ui.helper[0]);
-                speaker_object.detach().appendTo(speaker_list);
+                speaker_object.detach().appendTo(SPEAKER_LIST);
                 speaker_object.offset({ top: offset.top, left: offset.left});
-                update_speaker_list();
+                update_clients_data();
             }
         });
         speaker.offset({ top: destination.offset().top+off_top, left: destination.offset().left+off_left}); // Set speaker offset
@@ -192,22 +204,61 @@ GUI = (function (global) {
     var del_speaker = function (speaker_name) {
         $('#'+speaker_name).remove();
     };
-    var draw_object = function (object_name, off_left=0, off_top=0) {
+    var draw_object = function (object_name, destination, off_left=0, off_top=0) {
         var object = $('#'+object_name);
-        if (object.length) { // Check if speaker exists
-            //object.detach().appendTo(draw_area); // Add to draw area
-        } else { // Draw new speaker
+        if (object.length) { // Check if object exists
+            object.detach().appendTo(destination); // Add to destination area
+        } else { // Draw new object
             var object_class = "<div class='object noselect' id='"+object_name+"' onclick='GUI.load_object_properties(\""+object_name+"\")'>"+object_name+"</div>";
-            draw_area.append(object_class);
+            destination.append(object_class);
         }
-        var object = $('#'+object_name);
-        object.offset({ top: draw_area.offset().top+off_top, left: draw_area.offset().left+off_left}); // Set offset
+        object = $('#'+object_name);
         object.draggable({ // Make dragable in the draw area
-            containment: "#draw_area",
+            containment: '#top',
+            revert: 'invalid',
             scroll: false,
-            snap: "#draw_area",
+            snap: "#object_list",
             snapMode: "both"
         });
+        // Make speaker dropable in varius places
+        DRAW_AREA.droppable({
+            drop: function( event, ui ) {
+                var offset = ui.offset;
+                var object_object= $(ui.helper[0]);
+                object_object.detach().appendTo(DRAW_AREA);
+                object_object.offset({ top: offset.top, left: offset.left});
+                update_clients_data();
+            }
+        });
+        OBJECT_LIST.droppable({
+            accept:'.object',
+            drop: function( event, ui ) {
+                var offset = ui.offset;
+                var object_object= $(ui.helper[0]);
+                object_object.detach().appendTo(OBJECT_LIST);
+                object_object.offset({ top: offset.top, left: offset.left});
+                update_clients_data();
+            }
+        });
+        object.offset({ top: destination.offset().top+off_top, left: destination.offset().left+off_left}); // Set offset
+    };
+    /* Draw all available objects in object list */
+    var draw_available_objects = function () {
+        var objects=OBJECT.get_objects();
+        for (var object_name in objects) {
+            if (objects.hasOwnProperty(object_name)) {
+                var next_pos = calc_next_object_list_pos();
+                if (isEmpty($('#'+object_name))) { // Object not drawn.
+                    draw_object(object_name, OBJECT_LIST, next_pos.left, next_pos.top);
+                }
+            }
+        }
+    };
+    /* Delete single object */
+    var del_object = function (object_name) {
+        //console.log('deleting obj: '+object_name);
+        $('#'+object_name).remove();
+        OBJECT.del(object_name);
     };
     /* Load object properties into the gui */
     var load_object_properties = function (object_name) {
@@ -225,30 +276,27 @@ GUI = (function (global) {
         var obj_name = $('#music_name').val();
         var obj_uri = $('#music_uri').val();
         OBJECT.set(obj_name, obj_uri);
-        var next_pos = calc_next_object_draw_area();
-        draw_object(obj_name, next_pos.left, next_pos.top);
-        update_speaker_list();
+        var next_pos = calc_next_object_draw_area_pos();
+        draw_object(obj_name, DRAW_AREA, next_pos.left, next_pos.top);
+        update_clients_data();
         load_object_properties(obj_name);
     };
     /* Delete a object via the GUI delete button */
     var delete_object_button = function (object_name) {
         del_object(object_name);
-        update_speaker_list();
+        update_clients_data();
     };
-    /* Delete single object */
-    var del_object = function (object_name) {
-        //console.log('deleting obj: '+object_name);
-        $('#'+object_name).remove();
-        OBJECT.del(object_name);
-    };
-    /* Clear objects and speakers respectively */
+    /* Clear speakers respectively */
     var empty_speaker_list = function (not_x = '') {
-        if (!(not_x=='not_objects')) {
-            $('#speaker_list .object').remove();
-            //console.log('clear speaker list: obj');
-        }
         if (!(not_x=='not_speakers')) {
             $('#speaker_list .speaker').remove();
+            //console.log('clear speaker list: speaker');
+        }
+    };
+    /* Clear objects respectively */
+    var empty_objects_list = function (not_x = '') {
+        if (!(not_x=='not_objects')) {
+            $('#object_list .object').remove();
             //console.log('clear speaker list: speaker');
         }
     };
@@ -263,27 +311,6 @@ GUI = (function (global) {
             //console.log('clear draw area: speaker');
         }
     };
-    /* Convert x and y coordinates to a polar notation */
-    var polar = function(x, y) {
-        var polar = {
-            distance:0,
-            angle:0
-        };
-        polar.distance = Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2)); // sqrt(x^2 + y^2)
-        polar.angle = Math.degrees(Math.atan2(y, x)); // tan^-1(Y/X)
-        return polar;
-    };
-    /* Convert distance and angle to a rectangular notation */
-    var rectangular = function (distance, angle) {
-        var rectangular = {
-            x:0,
-            y:0
-        };
-        angle=Math.radians(angle);
-        rectangular.x = (distance*Math.cos(angle)); // distance cos angle
-        rectangular.y = (distance*Math.sin(angle)); // distance sin angle
-        return rectangular;
-    };
     /* Calculate the x and y value for next speaker */
     var calc_next_speaker_list_pos = function () {
         var pos={
@@ -291,8 +318,8 @@ GUI = (function (global) {
             left:5
         };
         var number_of_speakers=0;
-        var width=speaker_list.width();
-        var height=speaker_list.height();
+        var width=SPEAKER_LIST.width();
+        var height=SPEAKER_LIST.height();
         var speaker_temp = $("<div  class='speaker' id='speaker_temp'></div>").hide().appendTo("body"); //add temp speakers
         var speaker_boundry = 20;//% (margin atound speakers)
         var speaker_width=parseInt($('.speaker').css('width').replace('px',''));
@@ -303,8 +330,8 @@ GUI = (function (global) {
         var left, top;
         $(".speaker", '#speaker_list').each(function (i, key) {
             number_of_speakers++;
-            left = $(key).css('left').replace('px', '')-speaker_list.position().left;
-            top = $(key).css('top').replace('px', '')-speaker_list.position().top;
+            left = $(key).css('left').replace('px', '')-SPEAKER_LIST.position().left;
+            top = $(key).css('top').replace('px', '')-SPEAKER_LIST.position().top;
             //console.log("left: "+left+" top: "+top);
             if((left>pos.left) || (top>pos.top)){
                 pos.left=left;
@@ -327,15 +354,58 @@ GUI = (function (global) {
         }
         return pos;
     };
+    /* Calculate the x and y value for next object in the object list*/
+    var calc_next_object_list_pos = function () {
+        var pos={
+            top:30,
+            left:5
+        };
+        var number_of_objects=0;
+        var width=OBJECT_LIST.width();
+        var height=OBJECT_LIST.height();
+        var object_temp = $("<div  class='object' id='object_temp'></div>").hide().appendTo("body"); //add temp speakers
+        var object_boundry = 20;//% (margin atound speakers)
+        var object_width=parseInt($('.object').css('width').replace('px',''));
+        object_width+=object_width*(object_boundry/100);
+        var object_height=parseInt($('.object').css('height').replace('px',''));
+        object_height+=object_height*(object_boundry/100);
+        object_temp.remove(); //remove the temp speaker
+        var left, top;
+        $(".object", '#object_list').each(function (i, key) {
+            number_of_objects++;
+            left = $(key).css('left').replace('px', '')-OBJECT_LIST.position().left;
+            top = $(key).css('top').replace('px', '')-OBJECT_LIST.position().top;
+            //console.log("left: "+left+" top: "+top);
+            if((left>pos.left) || (top>pos.top)){
+                pos.left=left;
+                pos.top=top;
+            }
+        });
+        if(number_of_objects>0){pos.left+=object_width};
+        // Now got biggest values for a speaker
+        // if left or left+speak width is bigger as width
+        // pos left is 0
+        if((pos.left>width)||(pos.left+object_width>width)){
+            pos.left=0;
+            pos.top+=object_height;
+        }
+        //if top or top+speak height is bigger as height
+        //top is 0 and left is 0
+        if((pos.top>height)||(pos.top+object_height>height)){
+            pos.left=0;
+            pos.top=0;
+        }
+        return pos;
+    };
     /* Calculate the x and y value for next object */
-    var calc_next_object_draw_area = function () {
+    var calc_next_object_draw_area_pos = function () {
         var pos={
             top:0,
             left:0
         };
         var number_of_objects=0;
-        var width=draw_area.width();
-        var height=draw_area.height();
+        var width=DRAW_AREA.width();
+        var height=DRAW_AREA.height();
         var object_tmp = $("<div  class='object' id='object_tmp'></div>").hide().appendTo("body"); //add temp object
         var object_boundry = 20;//% (margin atound speakers)
         var object_width=parseInt($('.object').css('width').replace('px',''));
@@ -348,8 +418,8 @@ GUI = (function (global) {
         var left, top;
         $(".object", '#draw_area').each(function (index, key) {
             number_of_objects++;
-            left = $(key).css('left').replace('px', '')-draw_area.position().left;
-            top = $(key).css('top').replace('px', '')-draw_area.position().top;
+            left = $(key).css('left').replace('px', '')-DRAW_AREA.position().left;
+            top = $(key).css('top').replace('px', '')-DRAW_AREA.position().top;
             //console.log("left: "+left+" top: "+top);
             if((left>pos.left) || (top>pos.top)){
                 pos.left=left;
@@ -372,6 +442,10 @@ GUI = (function (global) {
         }
         return pos;
     };
+
+    /************************************************************/
+    /*  MATHS                                                   */
+    /************************************************************/
     /* Convert virt value to IRL value with scale */
     var scale_to_irl = function (value) {
         return ((value*scale_irl)/scale_virt);
@@ -379,6 +453,27 @@ GUI = (function (global) {
     /* Convert IRL value to VIRT value with scale */
     var scale_to_virt = function (value) {
         return ((value*scale_virt)/scale_irl);
+    };
+    /* Convert x and y coordinates to a polar notation */
+    var polar = function(x, y) {
+        var polar = {
+            distance:0,
+            angle:0
+        };
+        polar.distance = Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2)); // sqrt(x^2 + y^2)
+        polar.angle = Math.degrees(Math.atan2(y, x)); // tan^-1(Y/X)
+        return polar;
+    };
+    /* Convert distance and angle to a rectangular notation */
+    var rectangular = function (distance, angle) {
+        var rectangular = {
+            x:0,
+            y:0
+        };
+        angle=Math.radians(angle);
+        rectangular.x = (distance*Math.cos(angle)); // distance cos angle
+        rectangular.y = (distance*Math.sin(angle)); // distance sin angle
+        return rectangular;
     };
     // Converts from degrees to radians.
     Math.radians = function(degrees) {
@@ -392,8 +487,9 @@ GUI = (function (global) {
     return { // Bind functions to the outside world
         init                    : init,
         clear                   : clear,
-        update_speaker_list     : update_speaker_list,
+        update_clients_data     : update_clients_data,
         draw_speakers_from_data : draw_speakers_from_data,
+        draw_available_objects  : draw_available_objects,
         make_data_from_drawing  : make_data_from_drawing,
         save_object_properties  : save_object_properties,
         load_object_properties  : load_object_properties,

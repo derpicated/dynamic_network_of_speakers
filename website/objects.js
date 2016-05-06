@@ -52,8 +52,6 @@ OBJECT = (function (global) {
         console.log(OBJECTS);
     };
 
-
-
     return { // Bind functions to the outside world
         set         : set,
         set_all     : set_all,
