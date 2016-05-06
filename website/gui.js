@@ -30,7 +30,7 @@ GUI = (function (global) {
     var update_clients_data = function () {
         CLIENT.set_all(make_data_from_drawing());
         console.log('Updating speaker list!');
-        DNS.send(DNS.topic.info_clients_site, JSON.stringify(CLIENT.get_online()));
+        DNS.send(DNS.topic.info_clients_data_site, JSON.stringify(CLIENT.get_online()));
     };
     /* Clear the drawn speaker/objects
      * param: 'not_speakers' or 'not_objects'

@@ -73,7 +73,8 @@ DNS = (function (global) {
         this.info_music_sources         = this.info_music+'/sources';
         this.info_music_volume          = this.info_music+'/volume';
         this.info_clients               = this.info+'/clients';
-        this.info_clients_site          = this.info_clients+'/'+broker_mqtt.client_name;
+        this.info_clients_data          = this.info_clients+'/data';
+        this.info_clients_data_site     = this.info_clients_data+'/'+broker_mqtt.client_name;
         this.info_clients_startdraw     = this.info_clients+'/startdraw';
         this.info_clients_startdraw_site= this.info_clients_startdraw+'/'+broker_mqtt.client_name;
         this.info_clients_online        = this.info_clients+'/online';
@@ -192,7 +193,7 @@ DNS = (function (global) {
         subscribe(topic.info_clients_offline);
         subscribe(topic.info_music_volume);
         subscribe(topic.info_music_sources);
-        subscribe(topic.info_clients+'/+');
+        subscribe(topic.info_clients_data+'/+');
 
         subscribe(topic.answer+'/#');
         //subscribe(topic.root+'/#'); // Debug for message check
