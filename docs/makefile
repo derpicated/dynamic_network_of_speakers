@@ -1,35 +1,27 @@
-# makefile for pdflatex
-# pdflatex cant support some things
-#PDF_LATEX=pdflatex
-PDF_LATEX=xelatex
-#PDF_LATEX=latexmk -pdf
-#BIBTEX=bibtex
+# Makefile for Documentation
+LATEX_PDF=xelatex
 BIBTEX=biber
+COPY_BIB=find -name "*.bib" -not -path "./$(BUILD_DIR)/*" | xargs cp -t $(BUILD_DIR)
 LATEXFLAGS=-enable-write18
 RM=rm -f
 BUILD_DIR=build
-PDF_DIR=pdf
 COPY_BIB=find -name "*.bib" -not -path "./$(BUILD_DIR)/*" | xargs cp -t $(BUILD_DIR)
-CHECK_BUILD=if [ ! -d "./$(BUILD_DIR)" ];then \
-		mkdir $(BUILD_DIR);\
-	    fi
+CHECK_BUILD=if [ ! -d "./$(BUILD_DIR)" ];then	\
+				mkdir $(BUILD_DIR);     		\
+			fi
 
 # Generate PDF
-pdf_src=./main.tex
-pdf_name=document
-gen_pdf=$(PDF_LATEX) $(LATEXFLAGS) -output-directory=$(BUILD_DIR) -jobname=$(pdf_name) $(pdf_src) ./$(BUILD_DIR)/*
-pdf:$(pdf_src)
-	$(CHECK_BUILD)
-	$(COPY_BIB)
-	$(gen_pdf)
-	cd $(BUILD_DIR)/;$(BIBTEX) $(pdf_name).bcf
-	#cd $(BUILD_DIR)/;$(BIBTEX) $(pdf_name)
-	$(gen_pdf)
-	$(gen_pdf)
-
-# Remove logs
-clean_logs:
-	find $(BUILD_DIR) -type f -not -name '*pdf' | xargs rm
+latex_src=./main.tex
+document_name=Dynamic_Network_of_Speakers
+latex_to_pdf=$(LATEX_PDF) $(LATEXFLAGS) -output-directory=$(BUILD_DIR) -jobname=$(document_name) $(latex_src)
+documentation:$(latex_src)
+			  $(CHECK_BUILD)
+			  $(COPY_BIB)
+			  $(latex_to_pdf)
+			  cd $(BUILD_DIR)/;$(BIBTEX) $(document_name).bcf
+			  #cd $(BUILD_DIR)/;$(BIBTEX) $(pdf_name)
+			  $(latex_to_pdf)
+			  $(latex_to_pdf)
 
 # Clean build dir
 clean:

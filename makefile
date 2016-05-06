@@ -14,10 +14,10 @@ MKDIR_P = mkdir -p
 dns_client_src=./client/main.cpp \
 				./client/Config.cpp \
 				./client/DNSMusic.cpp \
-				./client/DNSDataParser.cpp\
-				./client/libs/audio/audio.cpp\
-				./client/libs/download/download.cpp\
-				./client/libs/jzon/Jzon.cpp\
+				./client/DNSDataParser.cpp \
+				./client/libs/audio/audio.cpp \
+				./client/libs/download/download.cpp \
+				./client/libs/jzon/Jzon.cpp \
 				./client/libs/topic/Tokenizer.cpp \
 				./client/libs/topic/Topic.cpp \
 				./client/libs/rwf/relative_weight_factor.cpp
@@ -40,7 +40,6 @@ $(rwf_test_src_out): $(rwf_test_src)
 # Audio Output
 audio_test_src=	./test/audio_test.cpp \
 				./client/libs/audio/audio.cpp
-
 audio_test_out=audio_test
 $(audio_test_out): $(audio_test_src)
 	$(CHECK_BUILD)
@@ -49,18 +48,16 @@ $(audio_test_out): $(audio_test_src)
 # Download test
 download_test_src=	./test/download_test.cpp \
 					./client/libs/download/download.cpp
-
 download_test_out=download_test
 $(download_test_out): $(download_test_src)
 	$(CHECK_BUILD)
 	$(CXX) $(CXXFLAGS) $(download_test_src) -o $(BUILD_DIR)/$(download_test_out)
 
 # Data Parser test
-dataparser_test_src=	./test/dataparser_test.cpp \
-					./client/DNSDataParser.cpp \
+dataparser_test_src=./test/dataparser_test.cpp 	\
+					./client/DNSDataParser.cpp 	\
 					./client/libs/jzon/Jzon.cpp \
 					./client/Config.cpp
-
 dataparser_test_out=dataparser_test
 $(dataparser_test_out): $(dataparser_test_src)
 	$(CHECK_BUILD)
@@ -71,8 +68,7 @@ $(dataparser_test_out): $(dataparser_test_src)
 
 # jzon test
 jzon_test_src=	./test/jzon_test.c \
-					./client/libs/jzon/Jzon.cpp
-
+				./client/libs/jzon/Jzon.cpp
 jzon_test_out=jzon_test
 $(jzon_test_out): $(jzon_test_src)
 	$(CHECK_BUILD)
@@ -81,7 +77,7 @@ $(jzon_test_out): $(jzon_test_src)
 # Config File Reader test
 config_file_reader_test_src = ./test/config_file_reader_test.cpp \
 							  ./client/ConfigFileReader.cpp \
-							  ./client/libs/jzon/Jzon.cpp 
+							  ./client/libs/jzon/Jzon.cpp
 
 config_file_reader_test_out = config_file_reader_test
 $(config_file_reader_test_out): $(config_file_reader_test_src)
