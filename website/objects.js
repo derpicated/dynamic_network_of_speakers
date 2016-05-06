@@ -14,11 +14,19 @@ OBJECT = (function (global) {
     var OBJECTS = {};
     /* Add/set object */
     var set = function (objectid, uri) {
-        OBJECTS[objectid]=uri;
+        if (isValid(objectid)) { // Object not drawn.
+            OBJECTS[objectid]=uri;
+        }
         //console.log("Object "+objectid+" : "+uri+" set");
         send_objects(); // Send new data
     };
     var set_all = function (objects) {
+        for (var object_name in objects) {
+            if(!object_name || !isValid(object_name)){ // Object not drawn.
+                console.log("NOT GOOD");
+                delete objects[object_name]
+            }
+        }
         OBJECTS=objects;
     };
     /* Delete object */
@@ -51,6 +59,9 @@ OBJECT = (function (global) {
         console.log("OBJECT DEBUG PRINT");
         console.log(OBJECTS);
     };
+    var isValid = function (str){
+        return !/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\? ]/g.test(str);
+    }
 
     return { // Bind functions to the outside world
         set         : set,

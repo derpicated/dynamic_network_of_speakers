@@ -275,6 +275,20 @@ GUI = (function (global) {
     var save_object_properties = function () {
         var obj_name = $('#music_name').val();
         var obj_uri = $('#music_uri').val();
+        if (!obj_name) {
+            $('#music_name').val("Idiot, fill all the values");
+            $('#music_uri').val(obj_uri);
+            return;
+        } else if (!obj_uri) {
+            $('#music_name').val(obj_name);
+            $('#music_uri').val("Idiot, fill all the values");
+            return;
+        }
+        if (!isValid(obj_name)) {
+            $('#music_name').val("Only valid characters!");
+            $('#music_uri').val(obj_uri);
+            return;
+        }
         OBJECT.set(obj_name, obj_uri);
         var next_pos = calc_next_object_draw_area_pos();
         draw_object(obj_name, DRAW_AREA, next_pos.left, next_pos.top);
@@ -443,6 +457,9 @@ GUI = (function (global) {
         return pos;
     };
 
+    var isValid = function (str){
+        return !/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\? ]/g.test(str);
+    }
     /************************************************************/
     /*  MATHS                                                   */
     /************************************************************/
