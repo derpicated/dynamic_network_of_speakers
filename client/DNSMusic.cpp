@@ -180,16 +180,16 @@ void DNSMusic::processClientData (std::string json_str) {
     rwf::rwf<float> rwf ({ 0 });
     _speaker_data = _data_parser.parseClientData (json_str, _client_id, objects);
 
-    for (auto object : objects) {
-        std::vector<float> distances = object.second;
-        distances.push_back (_speaker_data.objects[object.first].distance);
+    for (auto audio_object : _speaker_data.objects) {
+        std::vector<float> distances = objects[audio_object.first];
+
+        distances.push_back (audio_object.second.distance);
 
         rwf.set_factors (distances);
         rwf_volume = rwf.get_relative_weight_factor ().back ();
 
-        _rwf_volumes[object.first] = rwf_volume;
+        _rwf_volumes[audio_object.first] = rwf_volume;
         adjusted_volume = (100 * rwf_volume) / _master_volume;
-        _players[object.first].set_volume (adjusted_volume);
+        _players[audio_object.first].set_volume (adjusted_volume);
     }
-    // // relative_weight_factor::rwf<int> rwf_int ();
 }
