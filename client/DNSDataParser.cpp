@@ -58,9 +58,16 @@ std::map<std::string, std::string> dataParser::parseAudioSourceData (std::string
         if (30 < name.length ()) { // truncate string to MAX 30
             name.erase (30, std::string::npos);
         }
-        for (char& c : name) { // replace any non alphanumerical characters
+
+        char last_c = '.'; // set '.' to dissalow the name "."
+        for (char& c : name) {
+            // dissalow any special characters
             if (!isalnum (c)) {
-                c = '_';
+                // disallow multiple consecutive dots
+                if (!(c == '.' && last_c != '.')) {
+                    c = '_';
+                }
+                last_c = c;
             }
         }
 
@@ -72,9 +79,11 @@ std::map<std::string, std::string> dataParser::parseAudioSourceData (std::string
 
 std::string dataParser::composeClientData (speakerData speaker) {
     std::string ret_str;
-    Jzon::Node root_node, speaker_node, object_node;
+    Jzon::Node root_node    = Jzon::object ();
+    Jzon::Node speaker_node = Jzon::object ();
 
     for (auto object : speaker.objects) {
+        Jzon::Node object_node = Jzon::object ();
         object_node.add ("distance", object.second.distance);
         object_node.add ("angle", object.second.angle);
         speaker_node.add (object.first, object_node);

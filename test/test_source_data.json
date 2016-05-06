@@ -1,6 +1,6 @@
 {
   "song_1": "http://www.hello.internet/fm/song.ogg",
   "song_2": "http://www.website.com/music.ogg",
-  "fsf_song": "http://www.gnu.org/music/free-software-song.ogg",
-  "song_n": "http://www.dns.net/test.ogg"
+  "fsf_song.ogg": "http://www.gnu.org/music/free-software-song.ogg",
+  "song_n.nth": "http://www.dns.net/test.ogg"
 }
