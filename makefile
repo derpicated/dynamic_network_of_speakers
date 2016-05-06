@@ -78,17 +78,6 @@ $(jzon_test_out): $(jzon_test_src)
 	$(CHECK_BUILD)
 	$(CXX) $(CXXFLAGS) $(jzon_test_src) -o $(BUILD_DIR)/$(jzon_test_out)
 
-# Config File Reader test
-config_file_reader_test_src = ./test/config_file_reader_test.cpp \
-							  ./client/ConfigFileReader.cpp \
-							  ./client/libs/jzon/Jzon.cpp 
-
-config_file_reader_test_out = config_file_reader_test
-$(config_file_reader_test_out): $(config_file_reader_test_src)
-	$(CHECK_BUILD)
-	$(CXX) $(CXXFLAGS) $(config_file_reader_test_src) -o $(BUILD_DIR)/$(config_file_reader_test_out)
-
-
 # Clean build dir
 clean:
 	$(RM) ./$(BUILD_DIR)/*
