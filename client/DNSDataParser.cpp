@@ -58,9 +58,16 @@ std::map<std::string, std::string> dataParser::parseAudioSourceData (std::string
         if (30 < name.length ()) { // truncate string to MAX 30
             name.erase (30, std::string::npos);
         }
-        for (char& c : name) { // replace any non alphanumerical characters
+
+        char last_c = '.'; // set '.' to dissalow the name "."
+        for (char& c : name) {
+            // dissalow any special characters
             if (!isalnum (c)) {
-                c = '_';
+                // disallow multiple consecutive dots
+                if (!(c == '.' && last_c != '.')) {
+                    c = '_';
+                }
+                last_c = c;
             }
         }
 
