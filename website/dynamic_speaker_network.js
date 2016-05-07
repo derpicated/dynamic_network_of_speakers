@@ -154,13 +154,28 @@ DNS = (function (global) {
                     console.log("Request: "+message.destinationName+" | "+message.payloadString);
                     return;
                 } else if(message.destinationName.indexOf(topic.answer)>-1){ // Got answer
-                    var device_date = JSON.parse(message.payloadString);
+                    var device_date=message.payloadString;
+                    if (!device_date) {
+                        console.log("Empty device string!");
+                        return;
+                    }
+                    try {
+                        device_date=JSON.parse(device_date); // Produces a SyntaxError
+                    } catch (error) {
+                        console.log("Answer to object error:");
+                        console.log(error.message);
+                        return;
+                    }
+                    if (isEmpty(device_date)) {
+                        console.log("Empty device data!");
+                        return;
+                    }
                     for (var client_name in device_date) {
                         if (!isEmpty(device_date[client_name])) { // Check if object is empty
-                            //CLIENT.set_objects(client_name, device_date[client_name]); // Set data of object
-                            //GUI.draw_speakers_from_data(); // Redraw
-                            console.log("Got personnal data from: "+client_name);
-                            console.log(device_date[client_name]);
+                            CLIENT.set_objects(client_name, device_date[client_name]); // Set data of object
+                            GUI.draw_speakers_from_data(); // Redraw
+                            //console.log("Got personnal data from: "+client_name);
+                            //console.log(device_date[client_name]);
                         }
                     }
                     return;

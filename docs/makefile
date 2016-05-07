@@ -19,7 +19,6 @@ documentation:$(latex_src)
 			  $(COPY_BIB)
 			  $(latex_to_pdf)
 			  cd $(BUILD_DIR)/;$(BIBTEX) $(document_name).bcf
-			  #cd $(BUILD_DIR)/;$(BIBTEX) $(pdf_name)
 			  $(latex_to_pdf)
 			  $(latex_to_pdf)
 
