@@ -26,11 +26,13 @@ const std::string MQTT_TOPIC_REQUEST_INFO_CLIENTS{ MQTT_TOPIC_REQUEST_INFO +
     "/clients" };
 const std::string MQTT_TOPIC_INFO{ MQTT_TOPIC_ROOT + "/info" };
 const std::string MQTT_TOPIC_INFO_CLIENTS{ MQTT_TOPIC_INFO + "/clients" };
-const std::string MQTT_TOPIC_INFO_CLIENTS_WILDCARD{ MQTT_TOPIC_INFO_CLIENTS + "/+" };
 const std::string MQTT_TOPIC_INFO_CLIENTS_ONLINE{ MQTT_TOPIC_INFO_CLIENTS +
     "/online" };
 const std::string MQTT_TOPIC_INFO_CLIENTS_OFFLINE{ MQTT_TOPIC_INFO_CLIENTS +
     "/offline" };
+const std::string MQTT_TOPIC_INFO_CLIENTS_DATA{ MQTT_TOPIC_INFO_CLIENTS +
+    "/data" };
+const std::string MQTT_TOPIC_INFO_CLIENTS_DATA_WILDCARD{ MQTT_TOPIC_INFO_CLIENTS_DATA + "/+" };
 const std::string MQTT_TOPIC_INFO_MUSIC{ MQTT_TOPIC_INFO + "/music" };
 const std::string MQTT_TOPIC_INFO_MUSIC_TIME{ MQTT_TOPIC_INFO_MUSIC + "/time" };
 const std::string MQTT_TOPIC_INFO_MUSIC_TIME_POSITION{ MQTT_TOPIC_INFO_MUSIC_TIME + "/potition" };

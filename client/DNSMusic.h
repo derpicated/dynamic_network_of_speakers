@@ -42,12 +42,9 @@ class DNSMusic : public mosqpp::mosquittopp {
     protected:
     std::string _appname;
     std::string _clientname;
-    // std::string _musicfile;
     Topic _topicRoot;
 
     std::vector<int> _distances;
-
-    std::string _jsondatastring;
     std::mutex _mtx;
 
     // C++11 override (compiler check)
@@ -62,6 +59,7 @@ class DNSMusic : public mosqpp::mosquittopp {
     const std::string _client_id; //{ getClientID () };
     const std::string _cache_path;
     int _master_volume;
+    std::map<std::string, std::string> _sources;
     std::map<std::string, int> _rwf_volumes;      // key = object name
     std::map<std::string, audio_player> _players; // key = object name
     speakerData _speaker_data;
