@@ -1,4 +1,4 @@
-#include "ConfigFileReader.hpp"
+#include "config_parser.hpp"
 
 
 ConfigFileReader::ConfigFileReader():
@@ -33,7 +33,7 @@ void ConfigFileReader::getDataFromFile()
 	if (configfile.is_open())
 	{
 		std::cerr << "----------------------configfile is open" << std::endl;
-		
+
 		while(getline(configfile,line))
 		{
 			FileData.append(line);
@@ -64,11 +64,11 @@ void ConfigFileReader::writeDataToFile()
 	if (outfile.is_open())
 	{
 		std::cerr << "writing to file" << std::endl;
-		outfile << JsonData; 
+		outfile << JsonData;
 		outfile.close();
 	}
 	else std::cerr << "unable to open file to write" << std::endl;
- 
+
 }
 
 
@@ -78,8 +78,8 @@ void  ConfigFileReader::parseData()
 
 	ProjectName = rootNode.get("name").toString();
 	ShortProjectName = rootNode.get("name_short").toString();
-	
-	VersionMajor = rootNode.get("version").get("major").toInt(); 
+
+	VersionMajor = rootNode.get("version").get("major").toInt();
 	VersionMinor = rootNode.get("version").get("minor").toInt();
 	VersionRevision = rootNode.get("version").get("revision").toInt();
 
@@ -114,9 +114,9 @@ std::string ConfigFileReader::getProjectName(bool fullname)
 
 std::string ConfigFileReader::getVersion()
 {
-	return "( " + std::to_string(VersionMajor) + 
-			", " + std::to_string(VersionMinor) + 
-			", " + std::to_string(VersionRevision) + 
+	return "( " + std::to_string(VersionMajor) +
+			", " + std::to_string(VersionMinor) +
+			", " + std::to_string(VersionRevision) +
 			" )";
 }
 

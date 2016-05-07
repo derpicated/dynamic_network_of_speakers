@@ -9,7 +9,7 @@ CHECK_BUILD=if [ ! -d "./$(BUILD_DIR)" ];then	\
 				mkdir $(BUILD_DIR);     		\
 			fi
 MKDIR_P = mkdir -p
-
+SYM_LINK_CONF=ln -s -f -r $(shell pwd)/config/config.js $(BUILD_DIR)/config
 # Client
 dns_client_src=./client/main.cpp \
 				./client/Config.cpp \
@@ -25,6 +25,7 @@ dns_client_src=./client/main.cpp \
 dns_client_src_out=dns_client
 $(dns_client_src_out): $(dns_client_src)
 	$(CHECK_BUILD)
+	$(SYM_LINK_CONF)
 	$(CXX) $(CXXFLAGS) $(dns_client_src) $(LDFLAGS) -o $(BUILD_DIR)/$(dns_client_src_out)
 
 # Lib testing
@@ -74,15 +75,15 @@ $(jzon_test_out): $(jzon_test_src)
 	$(CHECK_BUILD)
 	$(CXX) $(CXXFLAGS) $(jzon_test_src) -o $(BUILD_DIR)/$(jzon_test_out)
 
-# Config File Reader test
-config_file_reader_test_src = ./test/config_file_reader_test.cpp \
-							  ./client/ConfigFileReader.cpp \
+# Config Pareser test
+config_parserr_test_src = ./test/config_parser_test.cpp \
+							  ./client/config_parser.cpp \
 							  ./client/libs/jzon/Jzon.cpp
 
-config_file_reader_test_out = config_file_reader_test
-$(config_file_reader_test_out): $(config_file_reader_test_src)
+config_parser_test_out = config_parser_test
+$(config_parser_test_out): $(config_parserr_test_src)
 	$(CHECK_BUILD)
-	$(CXX) $(CXXFLAGS) $(config_file_reader_test_src) -o $(BUILD_DIR)/$(config_file_reader_test_out)
+	$(CXX) $(CXXFLAGS) $(config_parserr_test_src) -o $(BUILD_DIR)/$(config_parser_test_out)
 
 # Clean build dir
 clean:
