@@ -7,7 +7,6 @@ const std::string& clientid)
 , _appname{ appname }
 , _clientname{ clientname }
 , _topicRoot{ "ESEiot" }
-, _distances{}
 , _mtx{}
 , _client_id (clientid)
 , _cache_path (".cache/")

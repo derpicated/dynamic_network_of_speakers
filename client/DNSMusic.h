@@ -43,11 +43,8 @@ class DNSMusic : public mosqpp::mosquittopp {
     std::string _appname;
     std::string _clientname;
     Topic _topicRoot;
-
-    std::vector<int> _distances;
     std::mutex _mtx;
 
-    // C++11 override (compiler check)
     virtual void on_connect (int rc) override;
     virtual void on_disconnect (int rc) override;
     virtual void on_message (const struct mosquitto_message* message) override;
