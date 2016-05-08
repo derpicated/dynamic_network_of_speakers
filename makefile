@@ -17,7 +17,7 @@ dns_client_src=./client/main.cpp \
 				./client/DNSDataParser.cpp \
 				./client/libs/audio/audio.cpp \
 				./client/libs/download/download.cpp \
-				./client/libs/config/config_parser.hpp \
+				./client/libs/config/config_parser.cpp \
 				./client/libs/jzon/Jzon.cpp \
 				./client/libs/topic/Tokenizer.cpp \
 				./client/libs/topic/Topic.cpp \
