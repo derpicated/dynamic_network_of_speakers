@@ -30,7 +30,7 @@ $(dns_client_src_out): $(dns_client_src)
 
 # Lib testing
 # Relative Weight Factor
-rwf_test_src=	./test/relative_weight_factor.cpp \
+rwf_test_src=	./test/relative_weight_factor_test.cpp \
 				./client/libs/rwf/relative_weight_factor.cpp
 # Target / executable
 rwf_test_src_out=rwf_test
@@ -68,7 +68,7 @@ $(dataparser_test_out): $(dataparser_test_src)
 	cp ./test/test_client_compose.json $(BUILD_DIR)
 
 # jzon test
-jzon_test_src=	./test/jzon_test.c \
+jzon_test_src=	./test/jzon_test.cpp \
 				./client/libs/jzon/Jzon.cpp
 jzon_test_out=jzon_test
 $(jzon_test_out): $(jzon_test_src)
