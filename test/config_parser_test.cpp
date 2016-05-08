@@ -3,9 +3,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "../client/ConfigFileReader.hpp"
+#include "../client/config_parser.hpp"
 
-int main (int argc, char const* argv[]) 
+int main (int argc, char const* argv[])
 {
 	ConfigFileReader test_configfilereader;
 
@@ -17,9 +17,9 @@ int main (int argc, char const* argv[])
 	std::cerr << "Website Name = " << test_configfilereader.getWebsiteName() << std::endl;
 	std::cerr << std::endl;
 
-	test_configfilereader.printBroker(1); 
+	test_configfilereader.printBroker(1);
 	test_configfilereader.printBroker(2);
-	test_configfilereader.printBroker(3); 
+	test_configfilereader.printBroker(3);
 	test_configfilereader.printBroker(4);
 
 }

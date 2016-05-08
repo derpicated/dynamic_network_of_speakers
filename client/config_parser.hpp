@@ -1,5 +1,5 @@
-#ifndef CONFIG_FILE_READER_HPP
-#define CONFIG_FILE_READER_HPP
+#ifndef CONFIG_PARSER_HPP
+#define CONFIG_PARSER_HPP
 
 #include <iostream>
 #include <fstream>
@@ -40,8 +40,8 @@ public:
 	std::string getSpeakerName();
 	std::string getWebsiteName();
 	Broker getBroker(int broker = 1);
-	
-	void printJsonData();	
+
+	void printJsonData();
 	void printBroker(int broker);
 
 
@@ -55,7 +55,7 @@ private:
 	int VersionMajor, VersionMinor, VersionRevision;
 	std::string SpeakerName;
 	std::string WebsiteName;
-	int BrokerToUse; 
+	int BrokerToUse;
 
 	Jzon::Parser _filereader;
 	Broker brokers[NUMBEROFBROKERS];
