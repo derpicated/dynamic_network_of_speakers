@@ -24,8 +24,45 @@ GUI = (function (global) {
     var scale_irl=1;
     var scale_virt=1;
     var init = function () {
+        bind_arrow_keys();
         draw_speakers_from_data();
     };
+    /* Move object with arrows */
+    var bind_arrow_keys = function () {
+        var move_amount = 100;//units
+        $(document).keydown(function(e) {
+            // if selected do switch
+            var obj_name = $('#music_name').val();
+            if (obj_name &&  ($('#'+obj_name).length)) { // Check if object exists
+                switch (e.which) {
+                case 37:
+                    $('#'+obj_name).stop().animate({
+                        left: "-="+move_amount
+                    }).trigger('drop'); //left arrow key
+                    break;
+                case 38:
+                    $('#'+obj_name).stop().animate({
+                        top: "-="+move_amount
+                    }); //up arrow key
+                    break;
+                case 39:
+                    $('#'+obj_name).stop().animate({
+                        left: "+="+move_amount
+                    }); //right arrow key
+                    break;
+                case 40:
+                    $('#'+obj_name).stop().animate({
+                        top: "+="+move_amount
+                    }); //bottom arrow key
+                    break;
+                }
+                event.returnValue = false;
+            } else {
+                event.returnValue = true;
+            }
+        });
+        return false;
+    }
     /* Update the local speaker list and send this */
     var update_clients_data = function () {
         CLIENT.set_all(make_data_from_drawing());

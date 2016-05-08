@@ -2,11 +2,8 @@
 #include <mosquittopp.h>
 #include <signal.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 #include "./libs/config/config_parser.hpp"
-#include "AppInfo.h"
-#include "Config.h"
 #include "DNSMusic.h"
 
 using namespace std;
@@ -48,18 +45,14 @@ int main (int argc, char const* argv[]) {
     cout << "uses Mosquitto lib version " << mosquitto_lib_version[0] << '.'
          << mosquitto_lib_version[1] << '.' << mosquitto_lib_version[2] << endl;
     try {
-        DNSMusic client (CONFIG);//"DNSMusic", "tempDNS", getClientID (), 
-
-        // auto clients{ static_cast<mosqpp::mosquittopp*> (&tempDNS) };
+        DNSMusic client (CONFIG);
 
         while (!receivedSIGINT) {
-            // for (auto client : clients) {
             int rc = client.loop ();
             if (rc) {
                 cerr << "-- MQTT reconnect" << std::endl;
                 client.reconnect ();
             }
-            //}
         }
     } catch (exception& e) {
         cerr << "Exception " << e.what () << std::endl;
@@ -67,7 +60,7 @@ int main (int argc, char const* argv[]) {
         cerr << "UNKNOWN EXCEPTION \n";
     }
 
-    cout << "-- MQTT application: " << APPNAME_VERSION << " stopped" << endl
+    cout << "-- MQTT application: " << CONFIG.project_name() << " stopped" << endl
          << endl;
     mosqpp::lib_cleanup ();
 
