@@ -2,6 +2,8 @@
 #include <string>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdexcept>
+#include <exception>
 
 #include "../client/libs/config/config_parser.hpp"
 
@@ -30,5 +32,22 @@ int main (int argc, char const* argv[]) {
     std::cout << "Port ws: " << test_config.broker ().port_ws << std::endl;
     std::cout << "Port ws encrypted: " << test_config.broker ().port_ws_encrypted
               << std::endl;
+    std::cout << "A few topics from the config:" << std::endl;
+    try {
+        std::cout << "Topic root: " << test_config.topic ("root") << std::endl;
+        std::cout
+        << "Topic Request Online: " << test_config.topic ("request_online")
+        << std::endl;
+        std::cout << "Topic Request client data: "
+                  << test_config.topic ("request_client_data") << std::endl;
+        std::cout
+        << "Topic clients data: " << test_config.topic ("clients_data") << std::endl;
+    } catch (std::exception const& exc) {
+        std::cerr << "Exception " << exc.what () << std::endl;
+        exit (EXIT_FAILURE);
+    } catch (...) {
+        std::cerr << "UNKNOWN EXCEPTION" << std::endl;
+    }
+
     return 0;
 }

@@ -36,14 +36,12 @@ void config_parser::load_config_file () {
         }
         config_file.close ();
     } catch (std::ifstream::failure e) {
-        std::cerr << "Exception opening/reading/closing config file" << std::endl;
-        exit (EXIT_FAILURE);
-    } catch (std::out_of_range) {
-        std::cerr << "Exception in config file" << std::endl;
-        exit (EXIT_FAILURE);
+        throw std::ifstream::failure (
+        "Exception opening/reading/closing config file");
+    } catch (std::out_of_range e) {
+        throw std::out_of_range ("Exception in config file");
     } catch (...) {
-        std::cerr << "Undefined Exception in config parser" << std::endl;
-        exit (EXIT_FAILURE);
+        throw ("Undefined Exception in config parser");
     }
     config_string = data;
 }
@@ -116,6 +114,23 @@ int config_parser::broker_selector () {
     Jzon::Parser parser;
     Jzon::Node root_node = parser.parseString (config_string);
     return root_node.get ("use_broker").toInt ();
+}
+
+std::string config_parser::topic (std::string topic_name) {
+    Jzon::Parser parser;
+    Jzon::Node root_node = parser.parseString (config_string);
+    std::string topic = root_node.get ("topics").get (topic_name).toString ();
+    std::string topic_root_name = "root";
+    std::string topic_root = root_node.get ("topics").get (topic_root_name).toString ();
+    if (topic_root.empty()) {
+        throw std::invalid_argument ("config parser: topic_root unknown");
+    } else if (topic.empty ()){
+        throw std::invalid_argument ("config parser: topic \"" + topic_name + "\" unknown");
+    }
+    if (!topic_name.compare(topic_root_name)) { // Equal
+        return topic_root;
+    }
+    return topic_root+topic;
 }
 
 std::string config_parser::generate_name (std::string prefix, int min, int max) {
