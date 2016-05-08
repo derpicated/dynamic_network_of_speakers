@@ -7,6 +7,7 @@
 #include <string>
 #include <unistd.h>
 #include <stdexcept>
+#include <random>
 
 #include "../jzon/Jzon.h"
 
@@ -30,15 +31,18 @@ class config_parser {
     std::string version ();
     std::string speaker_prefix ();
     std::string site_prefix ();
+    std::string clientid ();
+    void set_client_id (std::string clientid);
     broker_type broker ();
     int broker_selector ();
     void print_config_string ();
 
     protected:
     private:
-    const std::string config_file_location_default{ "./config/config.js" };
+    std::string generate_name (std::string prefix, int min = 0, int max = 999);
     std::string config_file_location;
     std::string config_string;
+    std::string _clientid;
     Jzon::Parser _parser;
 };
 

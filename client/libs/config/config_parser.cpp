@@ -12,8 +12,10 @@ config_parser::broker_type::broker_type ()
 config_parser::config_parser (std::string config_file)
 : config_file_location (config_file)
 , config_string{}
+, _clientid{}
 , _parser{} {
     load_config_file ();
+    _clientid = generate_name (speaker_prefix ());
 }
 
 config_parser::~config_parser () {
@@ -79,6 +81,13 @@ std::string config_parser::site_prefix () {
     return root_node.get ("name_website").toString ();
 }
 
+std::string config_parser::clientid () {
+    return _clientid;
+}
+
+void config_parser::set_client_id (std::string clientid) {
+    _clientid = clientid;
+}
 config_parser::broker_type config_parser::broker () {
     Jzon::Parser parser;
     Jzon::Node root_node = parser.parseString (config_string);
@@ -107,4 +116,10 @@ int config_parser::broker_selector () {
     Jzon::Parser parser;
     Jzon::Node root_node = parser.parseString (config_string);
     return root_node.get ("use_broker").toInt ();
+}
+
+std::string config_parser::generate_name (std::string prefix, int min, int max) {
+    std::random_device seed;
+    std::uniform_int_distribution<int> distribution (min, max);
+    return prefix + std::to_string (distribution (seed));
 }
