@@ -16,6 +16,7 @@ class audio_player {
     public:
     audio_player ();
     audio_player (std::string file_name);
+    ~audio_player ();
     void set_file (std::string file_name);
     void play (unsigned int time = 0);
     int stop ();

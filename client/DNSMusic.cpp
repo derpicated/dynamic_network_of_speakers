@@ -128,7 +128,7 @@ void DNSMusic::setMasterVolume (std::string volume) {
                      << "## EXCEPTION s40 out_of_range: " << e.what () << std::endl;);
     }
 
-    for (auto object : _players) {
+    for (auto& object : _players) {
         int rwf_volume, adjusted_volume;
 
         rwf_volume      = _rwf_volumes[object.first];
@@ -251,6 +251,15 @@ void DNSMusic::processClientData (std::string json_str) {
             } else {
                 ; // TODO LOG this somehow: no file known for this object
             }
+        }
+    }
+
+    // remove all unneeded players
+    for (auto it = _players.cbegin (); it != _players.cend ();) {
+        if (_speaker_data.objects.find (it->first) == _speaker_data.objects.end ()) {
+            _players.erase (it++);
+        } else {
+            ++it;
         }
     }
 }
