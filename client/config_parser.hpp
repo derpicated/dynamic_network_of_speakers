@@ -5,62 +5,41 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <unistd.h>
+#include <stdexcept>
 
 #include "libs/jzon/Jzon.h"
 
-const int NUMBEROFBROKERS {4};
-const std::string CONFIGPATH_IN {"config/config.js"};
-const std::string CONFIGPATH_OUT {"config/config.json"};
+class config_parser {
+    public:
+    class broker_type {
+        public:
+        broker_type ();
+        std::string name;
+        std::string uri;
+        int port;
+        int port_encrypted;
+        int port_encrypted_certificate;
+        int port_ws;
+        int port_ws_encrypted;
+    };
+    config_parser (std::string config_file);
+    ~config_parser ();
+    void load_config_file ();
+    std::string project_name (bool fullname = true);
+    std::string version ();
+    std::string speaker_prefix ();
+    std::string site_prefix ();
+    broker_type broker ();
+    int broker_selector ();
+    void print_config_string ();
 
-
-
-struct Broker
-{
-	std::string name = "Mosquitto" ;
-	std::string uri  = "test.mosquitto.org";
-	int port = 1883 ;
-	int port_encrypted = 8883;
-	int port_encrypted_certificate = 8884;
-	int port_ws = 8080;
-	int port_ws_encrypted = 8081;
+    protected:
+    private:
+    const std::string config_file_location_default{ "./config/config.js" };
+    std::string config_file_location;
+    std::string config_string;
+    Jzon::Parser _parser;
 };
-
-
-class ConfigFileReader
-{
-public:
-	ConfigFileReader();
-	~ConfigFileReader();
-
-	void getDataFromFile();
-	void writeDataToFile();
-	void parseData();
-	std::string getProjectName(bool fullname = true);
-	std::string getVersion();
-	std::string getSpeakerName();
-	std::string getWebsiteName();
-	Broker getBroker(int broker = 1);
-
-	void printJsonData();
-	void printBroker(int broker);
-
-
-protected:
-
-private:
-	std::string FileData;
-	std::string JsonData;
-	std::string ProjectName;
-	std::string ShortProjectName;
-	int VersionMajor, VersionMinor, VersionRevision;
-	std::string SpeakerName;
-	std::string WebsiteName;
-	int BrokerToUse;
-
-	Jzon::Parser _filereader;
-	Broker brokers[NUMBEROFBROKERS];
-};
-
-
 
 #endif

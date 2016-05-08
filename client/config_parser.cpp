@@ -1,149 +1,110 @@
 #include "config_parser.hpp"
 
+config_parser::broker_type::broker_type ()
+: name ("default_Mosquitto")
+, uri ("test.mosquitto.org")
+, port (1883)
+, port_encrypted (8883)
+, port_encrypted_certificate (8884)
+, port_ws (8080)
+, port_ws_encrypted (8081){};
 
-ConfigFileReader::ConfigFileReader():
-	FileData{}
-, 	JsonData{}
-,	ProjectName{}
-,	ShortProjectName{}
-,	VersionMajor{}
-, 	VersionMinor{}
-, 	VersionRevision{}
-, 	SpeakerName{}
-, 	WebsiteName{}
-, 	BrokerToUse {}
-, 	_filereader ()
-{
-
-	getDataFromFile();
-	parseData();
+config_parser::config_parser (std::string config_file)
+: config_file_location (config_file)
+, config_string{}
+, _parser{} {
+    load_config_file ();
 }
 
-ConfigFileReader::~ConfigFileReader()
-{}
-
-
-void ConfigFileReader::getDataFromFile()
-{
-	int counter = 0;
-	std::string line;
-
-	std::ifstream configfile (CONFIGPATH_IN, std::fstream::in);
-
-	if (configfile.is_open())
-	{
-		std::cerr << "----------------------configfile is open" << std::endl;
-
-		while(getline(configfile,line))
-		{
-			FileData.append(line);
-			if (counter != 0)
-			{
-				JsonData.append(line);
-				JsonData.append("\n");
-			}
-			++counter;
-		}
-		//close file
-		configfile.close();
-
-	}
-	else{
-		std::cerr << "---------------------configfile isn't open!!!!" << std::endl;
-	}
-
-	// find (;) and erase
-	std::size_t found = JsonData.find(";");
-	if(found!= std::string::npos) { JsonData.erase(found); }
-
+config_parser::~config_parser () {
 }
 
-void ConfigFileReader::writeDataToFile()
-{
-	std::ofstream outfile (CONFIGPATH_OUT);
-	if (outfile.is_open())
-	{
-		std::cerr << "writing to file" << std::endl;
-		outfile << JsonData;
-		outfile.close();
-	}
-	else std::cerr << "unable to open file to write" << std::endl;
-
+void config_parser::load_config_file () {
+    std::string line;
+    std::string data;
+    std::ifstream config_file;
+    std::string delete_from_file[] = { "var CONFIG =", ";" };
+    try {
+        config_file.open (config_file_location);
+        while (getline (config_file, line)) {
+            data.append (line);
+        }
+        for (auto elem : delete_from_file) {
+            data.replace (data.find (elem), elem.length (), "");
+        }
+        config_file.close ();
+    } catch (std::ifstream::failure e) {
+        std::cerr << "Exception opening/reading/closing config file" << std::endl;
+        exit (EXIT_FAILURE);
+    } catch (std::out_of_range) {
+        std::cerr << "Exception in config file" << std::endl;
+        exit (EXIT_FAILURE);
+    } catch (...) {
+        std::cerr << "Undefined Exception in config parser" << std::endl;
+        exit (EXIT_FAILURE);
+    }
+    config_string = data;
 }
 
-
-void  ConfigFileReader::parseData()
-{
-	Jzon::Node rootNode = _filereader.parseString(JsonData);
-
-	ProjectName = rootNode.get("name").toString();
-	ShortProjectName = rootNode.get("name_short").toString();
-
-	VersionMajor = rootNode.get("version").get("major").toInt();
-	VersionMinor = rootNode.get("version").get("minor").toInt();
-	VersionRevision = rootNode.get("version").get("revision").toInt();
-
-	SpeakerName = rootNode.get("name_speaker").toString();
-	WebsiteName = rootNode.get("name_website").toString();
-
-	BrokerToUse = rootNode.get("use_broker").toInt();
-
-	for (int i = 0; i < NUMBEROFBROKERS; ++i)
-	{
-		std::string id = std::to_string(i+1);
-		brokers[i].name = rootNode.get("broker").get(id).get("broker").toString();
-		brokers[i].uri 	= rootNode.get("broker").get(id).get("uri").toString();
-		brokers[i].port = rootNode.get("broker").get(id).get("port").toInt();
-		brokers[i].port_encrypted = rootNode.get("broker").get(id).get("port_encrypted").toInt();
-		brokers[i].port_encrypted_certificate =  rootNode.get("broker").get(id).get("port_encrypted_certificate").toInt();
-		brokers[i].port_ws = rootNode.get("broker").get(id).get("port_ws").toInt();
-		brokers[i].port_ws_encrypted = rootNode.get("broker").get(id).get("port_ws_encrypted").toInt();
-	}
+void config_parser::print_config_string () {
+    std::cout << config_string << std::endl;
 }
 
-void ConfigFileReader::printJsonData()
-{
-	std::cerr << "JsonData: " << std::endl
-			  << JsonData << std::endl;
+std::string config_parser::project_name (bool fullname) {
+    Jzon::Parser parser;
+    Jzon::Node root_node = parser.parseString (config_string);
+    return fullname ? root_node.get ("name").toString () :
+                      root_node.get ("name_short").toString ();
 }
 
-std::string ConfigFileReader::getProjectName(bool fullname)
-{
-	return fullname ? ProjectName : ShortProjectName;
+std::string config_parser::version () {
+    Jzon::Parser parser;
+    Jzon::Node root_node = parser.parseString (config_string);
+    int version_major    = root_node.get ("version").get ("major").toInt ();
+    int version_minor    = root_node.get ("version").get ("minor").toInt ();
+    int version_revision = root_node.get ("version").get ("revision").toInt ();
+    return std::to_string (version_major) + "." +
+    std::to_string (version_minor) + "." + std::to_string (version_revision);
 }
 
-std::string ConfigFileReader::getVersion()
-{
-	return "( " + std::to_string(VersionMajor) +
-			", " + std::to_string(VersionMinor) +
-			", " + std::to_string(VersionRevision) +
-			" )";
+std::string config_parser::speaker_prefix () {
+    Jzon::Parser parser;
+    Jzon::Node root_node = parser.parseString (config_string);
+    return root_node.get ("name_speaker").toString ();
 }
 
-std::string ConfigFileReader::getSpeakerName()
-{
-	return SpeakerName;
+std::string config_parser::site_prefix () {
+    Jzon::Parser parser;
+    Jzon::Node root_node = parser.parseString (config_string);
+    return root_node.get ("name_website").toString ();
 }
 
-std::string ConfigFileReader::getWebsiteName()
-{
-	return WebsiteName;
+config_parser::broker_type config_parser::broker () {
+    Jzon::Parser parser;
+    Jzon::Node root_node = parser.parseString (config_string);
+
+    broker_type broker_used;
+    std::string broker_select = std::to_string (broker_selector ());
+    broker_used.name =
+    root_node.get ("broker").get (broker_select).get ("broker").toString ();
+    broker_used.uri  = root_node.get ("broker").get (broker_select).get ("uri").toString ();
+    broker_used.port = root_node.get ("broker").get (broker_select).get ("port").toInt ();
+    broker_used.port_encrypted =
+    root_node.get ("broker").get (broker_select).get ("port_encrypted").toInt ();
+    broker_used.port_encrypted_certificate = root_node.get ("broker")
+                                             .get (broker_select)
+                                             .get ("port_encrypted_certificate")
+                                             .toInt ();
+    broker_used.port_ws =
+    root_node.get ("broker").get (broker_select).get ("port_ws").toInt ();
+    broker_used.port_ws_encrypted =
+    root_node.get ("broker").get (broker_select).get ("port_ws_encrypted").toInt ();
+
+    return broker_used;
 }
 
-Broker ConfigFileReader::getBroker(int broker)
-{
-	return brokers[broker-1];
-}
-
-void ConfigFileReader::printBroker(int broker)
-{
-	std::cerr 	<< "Broker id = " << broker << std::endl
-				<< "Name = " << brokers[broker-1].name << std::endl
-				<< "Uri = "	<< brokers[broker-1].uri 	<< std::endl
-				<< "Port = " << brokers[broker-1].port << std::endl
-				<< "Port encrypted = " << brokers[broker-1].port_encrypted << std::endl
-				<< "port encrypted certificate = " << brokers[broker-1].port_encrypted_certificate << std::endl
-				<< "port ws = "	<< brokers[broker-1].port_ws << std::endl
-				<< "port ws encrypted = " << brokers[broker-1].port_ws_encrypted << std::endl
-				<< std::endl;
+int config_parser::broker_selector () {
+    Jzon::Parser parser;
+    Jzon::Node root_node = parser.parseString (config_string);
+    return root_node.get ("use_broker").toInt ();
 }
