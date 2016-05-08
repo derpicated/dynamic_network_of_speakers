@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <stdexcept>
 
-#include "libs/jzon/Jzon.h"
+#include "../jzon/Jzon.h"
 
 class config_parser {
     public:

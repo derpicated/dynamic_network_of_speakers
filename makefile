@@ -17,6 +17,7 @@ dns_client_src=./client/main.cpp \
 				./client/DNSDataParser.cpp \
 				./client/libs/audio/audio.cpp \
 				./client/libs/download/download.cpp \
+				./client/libs/config/config_parser.hpp \
 				./client/libs/jzon/Jzon.cpp \
 				./client/libs/topic/Tokenizer.cpp \
 				./client/libs/topic/Topic.cpp \
@@ -76,7 +77,7 @@ $(jzon_test_out): $(jzon_test_src)
 
 # Config Pareser test
 config_parserr_test_src =	./test/config_parser_test.cpp \
-							./client/config_parser.cpp \
+							./client/libs/config/config_parser.cpp \
 							./client/libs/jzon/Jzon.cpp
 config_parser_test_out = config_parser_test
 $(config_parser_test_out): $(config_parserr_test_src)

@@ -3,7 +3,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "../client/config_parser.hpp"
+#include "../client/libs/config/config_parser.hpp"
 
 int main (int argc, char const* argv[]) {
     if (argc != 2) {
