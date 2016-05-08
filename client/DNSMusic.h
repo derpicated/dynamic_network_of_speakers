@@ -22,6 +22,7 @@
 #include "libs/download/download.hpp"
 #include "libs/rwf/relative_weight_factor.hpp"
 #include "libs/topic/Topic.h"
+#include "libs/config/config_parser.hpp"
 
 /* Debug MACRO */
 //#define MAIN_DEBUG
@@ -33,15 +34,13 @@
 
 class DNSMusic : public mosqpp::mosquittopp {
     public:
-    DNSMusic (const std::string& appname, const std::string& clientname, const std::string& clientid);
+    DNSMusic (config_parser& config);
 
     DNSMusic (const DNSMusic& other) = delete;
     DNSMusic& operator=(const DNSMusic& other) = delete;
     virtual ~DNSMusic ();
 
     protected:
-    std::string _appname;
-    std::string _clientname;
     Topic _topicRoot;
     std::mutex _mtx;
 
@@ -53,7 +52,7 @@ class DNSMusic : public mosqpp::mosquittopp {
     virtual void on_error () override;
 
     private:
-    const std::string _client_id; //{ getClientID () };
+    config_parser& CONFIG;
     const std::string _cache_path;
     int _master_volume;
     std::map<std::string, std::string> _sources;

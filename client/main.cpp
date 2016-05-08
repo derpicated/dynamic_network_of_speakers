@@ -2,7 +2,9 @@
 #include <mosquittopp.h>
 #include <signal.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
+#include "./libs/config/config_parser.hpp"
 #include "AppInfo.h"
 #include "Config.h"
 #include "DNSMusic.h"
@@ -26,36 +28,27 @@ void handleSIGCHLD (int) {
     */
 }
 
-int main (void /*int argc, char* argv[]*/) {
+int main (int argc, char const* argv[]) {
     signal (SIGINT, handleSIGINT);
     signal (SIGCHLD, handleSIGCHLD);
 
-    int major{ 0 };
-    int minor{ 0 };
-    int revision{ 0 };
+    int mosquitto_lib_version[] = { 0, 0, 0 };
 
-    // temp test
-    /*if (argc != 1) {
-        std::cout << "usage: " << argv[0] << " file.ogg" << std::endl;
-        return 1;
+    if (argc != 2) {
+        std::cout << "usage: " << argv[0] << " config.js" << std::endl;
+        exit (EXIT_FAILURE);
     }
+    config_parser CONFIG (argv[1]);
 
-    std::string music_file = argv[1];
+    std::cout << CONFIG.project_name () << " v" << CONFIG.version () << std::endl;
 
-    struct stat buffer;
-    if (stat (music_file.c_str (), &buffer) != 0) {
-        std::perror ("error, file");
-        return 1;
-    }*/
-    // end temp
-
-    cout << "-- MQTT application: " << APPNAME_VERSION << "  ";
     mosqpp::lib_init ();
-    mosqpp::lib_version (&major, &minor, &revision);
-    cout << "uses Mosquitto lib version " << major << '.' << minor << '.'
-         << revision << endl;
+    mosqpp::lib_version (&mosquitto_lib_version[0], &mosquitto_lib_version[1],
+    &mosquitto_lib_version[2]);
+    cout << "uses Mosquitto lib version " << mosquitto_lib_version[0] << '.'
+         << mosquitto_lib_version[1] << '.' << mosquitto_lib_version[2] << endl;
     try {
-        DNSMusic client ("DNSMusic", "tempDNS", getClientID ());
+        DNSMusic client (CONFIG);//"DNSMusic", "tempDNS", getClientID (), 
 
         // auto clients{ static_cast<mosqpp::mosquittopp*> (&tempDNS) };
 

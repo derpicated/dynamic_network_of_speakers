@@ -1,25 +1,20 @@
 #include "DNSMusic.h"
 
-DNSMusic::DNSMusic (const std::string& appname,
-const std::string& clientname,
-const std::string& clientid)
-: mosqpp::mosquittopp{ (clientid).c_str () }
-, _appname{ appname }
-, _clientname{ clientname }
-, _topicRoot{ "ESEiot" }
+DNSMusic::DNSMusic (config_parser& config)
+: mosqpp::mosquittopp{ (config.clientid ()).c_str () }
+, _topicRoot ("ESEiot")
 , _mtx{}
-, _client_id (clientid)
+, CONFIG (config)
 , _cache_path (".cache/")
 , _master_volume (0)
 , _sources ()
 , _rwf_volumes ()
 , _players ()
 , _speaker_data ()
-, _data_parser ()
+, _data_parser () {
 
-{
-    will_set (MQTT_TOPIC_INFO_CLIENTS_OFFLINE.c_str (), _client_id.size (),
-    _client_id.c_str (), MQTT_QoS_0);
+    will_set (MQTT_TOPIC_INFO_CLIENTS_OFFLINE.c_str (),
+    CONFIG.clientid ().size (), CONFIG.clientid ().c_str (), MQTT_QoS_0);
 
     connect (MQTT_BROKER.c_str (), MQTT_BROKER_PORT, MQTT_KEEP_ALIVE);
 }
@@ -27,14 +22,14 @@ const std::string& clientid)
 DNSMusic::~DNSMusic () {
     std::cerr << "---- ** disconnecting DNSMusic" << std::endl;
     publish (nullptr, MQTT_TOPIC_INFO_CLIENTS_OFFLINE.c_str (),
-    _client_id.size (), _client_id.c_str (), MQTT_QoS_0);
+    CONFIG.clientid ().size (), CONFIG.clientid ().c_str (), MQTT_QoS_0);
     disconnect ();
 }
 
 void DNSMusic::on_connect (int rc) {
     if (rc == 0) {
         publish (nullptr, MQTT_TOPIC_INFO_CLIENTS_ONLINE.c_str (),
-        _client_id.size (), _client_id.c_str (), MQTT_QoS_0);
+        CONFIG.clientid ().size (), CONFIG.clientid ().c_str (), MQTT_QoS_0);
         subscribe (nullptr, MQTT_TOPIC_REQUEST_ONLINE.c_str (), MQTT_QoS_0);
         subscribe (nullptr, MQTT_TOPIC_REQUEST_INFO_CLIENTS.c_str (), MQTT_QoS_0);
         subscribe (nullptr, MQTT_TOPIC_INFO_CLIENTS_DATA_WILDCARD.c_str (), MQTT_QoS_0);
@@ -47,7 +42,7 @@ void DNSMusic::on_connect (int rc) {
 void DNSMusic::on_disconnect (int rc) {
     if (!(rc == 0)) {
         publish (nullptr, MQTT_TOPIC_INFO_CLIENTS_OFFLINE.c_str (),
-        _client_id.size (), _client_id.c_str (), MQTT_QoS_0);
+        CONFIG.clientid ().size (), CONFIG.clientid ().c_str (), MQTT_QoS_0);
     }
     std::cerr << "---- DNSMusic disconnected with rc = " << rc << std::endl;
 }
@@ -70,7 +65,7 @@ void DNSMusic::on_message (const mosquitto_message* message) {
 
     if (topic == MQTT_TOPIC_REQUEST_ONLINE) {
         publish (nullptr, MQTT_TOPIC_INFO_CLIENTS_ONLINE.c_str (),
-        _client_id.size (), _client_id.c_str (), MQTT_QoS_0);
+        CONFIG.clientid ().size (), CONFIG.clientid ().c_str (), MQTT_QoS_0);
     }
 
     if (topic == MQTT_TOPIC_REQUEST_INFO_CLIENTS) {
@@ -228,7 +223,7 @@ void DNSMusic::processClientData (std::string json_str) {
     std::map<std::string, std::vector<float>> objects;
     float rwf_volume, adjusted_volume;
     rwf::rwf<float> rwf ({ 0 });
-    _speaker_data = _data_parser.parseClientData (json_str, _client_id, objects);
+    _speaker_data = _data_parser.parseClientData (json_str, CONFIG.clientid (), objects);
 
     for (auto audio_object : _speaker_data.objects) {
         std::string object_name      = audio_object.first;
