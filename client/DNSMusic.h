@@ -16,7 +16,6 @@
 #include <thread>
 #include <utility>
 
-#include "Config.h"
 #include "DNSDataParser.hpp"
 #include "libs/audio/audio.hpp"
 #include "libs/download/download.hpp"

@@ -12,7 +12,6 @@ MKDIR_P = mkdir -p
 
 # Client
 dns_client_src=./client/main.cpp \
-				./client/Config.cpp \
 				./client/DNSMusic.cpp \
 				./client/DNSDataParser.cpp \
 				./client/libs/audio/audio.cpp \
@@ -57,8 +56,7 @@ $(download_test_out): $(download_test_src)
 # Data Parser test
 dataparser_test_src=./test/dataparser_test.cpp 	\
 					./client/DNSDataParser.cpp 	\
-					./client/libs/jzon/Jzon.cpp \
-					./client/Config.cpp
+					./client/libs/jzon/Jzon.cpp
 dataparser_test_out=dataparser_test
 $(dataparser_test_out): $(dataparser_test_src)
 	$(CHECK_BUILD)
