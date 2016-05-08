@@ -7,7 +7,7 @@ int main () {
     std::cout << "Testing RWF" << std::endl;
     // answer is 12.5
     // rounding error incoming at whole numbers!
-    rwf::rwf<int> rwf_int ({ 1, 1, 1, 1, 1, 1, 1, 1 }, 100);
+    rwf::rwf<int> rwf_int ({ 1, 1, 1, 1, 1, 1, 1 }, 100);
     rwf::rwf<float> rwf_float ({ 1, 1, 1, 1, 1, 1, 1, 1 }, 100);
     rwf::rwf<double> rwf_double ({ 1, 1, 1, 1, 1, 1, 1, 1 }, 100);
     rwf::rwf<long double> rwf_l_double ({ 1, 1, 1, 1, 1, 1, 1, 1 }, 100);

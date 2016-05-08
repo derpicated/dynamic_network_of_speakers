@@ -9,7 +9,7 @@ CHECK_BUILD=if [ ! -d "./$(BUILD_DIR)" ];then	\
 				mkdir $(BUILD_DIR);     		\
 			fi
 MKDIR_P = mkdir -p
-SYM_LINK_CONF=ln -s -f -r $(shell pwd)/config/config.js $(BUILD_DIR)/config
+
 # Client
 dns_client_src=./client/main.cpp \
 				./client/Config.cpp \
@@ -17,6 +17,7 @@ dns_client_src=./client/main.cpp \
 				./client/DNSDataParser.cpp \
 				./client/libs/audio/audio.cpp \
 				./client/libs/download/download.cpp \
+				./client/libs/config/config_parser.cpp \
 				./client/libs/jzon/Jzon.cpp \
 				./client/libs/topic/Tokenizer.cpp \
 				./client/libs/topic/Topic.cpp \
@@ -25,7 +26,6 @@ dns_client_src=./client/main.cpp \
 dns_client_src_out=dns_client
 $(dns_client_src_out): $(dns_client_src)
 	$(CHECK_BUILD)
-	$(SYM_LINK_CONF)
 	$(CXX) $(CXXFLAGS) $(dns_client_src) $(LDFLAGS) -o $(BUILD_DIR)/$(dns_client_src_out)
 
 # Lib testing
@@ -76,10 +76,9 @@ $(jzon_test_out): $(jzon_test_src)
 	$(CXX) $(CXXFLAGS) $(jzon_test_src) -o $(BUILD_DIR)/$(jzon_test_out)
 
 # Config Pareser test
-config_parserr_test_src = ./test/config_parser_test.cpp \
-							  ./client/config_parser.cpp \
-							  ./client/libs/jzon/Jzon.cpp
-
+config_parserr_test_src =	./test/config_parser_test.cpp \
+							./client/libs/config/config_parser.cpp \
+							./client/libs/jzon/Jzon.cpp
 config_parser_test_out = config_parser_test
 $(config_parser_test_out): $(config_parserr_test_src)
 	$(CHECK_BUILD)
