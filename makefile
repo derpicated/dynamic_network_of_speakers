@@ -3,7 +3,7 @@ CC=gcc
 CXX=g++
 LDFLAGS = -lmosquittopp -L/usr/local/lib
 RM=rm -f
-CXXFLAGS= -g -std=c++11 -Wall -Wextra -Weffc++ -Os -D_GLIBCXX_USE_NANOSLEEP -pthread
+CXXFLAGS= -g -std=c++11 -Wall -Wextra -Weffc++ -D_GLIBCXX_USE_NANOSLEEP -pthread
 BUILD_DIR=build
 CHECK_BUILD=if [ ! -d "./$(BUILD_DIR)" ];then	\
 				mkdir $(BUILD_DIR);     		\
