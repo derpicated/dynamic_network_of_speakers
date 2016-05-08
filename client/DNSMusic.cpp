@@ -131,7 +131,7 @@ void DNSMusic::setMasterVolume (std::string volume) {
         int rwf_volume, adjusted_volume;
 
         rwf_volume      = _rwf_volumes[object.first];
-        adjusted_volume = (100 * rwf_volume) / _master_volume;
+        adjusted_volume = (rwf_volume * _master_volume) / 100;
 
         object.second.set_volume (adjusted_volume);
     }
@@ -239,7 +239,7 @@ void DNSMusic::processClientData (std::string json_str) {
         rwf_volume = rwf.get_relative_weight_factor ().back ();
 
         _rwf_volumes[object_name] = rwf_volume;
-        adjusted_volume           = (100 * rwf_volume) / _master_volume;
+        adjusted_volume           = (rwf_volume * _master_volume) / 100;
 
         if (_players.find (object_name) != _players.end ()) {
             _players[object_name].set_volume (adjusted_volume);
