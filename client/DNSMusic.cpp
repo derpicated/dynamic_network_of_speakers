@@ -16,7 +16,7 @@ DNSMusic::DNSMusic (config_parser& config)
     will_set (MQTT_TOPIC_INFO_CLIENTS_OFFLINE.c_str (),
     CONFIG.clientid ().size (), CONFIG.clientid ().c_str (), MQTT_QoS_0);
 
-    connect (MQTT_BROKER.c_str (), MQTT_BROKER_PORT, MQTT_KEEP_ALIVE);
+    connect (CONFIG.broker().uri.c_str (), CONFIG.broker().port, MQTT_KEEP_ALIVE);
 }
 
 DNSMusic::~DNSMusic () {

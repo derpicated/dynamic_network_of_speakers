@@ -34,6 +34,12 @@
 
 class DNSMusic : public mosqpp::mosquittopp {
     public:
+    const int MQTT_QoS_0{ 0 };
+    const int MQTT_QoS_1{ 1 };
+    const int MQTT_QoS_2{ 2 };
+    const bool MQTT_RETAIN_OFF{ false };
+    const bool MQTT_RETAIN_ON{ true };
+    const int MQTT_KEEP_ALIVE{ 60 };
     DNSMusic (config_parser& config);
 
     DNSMusic (const DNSMusic& other) = delete;
