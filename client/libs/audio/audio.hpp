@@ -4,14 +4,19 @@
 #include <signal.h>
 #include <string>
 #include <unistd.h>
+#include <stdio.h>
 #include <wait.h>
+#include <vector>
 
 class audio_player {
-    std::string file_name;
-    pid_t child_pid;
+    std::string _file_name;
+    std::string _pa_index;
+    pid_t _child_pid;
 
     void call_player (unsigned int time);
     void call_mixer (unsigned int volume);
+    std::string get_pa_index ();
+    void get_pa_list (std::vector<std::string>& ret_vec);
 
     public:
     audio_player ();
