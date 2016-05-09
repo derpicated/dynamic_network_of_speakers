@@ -6,6 +6,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <deque>
+#include <stdexcept>
 #include <iomanip>
 #include <iostream>
 #include <map>
@@ -13,6 +14,7 @@
 #include <stdexcept>
 #include <stdlib.h>
 #include <string>
+#include <sys/stat.h>
 #include <thread>
 #include <utility>
 
