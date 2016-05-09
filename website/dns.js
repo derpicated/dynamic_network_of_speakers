@@ -36,7 +36,7 @@ DNS = (function (global) {
     /* Random name generator */
     function rand(min,max) {return Math.floor(Math.random()*(max-min+1)+min);};
     var generate_name = function () {
-        return CONFIG.name_website+parseInt(rand(1, 999));
+        return CONFIG.website_prefix+parseInt(rand(1, 999));
     };
     broker_mqtt.client_name=generate_name(); // Set site name
     var connected = false; // Connection status
