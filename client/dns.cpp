@@ -1,4 +1,4 @@
-#include "dns.h"
+#include "dns.hpp"
 
 dns::dns (config_parser& config)
 : mosqpp::mosquittopp{ (config.clientid ()).c_str () }
@@ -12,35 +12,35 @@ dns::dns (config_parser& config)
 , _players ()
 , _speaker_data ()
 , _data_parser () {
-    will_set (CONFIG.topic("online").c_str (),
-    CONFIG.clientid ().size (), CONFIG.clientid ().c_str (), MQTT_QoS_0);
+    will_set (CONFIG.topic ("online").c_str (), CONFIG.clientid ().size (),
+    CONFIG.clientid ().c_str (), MQTT_QoS_0);
 
-    connect (CONFIG.broker().uri.c_str (), CONFIG.broker().port, MQTT_KEEP_ALIVE);
+    connect (CONFIG.broker ().uri.c_str (), CONFIG.broker ().port, MQTT_KEEP_ALIVE);
 }
 
 dns::~dns () {
     std::cerr << "---- ** disconnecting dns" << std::endl;
-    publish (nullptr, CONFIG.topic("offline").c_str (),
+    publish (nullptr, CONFIG.topic ("offline").c_str (),
     CONFIG.clientid ().size (), CONFIG.clientid ().c_str (), MQTT_QoS_0);
     disconnect ();
 }
 
 void dns::on_connect (int rc) {
     if (rc == 0) {
-        publish (nullptr, CONFIG.topic("online").c_str (),
+        publish (nullptr, CONFIG.topic ("online").c_str (),
         CONFIG.clientid ().size (), CONFIG.clientid ().c_str (), MQTT_QoS_0);
-        subscribe (nullptr, CONFIG.topic("request_online").c_str (), MQTT_QoS_0);
-        subscribe (nullptr, CONFIG.topic("request_client_data").c_str (), MQTT_QoS_0);
-        subscribe (nullptr, (CONFIG.topic("clients_data")+"/+").c_str (), MQTT_QoS_0);
-        subscribe (nullptr, CONFIG.topic("music_volume").c_str (), MQTT_QoS_0);
-        subscribe (nullptr, CONFIG.topic("music_status").c_str (), MQTT_QoS_0);
-        subscribe (nullptr, CONFIG.topic("music_sources").c_str (), MQTT_QoS_0);
+        subscribe (nullptr, CONFIG.topic ("request_online").c_str (), MQTT_QoS_0);
+        subscribe (nullptr, CONFIG.topic ("request_client_data").c_str (), MQTT_QoS_0);
+        subscribe (nullptr, (CONFIG.topic ("clients_data") + "/+").c_str (), MQTT_QoS_0);
+        subscribe (nullptr, CONFIG.topic ("music_volume").c_str (), MQTT_QoS_0);
+        subscribe (nullptr, CONFIG.topic ("music_status").c_str (), MQTT_QoS_0);
+        subscribe (nullptr, CONFIG.topic ("music_sources").c_str (), MQTT_QoS_0);
     }
 }
 
 void dns::on_disconnect (int rc) {
     if (!(rc == 0)) {
-        publish (nullptr, CONFIG.topic("offline").c_str (),
+        publish (nullptr, CONFIG.topic ("offline").c_str (),
         CONFIG.clientid ().size (), CONFIG.clientid ().c_str (), MQTT_QoS_0);
     }
     std::cerr << "---- dns disconnected with rc = " << rc << std::endl;
@@ -62,30 +62,30 @@ void dns::on_message (const mosquitto_message* message) {
                  << "Retian" << message->retain << std::endl
                  << std::endl;);
 
-    if (topic == CONFIG.topic("request_online")) {
-        publish (nullptr, CONFIG.topic("online").c_str (),
+    if (topic == CONFIG.topic ("request_online")) {
+        publish (nullptr, CONFIG.topic ("online").c_str (),
         CONFIG.clientid ().size (), CONFIG.clientid ().c_str (), MQTT_QoS_0);
     }
 
-    if (topic == CONFIG.topic("request_client_data")) {
+    if (topic == CONFIG.topic ("request_client_data")) {
         const std::string str_payload = _data_parser.composeClientData (_speaker_data);
         publish (nullptr, (char*)message->payload, str_payload.size (),
         str_payload.c_str (), MQTT_QoS_0);
     }
 
-    if (topic == CONFIG.topic("music_volume")) {
+    if (topic == CONFIG.topic ("music_volume")) {
         setMasterVolume (std::string{ (char*)message->payload });
     }
 
-    if (topic == CONFIG.topic("music_volume")) {
+    if (topic == CONFIG.topic ("music_volume")) {
         setPPS (std::string{ (char*)message->payload });
     }
 
-    if (topic == CONFIG.topic("music_sources")) {
+    if (topic == CONFIG.topic ("music_sources")) {
         processMusicSourceData (std::string{ (char*)message->payload });
     }
 
-    if (topic.find (CONFIG.topic("clients_data")) == 0) {
+    if (topic.find (CONFIG.topic ("clients_data")) == 0) {
         processClientData (std::string{ (char*)message->payload });
     }
 }

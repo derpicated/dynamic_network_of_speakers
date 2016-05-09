@@ -4,7 +4,7 @@
 #include <sys/stat.h>
 
 #include "./libs/config/config_parser.hpp"
-#include "dns.h"
+#include "dns.hpp"
 
 using namespace std;
 
