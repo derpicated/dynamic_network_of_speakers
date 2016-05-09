@@ -4,7 +4,7 @@
 #include <sys/stat.h>
 
 #include "./libs/config/config_parser.hpp"
-#include "DNSMusic.h"
+#include "dns.h"
 
 using namespace std;
 
@@ -45,7 +45,7 @@ int main (int argc, char const* argv[]) {
     cout << "uses Mosquitto lib version " << mosquitto_lib_version[0] << '.'
          << mosquitto_lib_version[1] << '.' << mosquitto_lib_version[2] << endl;
     try {
-        DNSMusic client (CONFIG);
+        dns client (CONFIG);
 
         while (!receivedSIGINT) {
             int rc = client.loop ();
@@ -60,7 +60,7 @@ int main (int argc, char const* argv[]) {
         cerr << "UNKNOWN EXCEPTION \n";
     }
 
-    cout << "-- MQTT application: " << CONFIG.project_name() << " stopped" << endl
+    cout << "-- MQTT application: " << CONFIG.project_name () << " stopped" << endl
          << endl;
     mosqpp::lib_cleanup ();
 

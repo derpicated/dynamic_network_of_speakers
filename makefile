@@ -12,7 +12,7 @@ MKDIR_P = mkdir -p
 
 # Client
 dns_client_src=./client/main.cpp \
-				./client/DNSMusic.cpp \
+				./client/dns.cpp \
 				./client/DNSDataParser.cpp \
 				./client/libs/audio/audio.cpp \
 				./client/libs/download/download.cpp \

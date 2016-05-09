@@ -1,6 +1,6 @@
-#include "DNSMusic.h"
+#include "dns.h"
 
-DNSMusic::DNSMusic (config_parser& config)
+dns::dns (config_parser& config)
 : mosqpp::mosquittopp{ (config.clientid ()).c_str () }
 , _topicRoot ("ESEiot")
 , _mtx{}
@@ -18,14 +18,14 @@ DNSMusic::DNSMusic (config_parser& config)
     connect (CONFIG.broker().uri.c_str (), CONFIG.broker().port, MQTT_KEEP_ALIVE);
 }
 
-DNSMusic::~DNSMusic () {
-    std::cerr << "---- ** disconnecting DNSMusic" << std::endl;
+dns::~dns () {
+    std::cerr << "---- ** disconnecting dns" << std::endl;
     publish (nullptr, CONFIG.topic("offline").c_str (),
     CONFIG.clientid ().size (), CONFIG.clientid ().c_str (), MQTT_QoS_0);
     disconnect ();
 }
 
-void DNSMusic::on_connect (int rc) {
+void dns::on_connect (int rc) {
     if (rc == 0) {
         publish (nullptr, CONFIG.topic("online").c_str (),
         CONFIG.clientid ().size (), CONFIG.clientid ().c_str (), MQTT_QoS_0);
@@ -38,15 +38,15 @@ void DNSMusic::on_connect (int rc) {
     }
 }
 
-void DNSMusic::on_disconnect (int rc) {
+void dns::on_disconnect (int rc) {
     if (!(rc == 0)) {
         publish (nullptr, CONFIG.topic("offline").c_str (),
         CONFIG.clientid ().size (), CONFIG.clientid ().c_str (), MQTT_QoS_0);
     }
-    std::cerr << "---- DNSMusic disconnected with rc = " << rc << std::endl;
+    std::cerr << "---- dns disconnected with rc = " << rc << std::endl;
 }
 
-void DNSMusic::on_message (const mosquitto_message* message) {
+void dns::on_message (const mosquitto_message* message) {
     std::unique_lock<std::mutex> lk{ _mtx };
     std::string topic{ message->topic };
 
@@ -90,23 +90,23 @@ void DNSMusic::on_message (const mosquitto_message* message) {
     }
 }
 
-void DNSMusic::on_subscribe (int mid, int qos_count, const int* granted_qos) {
-    std::cerr << "---- DNSMusic subscription succeeded mid = " << mid << std::endl
+void dns::on_subscribe (int mid, int qos_count, const int* granted_qos) {
+    std::cerr << "---- dns subscription succeeded mid = " << mid << std::endl
               << " qos_count = " << qos_count << std::endl
               << " granted_qos = " << *granted_qos << std::endl;
 }
 
 
-void DNSMusic::on_log (int level, const char* str) {
-    std::cerr << "---- # log DNSMusic " << level << std::endl
+void dns::on_log (int level, const char* str) {
+    std::cerr << "---- # log dns " << level << std::endl
               << ": " << str << std::endl;
 }
 
-void DNSMusic::on_error () {
-    std::cerr << "**** DNSMusic ERROR" << std::endl;
+void dns::on_error () {
+    std::cerr << "**** dns ERROR" << std::endl;
 }
 
-void DNSMusic::setMasterVolume (std::string volume) {
+void dns::setMasterVolume (std::string volume) {
     try {
         size_t size{ 0 };
         _master_volume = stoi (volume, &size);
@@ -131,7 +131,7 @@ void DNSMusic::setMasterVolume (std::string volume) {
     }
 }
 
-void DNSMusic::setPPS (std::string status_str) {
+void dns::setPPS (std::string status_str) {
     enum play_status { play, pause, stop } status;
     if (status_str == "p" || status_str == "play") {
         status = play;
@@ -172,7 +172,7 @@ if source is new
     download
 beepboop
 */
-void DNSMusic::processMusicSourceData (std::string json_str) {
+void dns::processMusicSourceData (std::string json_str) {
     std::map<std::string, std::string> new_sources;
     new_sources = _data_parser.parseAudioSourceData (json_str);
 
@@ -218,7 +218,7 @@ for every local speaker object
             set player local object volume
 */
 
-void DNSMusic::processClientData (std::string json_str) {
+void dns::processClientData (std::string json_str) {
     std::map<std::string, std::vector<float>> objects;
     float rwf_volume, adjusted_volume;
     rwf::rwf<float> rwf ({ 0 });

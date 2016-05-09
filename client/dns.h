@@ -1,5 +1,5 @@
-#ifndef DNS_MUSIC_H
-#define DNS_MUSIC_H
+#ifndef DNS_H
+#define DNS_H
 
 #include <assert.h>
 #include <atomic>
@@ -31,7 +31,7 @@
 #define D(call)
 #endif
 
-class DNSMusic : public mosqpp::mosquittopp {
+class dns : public mosqpp::mosquittopp {
     public:
     const int MQTT_QoS_0{ 0 };
     const int MQTT_QoS_1{ 1 };
@@ -39,11 +39,11 @@ class DNSMusic : public mosqpp::mosquittopp {
     const bool MQTT_RETAIN_OFF{ false };
     const bool MQTT_RETAIN_ON{ true };
     const int MQTT_KEEP_ALIVE{ 60 };
-    DNSMusic (config_parser& config);
+    dns (config_parser& config);
 
-    DNSMusic (const DNSMusic& other) = delete;
-    DNSMusic& operator=(const DNSMusic& other) = delete;
-    virtual ~DNSMusic ();
+    dns (const dns& other) = delete;
+    dns& operator=(const dns& other) = delete;
+    virtual ~dns ();
 
     protected:
     Topic _topicRoot;
