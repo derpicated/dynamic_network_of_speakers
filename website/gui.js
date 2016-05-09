@@ -23,6 +23,10 @@ GUI = (function (global) {
      */
     var scale_irl=1;
     var scale_virt=1;
+    var first_object_location = {
+        left: DRAW_AREA.width()/2,
+        top: DRAW_AREA.height()/2
+    }
     var init = function () {
         bind_arrow_keys();
         draw_speakers_from_data();
@@ -60,7 +64,7 @@ GUI = (function (global) {
                     event.returnValue = false;
                     break;
                 default:
-                    event.returnValue = true;    
+                    event.returnValue = true;
                 }
             } else {
                 event.returnValue = true;
@@ -73,6 +77,19 @@ GUI = (function (global) {
         CLIENT.set_all(make_data_from_drawing());
         console.log('Updating speaker list!');
         DNS.send_clients_data(JSON.stringify(CLIENT.get_online()));
+        // Send first object location
+        var data = CLIENT.get_online();
+        var object_offset_left;
+        var object_offset_top;
+        if (!isEmpty(data)) {
+            for (first_speaker in data) break; // get first speaker in obj
+            if (!isEmpty(data[first_speaker])) {
+                for (first_object in data[first_speaker]) break; // First object
+                object_offset_left = ($('#'+first_object).offset().left-DRAW_AREA.offset().left);
+                object_offset_top = ($('#'+first_object).offset().top-DRAW_AREA.offset().top);
+                DNS.send_first_position(object_offset_left, object_offset_top);
+            }
+        }
     };
     /* Clear the drawn speaker/objects
      * param: 'not_speakers' or 'not_objects'
@@ -83,8 +100,11 @@ GUI = (function (global) {
         empty_objects_list(not_x);
         empty_draw_area(not_x);
     };
-    /* Draw speakers from CLIENT data */
-    var draw_speakers_from_data = function () {
+    /* Draw speakers from CLIENT data
+     * first_object_left is first object location from left in percentage
+     * first_object_top is first object location from top in percentage
+     */
+    var draw_speakers_from_data = function (first_object_left = first_object_location.left, first_object_top = first_object_location.top) {
         empty_draw_area();
         var nr_of_objects=0;
         var object_tmp = $("<div class='object' id='object_tmp'></div>").hide().appendTo("body"); //add temp object
@@ -112,7 +132,8 @@ GUI = (function (global) {
                 nr_of_objects=0;
                 $.each(CLIENT.get_online()[speaker_name], function(object_name, obj_value){
                     if (!nr_of_objects) { // First object
-                        draw_object(object_name, DRAW_AREA, ((DRAW_AREA.width()-object_width)/2), ((DRAW_AREA.height()-object_height)/2));
+                        //draw_object(object_name, DRAW_AREA, ((DRAW_AREA.width()-object_width)*(first_object_left/100)), ((DRAW_AREA.height()-object_height)*(first_object_top/100)));
+                        draw_object(object_name, DRAW_AREA, (first_object_left), (first_object_top));
                         // Draw speaker seen from object
                         var left =$('#'+object_name).offset().left-DRAW_AREA.offset().left-rectangular(obj_value.distance, obj_value.angle).x;
                         var top  =$('#'+object_name).offset().top-DRAW_AREA.offset().top+rectangular(obj_value.distance, obj_value.angle).y;
@@ -541,6 +562,10 @@ GUI = (function (global) {
         save_object_properties  : save_object_properties,
         load_object_properties  : load_object_properties,
         delete_object_button    : delete_object_button,
+        DRAW_AREA               : DRAW_AREA,
+        SPEAKER_LIST            : SPEAKER_LIST,
+        OBJECT_LIST             : OBJECT_LIST,
+        first_object_location   : first_object_location
     };
 })(window);
 /* Check if object is empty */

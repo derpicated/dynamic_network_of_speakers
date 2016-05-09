@@ -140,6 +140,8 @@ DNS = (function (global) {
                 break;
             case topic("clients_data")+'/'+broker_mqtt.client_name: // Filter own data message
                 break;
+            case topic("clients_data_first_object")+'/'+broker_mqtt.client_name: // Filter own data message
+                break;
             case topic("music_sources"):
                 var info_music_sources = JSON.parse(message.payloadString);
                 console.log("Music Sources: ");console.log(info_music_sources);
@@ -171,16 +173,21 @@ DNS = (function (global) {
                         if (!isEmpty(device_date[client_name])) { // Check if object is empty
                             CLIENT.set_objects(client_name, device_date[client_name]); // Set data of object
                             GUI.draw_speakers_from_data(); // Redraw
-                            //console.log("Got personnal data from: "+client_name);
-                            //console.log(device_date[client_name]);
                         }
                     }
                     return;
                 } else if (message.destinationName.indexOf(topic("clients_data")+'/')>-1) { // Got new clients data
                     var info_clients = JSON.parse(message.payloadString);
                     CLIENT.set_all(info_clients); // Set date
-                    GUI.draw_speakers_from_data(); // Redraw
-                    //console.log('New clients data');
+                    if (isEmpty(CLIENT.get_online())) { // Only redraw when all devices are gone
+                        GUI.draw_speakers_from_data(); // Redraw
+                    }
+                    return;
+                } else if (message.destinationName.indexOf(topic("clients_data_first_object")+'/')>-1) { // Got first object pos
+                    var object = JSON.parse(message.payloadString);
+                    GUI.first_object_location.left = object.object_offset_left;
+                    GUI.first_object_location.top = object.object_offset_top;
+                    GUI.draw_speakers_from_data(); // Redraw 
                     return;
                 }
                 console.log("Got unfiltred message from: "+message.destinationName+" | "+message.payloadString);
@@ -196,6 +203,16 @@ DNS = (function (global) {
     /* Send all clients data */
     var send_clients_data = function (data) {
         send(DNS.topic("clients_data")+'/'+broker_mqtt.client_name, data);
+    };
+    /* Send first position of first object */
+    var send_first_position = function (left, top) {
+        first_object = {
+            object_offset_left: 0,
+            object_offset_top: 0
+        };
+        first_object.object_offset_left = left;
+        first_object.object_offset_top = top;
+        send(DNS.topic("clients_data_first_object")+'/'+broker_mqtt.client_name, JSON.stringify(first_object), true);
     };
     /* Subscribe to a topic */
     var subscribe = function (topic) {
@@ -216,9 +233,10 @@ DNS = (function (global) {
         subscribe(topic("music_volume"));
         subscribe(topic("music_sources"));
         subscribe(topic("clients_data")+'/+');
+        subscribe(topic("clients_data_first_object")+'/+');
 
         subscribe(topic("answer_site")+'/#');
-        //subscribe(topic.root+'/#'); // Debug for message check
+        //subscribe(topic("root")+'#'); // Debug for message check
     };
 
     return { // Bind functions to the outside world
@@ -228,6 +246,7 @@ DNS = (function (global) {
         subscribe           : subscribe,
         send                : send,
         send_clients_data   : send_clients_data,
+        send_first_position : send_first_position,
         clientid            : clientid
     };
 })(window);
