@@ -77,7 +77,7 @@ void dns::on_message (const mosquitto_message* message) {
         setMasterVolume (std::string{ (char*)message->payload });
     }
 
-    if (topic == CONFIG.topic ("music_volume")) {
+    if (topic == CONFIG.topic ("music_status")) {
         setPPS (std::string{ (char*)message->payload });
     }
 
