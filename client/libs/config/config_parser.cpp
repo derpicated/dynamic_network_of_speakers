@@ -84,7 +84,7 @@ std::string config_parser::clientid () {
 }
 
 void config_parser::set_client_id (std::string clientid) {
-    _clientid = clientid;
+    _clientid = (speaker_prefix()+clientid);
 }
 config_parser::broker_type config_parser::broker () {
     Jzon::Parser parser;
