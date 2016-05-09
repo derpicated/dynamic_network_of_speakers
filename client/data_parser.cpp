@@ -1,4 +1,4 @@
-#include "DNSDataParser.hpp"
+#include "data_parser.hpp"
 
 audioObject::audioObject ()
 : distance (0)
@@ -10,12 +10,12 @@ speakerData::speakerData ()
 , objects{} {
 }
 
-dataParser::dataParser ()
+data_parser::data_parser ()
 : _filereader ()
 , _filewriter () {
 }
 
-speakerData dataParser::parseClientData (std::string jsonstring,
+speakerData data_parser::parseClientData (std::string jsonstring,
 std::string client_id,
 std::map<std::string, std::vector<float>>& objects) {
     Jzon::Node rootNode = _filereader.parseString (jsonstring);
@@ -46,7 +46,7 @@ std::map<std::string, std::vector<float>>& objects) {
 }
 
 
-std::map<std::string, std::string> dataParser::parseAudioSourceData (std::string jsonstring) {
+std::map<std::string, std::string> data_parser::parseAudioSourceData (std::string jsonstring) {
     std::map<std::string, std::string> ret;
     Jzon::Node root_node = _filereader.parseString (jsonstring);
 
@@ -77,7 +77,7 @@ std::map<std::string, std::string> dataParser::parseAudioSourceData (std::string
     return ret;
 }
 
-std::string dataParser::composeClientData (speakerData speaker) {
+std::string data_parser::composeClientData (speakerData speaker) {
     std::string ret_str;
     Jzon::Node root_node    = Jzon::object ();
     Jzon::Node speaker_node = Jzon::object ();

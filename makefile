@@ -13,7 +13,7 @@ MKDIR_P = mkdir -p
 # Client
 dns_client_src=./client/main.cpp \
 				./client/dns.cpp \
-				./client/DNSDataParser.cpp \
+				./client/data_parser.cpp \
 				./client/libs/audio/audio.cpp \
 				./client/libs/download/download.cpp \
 				./client/libs/config/config_parser.cpp \
@@ -54,13 +54,13 @@ $(download_test_out): $(download_test_src)
 	$(CXX) $(CXXFLAGS) $(download_test_src) -o $(BUILD_DIR)/$(download_test_out)
 
 # Data Parser test
-dataparser_test_src=./test/dataparser_test.cpp 	\
-					./client/DNSDataParser.cpp 	\
+data_parser_test_src=./test/data_parser_test.cpp 	\
+					./client/data_parser.cpp 	\
 					./client/libs/jzon/Jzon.cpp
-dataparser_test_out=dataparser_test
-$(dataparser_test_out): $(dataparser_test_src)
+data_parser_test_out=data_parser_test
+$(data_parser_test_out): $(data_parser_test_src)
 	$(CHECK_BUILD)
-	$(CXX) $(CXXFLAGS) $(dataparser_test_src) -o $(BUILD_DIR)/$(dataparser_test_out)
+	$(CXX) $(CXXFLAGS) $(data_parser_test_src) -o $(BUILD_DIR)/$(data_parser_test_out)
 	cp ./test/test_client_data.json $(BUILD_DIR)
 	cp ./test/test_source_data.json $(BUILD_DIR)
 	cp ./test/test_client_compose.json $(BUILD_DIR)

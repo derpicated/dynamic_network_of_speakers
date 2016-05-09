@@ -16,7 +16,7 @@
 #include <thread>
 #include <utility>
 
-#include "DNSDataParser.hpp"
+#include "data_parser.hpp"
 #include "libs/audio/audio.hpp"
 #include "libs/download/download.hpp"
 #include "libs/rwf/relative_weight_factor.hpp"
@@ -64,7 +64,7 @@ class dns : public mosqpp::mosquittopp {
     std::map<std::string, int> _rwf_volumes;      // key = object name
     std::map<std::string, audio_player> _players; // key = object name
     speakerData _speaker_data;
-    dataParser _data_parser;
+    data_parser _data_parser;
 
     void setMasterVolume (std::string volume);
     void setPPS (std::string pps);

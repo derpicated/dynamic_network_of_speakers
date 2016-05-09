@@ -1,5 +1,5 @@
-#ifndef DNS_DATAPARSER_HPP
-#define DNS_DATAPARSER_HPP
+#ifndef DNS_data_parser_HPP
+#define DNS_data_parser_HPP
 
 #include <iostream>
 #include <map>
@@ -27,13 +27,13 @@ class speakerData {
     std::map<std::string, audioObject> objects;
 };
 
-class dataParser {
+class data_parser {
     private:
     Jzon::Parser _filereader;
     Jzon::Writer _filewriter;
 
     public:
-    dataParser ();
+    data_parser ();
     speakerData parseClientData (std::string jsonstring,
     std::string client_id,
     std::map<std::string, std::vector<float>>& objects);
