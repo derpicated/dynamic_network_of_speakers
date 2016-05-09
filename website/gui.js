@@ -200,7 +200,7 @@ GUI = (function (global) {
         if (speaker.length) { // Check if speaker exists
             speaker.detach().appendTo(destination); // Add to x
         } else { // Draw new speaker
-            var speaker_class = "<div class='speaker noselect' move_counter='0' id='"+speaker_name+"'>"+speaker_name.replace(CONFIG.name_speaker, '')+"</div>";
+            var speaker_class = "<div class='speaker noselect' move_counter='0' id='"+speaker_name+"'>"+speaker_name.replace(CONFIG.speaker_prefix, '')+"</div>";
             destination.append(speaker_class);
         }
         speaker = $('#'+speaker_name); // Update reference to object
