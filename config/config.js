@@ -2,13 +2,16 @@ var CONFIG =
 {
     "name": "Dynamic Network of Speakers",
     "name_short": "DNS",
+    "client_name": "",
     "version": {
         "major": 0,
         "minor": 0,
         "revision": 1
     },
-    "name_speaker": "speaker_",
-    "name_website": "site_",
+    "log_level":"info",
+    "log_file": "./dns.log",
+    "speaker_prefix": "speaker_",
+    "website_prefix": "site_",
     "use_broker": 1,
     "broker": {
         "1": {

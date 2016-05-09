@@ -70,17 +70,33 @@ std::string config_parser::version () {
 std::string config_parser::speaker_prefix () {
     Jzon::Parser parser;
     Jzon::Node root_node = parser.parseString (config_string);
-    return root_node.get ("name_speaker").toString ();
+    return root_node.get ("speaker_prefix").toString ();
 }
 
 std::string config_parser::site_prefix () {
     Jzon::Parser parser;
     Jzon::Node root_node = parser.parseString (config_string);
-    return root_node.get ("name_website").toString ();
+    return root_node.get ("speaker_prefix").toString ();
 }
 
 std::string config_parser::clientid () {
+    Jzon::Parser parser;
+    Jzon::Node root_node = parser.parseString (config_string);
+    if (!root_node.get ("client_name").toString ().empty()) {
+        return speaker_prefix()+root_node.get ("client_name").toString ();
+    }
     return _clientid;
+}
+
+std::string config_parser::log_level() {
+    Jzon::Parser parser;
+    Jzon::Node root_node = parser.parseString (config_string);
+    return root_node.get ("log_level").toString ();
+}
+std::string config_parser::log_file() {
+    Jzon::Parser parser;
+    Jzon::Node root_node = parser.parseString (config_string);
+    return root_node.get ("log_file").toString ();
 }
 
 void config_parser::set_client_id (std::string clientid) {

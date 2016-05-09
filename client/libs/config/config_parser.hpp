@@ -32,6 +32,8 @@ class config_parser {
     std::string speaker_prefix ();
     std::string site_prefix ();
     std::string clientid ();
+    std::string log_level();
+    std::string log_file();
     void set_client_id (std::string clientid);
     broker_type broker ();
     int broker_selector ();
