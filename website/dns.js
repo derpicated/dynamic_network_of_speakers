@@ -179,7 +179,7 @@ DNS = (function (global) {
                 } else if (message.destinationName.indexOf(topic("clients_data")+'/')>-1) { // Got new clients data
                     var info_clients = JSON.parse(message.payloadString);
                     CLIENT.set_all(info_clients); // Set date
-                    console.log(info_clients);
+                    //console.log(info_clients);
                     //GUI.draw_speakers_from_data(); // Redraw
                     return;
                 } else if (message.destinationName.indexOf(topic("clients_data_first_object")+'/')>-1) { // Got first object pos
