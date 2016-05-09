@@ -1,4 +1,4 @@
-#include "../client/DNSDataParser.hpp"
+#include "../client/data_parser.hpp"
 #include <cassert>
 #include <fstream>
 #include <iostream>
@@ -24,7 +24,7 @@ int main () {
 }
 
 void test_prarse_client_data () {
-    dataParser dp;
+    data_parser dp;
     std::ifstream client_data_file ("test_client_data.json");
     if (!client_data_file.is_open ()) {
         std::cout << "Unable to open file test_client_data.json" << std::endl;
@@ -59,7 +59,7 @@ void test_prarse_client_data () {
 }
 
 void test_prarse_source_data () {
-    dataParser dp;
+    data_parser dp;
     std::ifstream source_data_file ("test_source_data.json");
     if (!source_data_file.is_open ()) {
         std::cout << "Unable to open file test_source_data.json" << std::endl;
@@ -83,7 +83,7 @@ void test_prarse_source_data () {
 }
 
 void test_compose_client_data () {
-    dataParser dp;
+    data_parser dp;
     std::ifstream source_data_file ("test_client_compose.json");
     if (!source_data_file.is_open ()) {
         std::cout << "Unable to open file test_client_compose.json" << std::endl;
