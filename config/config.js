@@ -43,8 +43,10 @@ var CONFIG =
     },
     "topics": {
         "root": "ESEiot/DNS/",
+        "request": "request",
         "request_online": "request/online",
         "request_client_data": "request/info/clients",
+        "answer_site": "/answer/site",
         "music_time": "info/music/time",
         "music_position": "info/music/time/position",
         "music_status": "info/music/status",

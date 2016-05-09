@@ -1,11 +1,10 @@
-var DNS_VERSION = {
-    major: 0,
-    minor: 0,
-    revison: 1
-};
-
-/* Debug text */
-//console.log = function() {};
+/*
+ * Dynamic Network of Speakers
+ *
+ * A dynamic network of Speakers
+ * With MQTT
+ *
+ */
 
 function include(filename) {
     if (document.querySelectorAll('[src="' + filename + '"]').length > 0 > 0) {
@@ -48,8 +47,8 @@ DNS = (function (global) {
             console.log("MQTT Connected with: "+CONFIG.broker[CONFIG.use_broker].broker);
             connected = true;
             subscribe_list();// Connection succeeded; subscribe to our topics
-            DNS.send(DNS.topic.request_online, '1');    //get initial devices
-            DNS.send(DNS.topic.request_info_clients, topic.answer);    //get initial devices parameters
+            DNS.send(DNS.topic("request_online"), '1');    //get initial devices
+            DNS.send(DNS.topic("request_client_data"), topic("answer_site"));    //get initial devices parameters
             //update device info
         },
         onFailure: function (message) {
@@ -57,31 +56,29 @@ DNS = (function (global) {
             console.log("MQTT Connection failed: " + message.errorMessage);
         }
     };
-    /* MQTT Topics (See: topic spec sheet)*/
-    var topic = new function() {
-        this._                          = 'ESEiot';
-        this.root                       = this._+'/DNS';
-        this.request                    = this.root+'/request';
-        this.request_online             = this.request+'/online';
-        this.request_info               = this.request+'/info';
-        this.request_info_clients       = this.request_info+'/clients';
-        this.info                       = this.root+'/info';
-        this.info_music                 = this.info+'/music';
-        this.info_music_time            = this.info_music+'/time';
-        this.info_music_time_position   = this.info_music_time+'/position';
-        this.info_music_status          = this.info_music+'/status';
-        this.info_music_sources         = this.info_music+'/sources';
-        this.info_music_volume          = this.info_music+'/volume';
-        this.info_clients               = this.info+'/clients';
-        this.info_clients_data          = this.info_clients+'/data';
-        this.info_clients_data_site     = this.info_clients_data+'/'+broker_mqtt.client_name;
-        this.info_clients_startdraw     = this.info_clients+'/startdraw';
-        this.info_clients_startdraw_site= this.info_clients_startdraw+'/'+broker_mqtt.client_name;
-        this.info_clients_online        = this.info_clients+'/online';
-        this.info_clients_offline       = this.info_clients+'/offline';
-        /* personnal request topics */
-        this.answer                     = this.root+'/answer/site';
-    };
+    /* MQTT Topics (See: topic spec sheet and config file)*/
+    var topic = function (topic_name) {
+        var topic_root = "root";
+        if(isEmpty(topic_name)){
+            console.log("Topic request was empty");
+            throw "Topic request was empty";
+            return 0;
+        }
+        if(isEmpty(CONFIG.topics[topic_root])){
+            console.log("The root topic: \""+topic_root+"\" was not found in the config");
+            throw "The root topic: \""+topic_root+"\" was not found in the config";
+            return 0;
+        }
+        if (topic_name == topic_root) {
+            return CONFIG.topics[topic_root];
+        }
+        if(isEmpty(CONFIG.topics[topic_name])){
+            console.log("Topic \""+topic_name+"\" was not found in the config");
+            throw "Topic \""+topic_name+"\" was not found in the config";
+            return 0;
+        }
+        return (CONFIG.topics[topic_root]+CONFIG.topics[topic_name]);
+    }
     var client; // MQTT Client
     /* Init the DNS */
     var init = function () {
@@ -127,33 +124,33 @@ DNS = (function (global) {
     /* Call when message is recieved */
     var message_recieve = function (message) {
         switch (message.destinationName) {
-            case topic.info_clients_online:
+            case topic("online"):
                 CLIENT.online(message.payloadString);
                 GUI.draw_speakers_from_data();
                 //console.log("Client online: "+message.payloadString);
                 break;
-            case topic.info_clients_offline:
+            case topic("offline"):
                 CLIENT.offline(message.payloadString);
                 GUI.draw_speakers_from_data();
                 //console.log("Client offline: "+message.payloadString);
                 break;
-            case topic.info_music_volume:
+            case topic("music_volume"):
                 $("#volume_slider").val(message.payloadString);//set slider value
                 //console.log("Volume: "+message.payloadString);
                 break;
-            case topic.info_clients_data_site: // Filter own message
+            case topic("clients_data")+'/'+broker_mqtt.client_name: // Filter own data message
                 break;
-            case topic.info_music_sources:
+            case topic("music_sources"):
                 var info_music_sources = JSON.parse(message.payloadString);
                 console.log("Music Sources: ");console.log(info_music_sources);
                 OBJECT.set_all(info_music_sources);
                 GUI.draw_available_objects();
                 break;
             default:
-                if(message.destinationName.indexOf(topic.request)>-1){ // Request topic
+                if(message.destinationName.indexOf(topic("request"))>-1){ // Request topic
                     console.log("Request: "+message.destinationName+" | "+message.payloadString);
                     return;
-                } else if(message.destinationName.indexOf(topic.answer)>-1){ // Got answer
+                } else if(message.destinationName.indexOf(topic("answer_site"))>-1){ // Got answer
                     var device_date=message.payloadString;
                     if (!device_date) {
                         console.log("Empty device string!");
@@ -179,7 +176,7 @@ DNS = (function (global) {
                         }
                     }
                     return;
-                } else if (message.destinationName.indexOf(topic.info_clients_data+'/')>-1) { // Got new clients data
+                } else if (message.destinationName.indexOf(topic("clients_data")+'/')>-1) { // Got new clients data
                     var info_clients = JSON.parse(message.payloadString);
                     CLIENT.set_all(info_clients); // Set date
                     GUI.draw_speakers_from_data(); // Redraw
@@ -196,6 +193,10 @@ DNS = (function (global) {
         message.retained = !!retain;
         client.send(message);
     };
+    /* Send all clients data */
+    var send_clients_data = function (data) {
+        send(DNS.topic("clients_data")+'/'+broker_mqtt.client_name, data);
+    };
     /* Subscribe to a topic */
     var subscribe = function (topic) {
         client.subscribe(topic, {qos: 1});//qos Quality of Service
@@ -204,23 +205,29 @@ DNS = (function (global) {
     var unsubscribe = function (topic) {
         client.unsubscribe(topic, {});
     };
+    /* Get the client ID */
+    var clientid = function () {
+        return broker.client_name;
+    };
     /* Initial subscribed topics */
     var subscribe_list = function () {
-        subscribe(topic.info_clients_online);
-        subscribe(topic.info_clients_offline);
-        subscribe(topic.info_music_volume);
-        subscribe(topic.info_music_sources);
-        subscribe(topic.info_clients_data+'/+');
+        subscribe(topic("online"));
+        subscribe(topic("offline"));
+        subscribe(topic("music_volume"));
+        subscribe(topic("music_sources"));
+        subscribe(topic("clients_data")+'/+');
 
-        subscribe(topic.answer+'/#');
+        subscribe(topic("answer_site")+'/#');
         //subscribe(topic.root+'/#'); // Debug for message check
     };
 
     return { // Bind functions to the outside world
-        init        : init,
-        deinit      : deinit,
-        topic       : topic,
-        subscribe   : subscribe,
-        send        : send
+        init                : init,
+        deinit              : deinit,
+        topic               : topic,
+        subscribe           : subscribe,
+        send                : send,
+        send_clients_data   : send_clients_data,
+        clientid            : clientid
     };
 })(window);

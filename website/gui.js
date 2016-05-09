@@ -39,24 +39,29 @@ GUI = (function (global) {
                     $('#'+obj_name).stop().animate({
                         left: "-="+move_amount
                     }).trigger('drop'); //left arrow key
+                    event.returnValue = false;
                     break;
                 case 38:
                     $('#'+obj_name).stop().animate({
                         top: "-="+move_amount
                     }); //up arrow key
+                    event.returnValue = false;
                     break;
                 case 39:
                     $('#'+obj_name).stop().animate({
                         left: "+="+move_amount
                     }); //right arrow key
+                    event.returnValue = false;
                     break;
                 case 40:
                     $('#'+obj_name).stop().animate({
                         top: "+="+move_amount
                     }); //bottom arrow key
+                    event.returnValue = false;
                     break;
+                default:
+                    event.returnValue = true;    
                 }
-                event.returnValue = false;
             } else {
                 event.returnValue = true;
             }
@@ -67,7 +72,7 @@ GUI = (function (global) {
     var update_clients_data = function () {
         CLIENT.set_all(make_data_from_drawing());
         console.log('Updating speaker list!');
-        DNS.send(DNS.topic.info_clients_data_site, JSON.stringify(CLIENT.get_online()));
+        DNS.send_clients_data(JSON.stringify(CLIENT.get_online()));
     };
     /* Clear the drawn speaker/objects
      * param: 'not_speakers' or 'not_objects'
