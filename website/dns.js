@@ -179,15 +179,13 @@ DNS = (function (global) {
                 } else if (message.destinationName.indexOf(topic("clients_data")+'/')>-1) { // Got new clients data
                     var info_clients = JSON.parse(message.payloadString);
                     CLIENT.set_all(info_clients); // Set date
-                    if (isEmpty(CLIENT.get_online())) { // Only redraw when all devices are gone
-                        GUI.draw_speakers_from_data(); // Redraw
-                    }
+                    GUI.draw_speakers_from_data(); // Redraw
                     return;
                 } else if (message.destinationName.indexOf(topic("clients_data_first_object")+'/')>-1) { // Got first object pos
                     var object = JSON.parse(message.payloadString);
                     GUI.first_object_location.left = object.object_offset_left;
                     GUI.first_object_location.top = object.object_offset_top;
-                    GUI.draw_speakers_from_data(); // Redraw 
+                    GUI.draw_speakers_from_data(); // Redraw
                     return;
                 }
                 console.log("Got unfiltred message from: "+message.destinationName+" | "+message.payloadString);
