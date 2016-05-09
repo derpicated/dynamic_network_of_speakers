@@ -17,7 +17,7 @@ GUI = (function (global) {
     var SPEAKER_LIST = $("#speaker_list");
     var DRAW_AREA = $("#draw_area");
     var OBJECT_LIST = $("#object_list");
-    var UPDATE_FREQ_MOVE = 100; // Send data when an obj/speaker has moved this amount of units
+    var UPDATE_FREQ_MOVE = 20; // Send data when an obj/speaker has moved this amount of units
     /* Scale factor for In Real Life to Virtual
      * Default: 1:1
      */
@@ -555,6 +555,7 @@ GUI = (function (global) {
     return { // Bind functions to the outside world
         init                    : init,
         clear                   : clear,
+        empty_draw_area         : empty_draw_area,
         update_clients_data     : update_clients_data,
         draw_speakers_from_data : draw_speakers_from_data,
         draw_available_objects  : draw_available_objects,
