@@ -146,7 +146,7 @@ DNS = (function (global) {
                 //console.log("Client offline: "+message.payloadString);
                 break;
             case topic("music_volume"):
-                $("#volume_slider").val(message.payloadString);//set slider value
+                GUI.set_volume_slider(message.payloadString);
                 //console.log("Volume: "+message.payloadString);
                 break;
             case topic("clients_data")+'/'+broker_mqtt.client_name: // Filter own data message

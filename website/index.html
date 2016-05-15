@@ -45,7 +45,7 @@
             <div id='bottom'>
                 <div id='media_controls' class='right'>
                     <div id='volume_controls' class='right_control'>
-                        <input type="range" id='volume_slider' onclick="DNS.send(DNS.topic('music_volume'), this.value, 1)" min="0" max="100" step="1" value="0" />
+                        <input type="range" id='volume_slider' min="0" max="100" step="1" value="0" />
                     </div>
                     <div id='music_controls' class='left_control'>
                         <button class="fa fa-play button" onclick="DNS.send(DNS.topic('music_status'), 'play')"></button>

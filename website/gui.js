@@ -29,6 +29,7 @@ GUI = (function (global) {
     }
     var init = function () {
         bind_arrow_keys();
+        bind_volume_slider();
         draw_speakers_from_data();
     };
     /* Move object with arrows */
@@ -364,6 +365,34 @@ GUI = (function (global) {
         del_object(object_name);
         update_clients_data();
     };
+    /* bind volume */
+    var bind_volume_slider = function () {
+        var UPDATE_FREQ_SLIDE = 1; // just 1
+        var volume_slider = $("#volume_slider");
+        if (isEmpty(volume_slider.attr('move_counter'))) {
+            volume_slider.attr('move_counter', 0);
+        }
+        document.getElementById("volume_slider").oninput = function() {
+            volume_slider.attr('move_counter', parseInt(volume_slider.attr('move_counter'))+1);
+            if(volume_slider.attr('move_counter')>UPDATE_FREQ_SLIDE){
+                volume_slider.attr('move_counter', 0);
+                DNS.send(DNS.topic("music_volume"), $("#volume_slider").val(), true);
+            }
+        };
+        volume_slider.mouseup(function() { // enable setting of volume
+            volume_slider.removeAttr('moving');
+        })
+        volume_slider.mousedown(function() { // disable setting of volume
+            volume_slider.attr('moving', true);
+        });
+    };
+    /* Set the volume */
+    var set_volume_slider = function (volume) {
+        if (!$("#volume_slider").attr('moving')) {
+            $("#volume_slider").val(volume);//set slider value
+        }
+    };
+
     /* Clear speakers respectively */
     var empty_speaker_list = function (not_x = '') {
         if (!(not_x=='not_speakers')) {
@@ -625,7 +654,8 @@ GUI = (function (global) {
         SPEAKER_LIST            : SPEAKER_LIST,
         OBJECT_LIST             : OBJECT_LIST,
         first_object_location   : first_object_location,
-        smart_truncate          : smart_truncate
+        smart_truncate          : smart_truncate,
+        set_volume_slider       : set_volume_slider
     };
 })(window);
 /* Check if object is empty */
