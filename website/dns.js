@@ -39,23 +39,6 @@ DNS = (function (global) {
         return CONFIG.website_prefix+parseInt(rand(1, 999));
     };
     broker_mqtt.client_name=generate_name(); // Set site name
-    var connected = false; // Connection status
-    var connect_options = {
-        timeout: 3,
-        onSuccess: function () {
-            console.log("MQTT Connected as: "+client._getClientId());
-            console.log("MQTT Connected with: "+CONFIG.broker[CONFIG.use_broker].broker);
-            connected = true;
-            subscribe_list();// Connection succeeded; subscribe to our topics
-            DNS.send(DNS.topic("request_online"), '1');    //get initial devices
-            DNS.send(DNS.topic("request_client_data"), topic("answer_site"));    //get initial devices parameters
-            //update device info
-        },
-        onFailure: function (message) {
-            connected = false;
-            console.log("MQTT Connection failed: " + message.errorMessage);
-        }
-    };
     /* MQTT Topics (See: topic spec sheet and config file)*/
     var topic = function (topic_name) {
         var topic_root = "root";
@@ -79,6 +62,34 @@ DNS = (function (global) {
         }
         return (CONFIG.topics[topic_root]+CONFIG.topics[topic_name]);
     }
+    var connected = false; // Connection status
+
+    //new Paho.MQTT.Message(String(payload));
+    //Paho.MQTT.message
+    //message.destinationName = String(topic);
+    //message.retained = !!retain;
+
+    /* Lastwill for first object of site */
+    var lastwill = new Paho.MQTT.Message("");
+    lastwill.destinationName= topic("clients_data_first_object")+'/'+broker_mqtt.client_name;
+    lastwill.retained = true;
+    var connect_options = {
+        timeout: 3,
+        onSuccess: function () {
+            console.log("MQTT Connected as: "+client._getClientId());
+            console.log("MQTT Connected with: "+CONFIG.broker[CONFIG.use_broker].broker);
+            connected = true;
+            subscribe_list();// Connection succeeded; subscribe to our topics
+            DNS.send(DNS.topic("request_online"), '1');    //get initial devices
+            DNS.send(DNS.topic("request_client_data"), topic("answer_site"));    //get initial devices parameters
+            //update device info
+        },
+        onFailure: function (message) {
+            connected = false;
+            console.log("MQTT Connection failed: " + message.errorMessage);
+        },
+        willMessage: lastwill
+    };
     var client; // MQTT Client
     /* Init the DNS */
     var init = function () {
@@ -177,16 +188,27 @@ DNS = (function (global) {
                     }
                     return;
                 } else if (message.destinationName.indexOf(topic("clients_data")+'/')>-1) { // Got new clients data
-                    var info_clients = JSON.parse(message.payloadString);
-                    CLIENT.set_all(info_clients); // Set date
+                    try {
+                        var info_clients = JSON.parse(message.payloadString); // syntax error
+                        CLIENT.set_all(info_clients); // Set date
+                    } catch (error) {
+                        console.log("Clients data wrong message error:");
+                        console.log(error.message);
+                    }
                     //console.log(info_clients);
                     //GUI.draw_speakers_from_data(); // Redraw
                     return;
                 } else if (message.destinationName.indexOf(topic("clients_data_first_object")+'/')>-1) { // Got first object pos
-                    var object = JSON.parse(message.payloadString);
-                    GUI.first_object_location.left = object.object_offset_left;
-                    GUI.first_object_location.top = object.object_offset_top;
-                    GUI.draw_speakers_from_data(); // Redraw
+                    //send(message.destinationName, '', true);
+                    try {
+                        var object = JSON.parse(message.payloadString); // syntax error
+                        GUI.first_object_location.left = object.object_offset_left;
+                        GUI.first_object_location.top = object.object_offset_top;
+                        GUI.draw_speakers_from_data(); // Redraw
+                    } catch (error) {
+                        console.log("First object wrong message error:");
+                        console.log(error.message);
+                    }
                     return;
                 }
                 console.log("Got unfiltred message from: "+message.destinationName+" | "+message.payloadString);
@@ -249,3 +271,20 @@ DNS = (function (global) {
         clientid            : clientid
     };
 })(window);
+
+/* Check if object is empty */
+function isEmpty(obj) {
+    // null and undefined are "empty"
+    if (obj == null) return true;
+    // Assume if it has a length property with a non-zero value
+    // that that property is correct.
+    if (obj.length > 0)    return false;
+    if (obj.length === 0)  return true;
+    // Otherwise, does it have any properties of its own?
+    // Note that this doesn't handle
+    // toString and valueOf enumeration bugs in IE < 9
+    for (var key in obj) {
+        if (hasOwnProperty.call(obj, key)) return false;
+    }
+    return true;
+}

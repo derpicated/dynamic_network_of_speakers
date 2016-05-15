@@ -300,3 +300,25 @@ a:active{
   user-select: none;           /* Non-prefixed version, currently
                                   not supported by any browser */
 }
+
+/* Tooltips */
+.ui-tooltip {
+    background-color: #E4E4E4;
+    font-family: 'nimbus-sans-l';
+	padding: 8px;
+	position: absolute;
+	z-index: 9999;
+	max-width: 400px;
+	-webkit-box-shadow: 0 0 5px #aaa;
+	box-shadow: 0 0 5px #aaa;
+}
+body .ui-tooltip {
+	border-width: 2px;
+}
+label {
+    display: inline-block;
+    width: 50em;
+}
+.ui-helper-hidden-accessible{
+    display: none;
+}

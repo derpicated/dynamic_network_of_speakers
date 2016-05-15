@@ -251,10 +251,23 @@ GUI = (function (global) {
         if (object.length) { // Check if object exists
             object.detach().appendTo(destination); // Add to destination area
         } else { // Draw new object
-            var object_class = "<div class='object noselect' move_counter='0' id='"+object_name+"' onclick='GUI.load_object_properties(\""+object_name+"\")'>"+object_name+"</div>";
+            var object_class = "<div class='object noselect' move_counter='0' title='' id='"+object_name+"' onclick='GUI.load_object_properties(\""+object_name+"\")'>"+smart_truncate(object_name)+"</div>";
             destination.append(object_class);
         }
-        object = $('#'+object_name);
+        object=$('#'+object_name);
+        object.tooltip({
+            show: null,
+            hide:null,
+            track: true,
+            content: object_name,
+            position: {
+                my: "top-50",
+                at: "right+20 top"
+            },
+            close: function (event, ui) {
+                $(".ui-helper-hidden-accessible").remove();
+            }
+        });
         object.draggable({ // Make dragable in the draw area
             containment: '#top',
             revert: 'invalid',
@@ -511,6 +524,51 @@ GUI = (function (global) {
     var isValid = function (str){
         return !/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\? ]/g.test(str);
     }
+
+    /* Make short string from long string
+     * some examples
+     * Name_Of_String => NOS
+     * name_of_string => nos
+     * nameofstring => nam
+     * name_OF_string => nOs
+     * na => na_
+     */
+    var smart_truncate = function (string, min_chars=3, max_chars=4) {
+        var between = function (str, min=min_chars, max=max_chars) {
+            if (str.length>=min && str.length<=max) {
+                return true;
+            }
+            return false;
+        }
+        var string_size_check = function (str, min=min_chars, max=max_chars, append_char='_') {
+            if (str.length>max) { // truncate
+                //console.log("truncate string "+str.substring(0, max));
+                return  str.substring(0, max);
+            } else if (str.length<min) { //append missing chars
+                return str+append_char.repeat(min-str.length);
+            }
+            return str;
+        }
+        var new_str;
+        new_str = string.match(/[A-Z, 0-9]/g);//    replace(/[a-z]/g, ''); // capitals: VALUE => VAL...
+        if (new_str) {
+            new_str = new_str.join('')
+            //console.log("regex capitals: "+new_str);
+            if (between(new_str)) {
+                return new_str;
+            }
+        }
+
+        new_str = string.match(/(?:^|_)([A-z])/g); // Befor e'_': V_a_l_u_e => VAL....
+        if (new_str) {
+            //console.log("regex '_': "+new_str);
+            new_str = new_str.join('').replace(/_/g, '')
+            if (between(new_str)) { // more then only start char (first char + min of one char after _ = 2)
+                return new_str;
+            }
+        }
+        return string_size_check(string); // ok, just return part of string none matched
+    }
     /************************************************************/
     /*  MATHS                                                   */
     /************************************************************/
@@ -566,7 +624,8 @@ GUI = (function (global) {
         DRAW_AREA               : DRAW_AREA,
         SPEAKER_LIST            : SPEAKER_LIST,
         OBJECT_LIST             : OBJECT_LIST,
-        first_object_location   : first_object_location
+        first_object_location   : first_object_location,
+        smart_truncate          : smart_truncate
     };
 })(window);
 /* Check if object is empty */
