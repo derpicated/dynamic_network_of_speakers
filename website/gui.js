@@ -393,6 +393,22 @@ GUI = (function (global) {
         }
     };
 
+    /* Send the music status */
+    var music_status = function (status) {
+        switch (status) {
+            case 'play':
+                DNS.send(DNS.topic('music_status'), 'play');
+                DNS.send(DNS.topic('music_position'), $("#time_slider").val());
+                break;
+            case 'pause':
+                DNS.send(DNS.topic('music_status'), 'pause');
+                break;
+            default:
+                DNS.send(DNS.topic('music_status'), 'stop');
+                break;
+        }
+    };
+
     /* Clear speakers respectively */
     var empty_speaker_list = function (not_x = '') {
         if (!(not_x=='not_speakers')) {
@@ -655,7 +671,8 @@ GUI = (function (global) {
         OBJECT_LIST             : OBJECT_LIST,
         first_object_location   : first_object_location,
         smart_truncate          : smart_truncate,
-        set_volume_slider       : set_volume_slider
+        set_volume_slider       : set_volume_slider,
+        music_status            : music_status
     };
 })(window);
 /* Check if object is empty */

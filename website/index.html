@@ -48,9 +48,9 @@
                         <input type="range" id='volume_slider' min="0" max="100" step="1" value="0" />
                     </div>
                     <div id='music_controls' class='left_control'>
-                        <button class="fa fa-play button" onclick="DNS.send(DNS.topic('music_status'), 'play')"></button>
-                        <button class="fa fa-pause button"  onclick="DNS.send(DNS.topic('music_status'), 'pause')"></button>
-                        <button class="fa fa-stop button"  onclick="DNS.send(DNS.topic('music_status'), 'stop')"></button>
+                        <button class="fa fa-play button" onclick="GUI.music_status('play')"></button>
+                        <button class="fa fa-pause button"  onclick="GUI.music_status('pause')"></button>
+                        <button class="fa fa-stop button"  onclick="GUI.music_status('stop')"></button>
                     </div>
                     <div id='time_controls' class='left_control'>
                         <input type="range" id='time_slider' min="0" max="100" step="1" value="0" />
