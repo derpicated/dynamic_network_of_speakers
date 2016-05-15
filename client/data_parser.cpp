@@ -55,8 +55,8 @@ std::map<std::string, std::string> data_parser::parseAudioSourceData (std::strin
         name = sub_node.first;
         uri  = sub_node.second.toString ();
 
-        if (30 < name.length ()) { // truncate string to MAX 30
-            name.erase (30, std::string::npos);
+        if (40 < name.length ()) { // truncate string to MAX 30
+            name.erase (40, std::string::npos);
         }
 
         char last_c = '.'; // set '.' to dissalow the name "."
