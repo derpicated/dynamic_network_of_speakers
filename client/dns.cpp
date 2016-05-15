@@ -2,7 +2,6 @@
 
 dns::dns (config_parser& config)
 : mosqpp::mosquittopp{ (config.clientid ()).c_str () }
-, _topicRoot ("ESEiot")
 , _mtx{}
 , CONFIG (config)
 , _cache_path ("/tmp/dns_sound_cache/")

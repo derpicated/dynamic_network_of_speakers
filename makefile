@@ -18,8 +18,6 @@ dns_client_src=./client/main.cpp \
 				./client/libs/download/download.cpp \
 				./client/libs/config/config_parser.cpp \
 				./client/libs/jzon/Jzon.cpp \
-				./client/libs/topic/Tokenizer.cpp \
-				./client/libs/topic/Topic.cpp \
 				./client/libs/rwf/relative_weight_factor.cpp
 # Target / executable
 dns_client_src_out=dns_client

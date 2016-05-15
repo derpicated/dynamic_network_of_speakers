@@ -22,7 +22,6 @@
 #include "libs/audio/audio.hpp"
 #include "libs/download/download.hpp"
 #include "libs/rwf/relative_weight_factor.hpp"
-#include "libs/topic/Topic.h"
 #include "libs/config/config_parser.hpp"
 
 /* Debug MACRO */
@@ -48,7 +47,6 @@ class dns : public mosqpp::mosquittopp {
     virtual ~dns ();
 
     protected:
-    Topic _topicRoot;
     std::mutex _mtx;
 
     virtual void on_connect (int rc) override;
