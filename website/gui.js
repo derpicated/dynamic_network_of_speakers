@@ -622,7 +622,7 @@ GUI = (function (global) {
     };
 
     var isValid = function (str){
-        return !/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\? ]/g.test(str);
+        return !/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\? _]/g.test(str);
     }
 
     /* Make short string from long string
