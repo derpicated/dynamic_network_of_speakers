@@ -57,7 +57,7 @@ body {
 
 #bottom {
     width: 100%;
-    height: 20%;
+    height: 23%;
 }
 #misc {
     height: 100%;
@@ -321,4 +321,14 @@ label {
 }
 .ui-helper-hidden-accessible{
     display: none;
+}
+
+/* Expandable options */
+#misc_expand {
+    display: none;
+    padding : 5px;
+    font-family: 'nimbus-sans-l';
+    position: absolute;
+    background-color: inherit;
+    width: 50%;
 }

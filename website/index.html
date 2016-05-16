@@ -63,6 +63,17 @@
                         <button class="fa fa-trash-o button" onclick="GUI.delete_object_button($('#music_name').val())"></button>
                         <input type="text" id="music_uri" value="" placeholder="Stream Link" style="width: 80%; height: 30px; padding: 2px; margin: 2px; border: 1px solid black">
                     </p>
+                    <p>
+                        <button id="expand_button" title="Extra options" class="fa fa-plus-square-o button" ></button>
+                    </p>
+                    <div id="misc_expand">
+                        <p>
+                            Add multiple objects in the form of 'name, uri' per line<br/>
+                            <textarea id="batch_objects" style="width: 80%; height: 150px; padding: 2px; margin: 2px; border: 1px solid black" placeholder="NAME, URI"></textarea><br/>
+                            <button class="fa fa-upload button" onclick="GUI.batch_add_objects($('#batch_objects').val());"><span style="font-family: 'nimbus-sans-l';"> Batch</span></button>
+                            <button class="fa fa-trash-o button"onclick="GUI.batch_delete_objects();"><span style="font-family: 'nimbus-sans-l';"> All</span></button>
+                        </p>
+                    </div>
                 </div>
             </div>
             <div id='main_text'>

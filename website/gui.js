@@ -31,6 +31,7 @@ GUI = (function (global) {
         bind_arrow_keys();
         bind_volume_slider();
         draw_speakers_from_data();
+        set_misc_expand();
     };
     /* Move object with arrows */
     var bind_arrow_keys = function () {
@@ -409,6 +410,60 @@ GUI = (function (global) {
         }
     };
 
+    var set_misc_expand = function () {
+        $("#expand_button").click(function () {
+            $content = $('#misc_expand');
+            //open up the content needed - toggle the slide- if visible, slide up, if not slidedown.
+            $content.slideToggle(500, function () {
+                if ($content.is(":visible")) {
+                     $("#expand_button").removeClass('fa-plus-square-o').addClass('fa-minus-square-o');
+                     $("#expand_button").attr('title', "Close");
+                } else {
+                    $("#expand_button").removeClass('fa-minus-square-o').addClass('fa-plus-square-o');
+                    $("#expand_button").attr('title', "Open");
+                }
+            });
+        });
+        $("#expand_button").tooltip({
+            show: null,
+            hide:null,
+            track: true,
+            position: {
+                my: "top-50",
+                at: "right+20 top"
+            },
+            close: function (event, ui) {
+                $(".ui-helper-hidden-accessible").remove();
+            }
+        });
+    };
+
+    var batch_delete_objects = function (control = 'all') {
+        switch (control) {
+            case 'all':
+                //console.log("delete all");
+                OBJECT.del_all();
+                OBJECT.send_objects();
+                draw_speakers_from_data();
+                break;
+            default:
+                break;
+        }
+    };
+    var batch_add_objects = function (objects) {
+        //console.log("Add batch: "+objects);
+        for (line in objects.split("\n")){
+            //console.log("Line: "+objects.split("\n")[line]);
+            if(objects.split("\n")[line].split(",").length==2){
+                //console.log("Name: "+objects.split("\n")[line].split(",")[0].replace(' ', ''));
+                $('#music_name').val(objects.split("\n")[line].split(",")[0].replace(' ', ''));
+                //console.log("Object: "+objects.split("\n")[line].split(",")[1].replace(' ', ''));
+                $('#music_uri').val(objects.split("\n")[line].split(",")[1].replace(' ', ''));
+                save_object_properties();
+            }
+        }
+    };
+
     /* Clear speakers respectively */
     var empty_speaker_list = function (not_x = '') {
         if (!(not_x=='not_speakers')) {
@@ -672,7 +727,9 @@ GUI = (function (global) {
         first_object_location   : first_object_location,
         smart_truncate          : smart_truncate,
         set_volume_slider       : set_volume_slider,
-        music_status            : music_status
+        music_status            : music_status,
+        batch_delete_objects    : batch_delete_objects,
+        batch_add_objects       : batch_add_objects
     };
 })(window);
 /* Check if object is empty */
