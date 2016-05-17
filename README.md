@@ -2,33 +2,40 @@
 
 This project holds a Dynamic Network of Speakers.
 
-The goal for this project is to create a system where a user can setup speakers and tell via a website what sound comes out of each speaker. All the speakers are connected via the internet and are talking which each other via a protocol called [MQTT](http://mqtt.org/).
+The goal for this project is to create a system where a user can setup speakers
+and tell via a website what sound comes out of each speaker. All the speakers
+are connected via the internet and are talking with each other via a protocol
+called [MQTT](http://mqtt.org/).
 
 <img src="./misc/logo/dynamic_network_of_speakers.png" alt="DNS" width="300">
 
 ## Folder structure
-- `./client/`: Client
-- `./config/`: Config file
-- `./docs/`: Documentation
-- `./misc/`: Miscellaneous
-- `./test/`: Tests
-- `./website/`: Website
+
+-   `./client/`: Client
+-   `./config/`: Config file
+-   `./docs/`: Documentation
+-   `./misc/`: Miscellaneous
+-   `./test/`: Tests
+-   `./website/`: Website
 
 ## Installation / Compilation
+
 Make commands.
 
 ### Dependencies
-- Listing of deps
 
-# Credits
+Listing of dependencies.
+
+## Credits
 
 All Authors - Listed Alphabetically.
 
-- [Ingmar Delsink](https://github.com/MrCrazyID)
-- [Menno van der Graaf](https://github.com/Mercotui)
-- [Brian van Zwam](https://github.com/Gerwie)
+-   [Ingmar Delsink](https://github.com/MrCrazyID)
+-   [Menno van der Graaf](https://github.com/Mercotui)
+-   [Brian van Zwam](https://github.com/Gerwie)
 
-## Libraries
+### Libraries
+
 Libraries used in this project:
 
 **Jzon**  
@@ -40,7 +47,8 @@ Libraries used in this project:
 
 **Eclipse Paho JavaScript client**  
 
-> The Paho JavaScript Client is an MQTT browser-based client library written in Javascript that uses WebSockets to connect to an MQTT Broker.  
+> The Paho JavaScript Client is an MQTT browser-based client library written
+> in Javascript that uses WebSockets to connect to an MQTT Broker.  
 > <https://github.com/eclipse/paho.mqtt.javascript>
 
 **jQuery**
@@ -53,10 +61,12 @@ Libraries used in this project:
 > Author  
 > Copyright (c) 2011-2014, Christopher Jeffrey. (MIT Licensed)  
 > marked - a markdown parser  
-> A full-featured markdown parser and compiler, written in JavaScript. Built for speed.  
+> A full-featured markdown parser and compiler, written in JavaScript.
+> Built for speed.  
 > <https://github.com/chjj/marked>  
 
 ## Fonts
+
 Fonts used in this project:
 
 **Font Awesome**  
@@ -64,16 +74,15 @@ Fonts used in this project:
 > Author  
 > [Fort Awesome](https://fortawesome.github.io/Font-Awesome/)  
 > The Font Awesome font is licensed under the SIL OFL 1.1:  
-> http://scripts.sil.org/OFL  
+> <http://scripts.sil.org/OFL>  
 
 **Xolonium**
 
 > Author  
-> Severin Meyer <sev.ch@web.de>  
+> Severin Meyer <mailto:sev.ch@web.de>  
 > This Font Software is licensed under the SIL Open Font License,  
 >  Version 1.1. This license is copied below, and is also available  
 > with a FAQ at <http://scripts.sil.org/OFL>
-
 
 **Nimbus Sans L**
 
@@ -82,7 +91,7 @@ Fonts used in this project:
 > LICENSE  
 > [General Public License (GPL)](http://www.fsf.org/licenses/gpl.html)
 
-# License
+## License
 
 > You can check out the full license [here](./LICENSE)
 
