@@ -36,4 +36,4 @@ docs/build*
 .cache/*
 
 # Logs
-*/logs/*
+logs/*
