@@ -16,9 +16,6 @@
 *.dylib
 *.dll
 
-# Fortran module files
-*.mod
-
 # Compiled Static libraries
 *.lai
 *.la
@@ -30,9 +27,13 @@
 *.out
 *.app
 
-# Buildfolder
+### output folders ###
+# Build
 build/*
 docs/build*
 
 # Cache
 .cache/*
+
+# Logs
+*/logs/*
