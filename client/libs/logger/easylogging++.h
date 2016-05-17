@@ -13,6 +13,7 @@
 //  http://easylogging.muflihun.com
 //  http://muflihun.com
 //
+#pragma GCC diagnostic ignored "-Weffc++"
 #ifndef EASYLOGGINGPP_H
 #define EASYLOGGINGPP_H
 // Compilers and C++0x/C++11 Evaluation
@@ -6661,3 +6662,4 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
 #   define START_EASYLOGGINGPP(argc, argv) el::Helpers::setArgs(argc, argv)
 #endif  // defined(ELPP_UNICODE)
 #endif // EASYLOGGINGPP_H
+#pragma GCC diagnostic warning "-Weffc++"
