@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <vector>
 
+#include "../logger/easylogging++.h"
+
 namespace rwf {
 template <class T> class rwf {
     private:

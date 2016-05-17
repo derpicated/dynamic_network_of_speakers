@@ -37,7 +37,7 @@ void audio_player::play (unsigned int time /*= 0*/) {
 
             default: // parent process, pid now contains the child pid
                 _child_pid = pid;
-                std::cout << "starting: " << pid << std::endl;
+                LOG (DEBUG) << "AUDIO: starting: " << pid;
         }
     }
     return;
@@ -54,7 +54,7 @@ void audio_player::call_player (unsigned int time) {
 int audio_player::stop () {
     int status = -1;
     if (_child_pid != 0) {
-        std::cout << "killing: " << _child_pid << std::endl;
+        LOG (DEBUG) << "AUDIO: killing: " << _child_pid;
         status     = kill (_child_pid, SIGKILL);
         _child_pid = 0;
         _pa_index.clear ();
@@ -68,8 +68,8 @@ void audio_player::set_volume (unsigned int volume) {
             _pa_index = get_pa_index ();
         }
 
-        std::cout << "setting volume at index: " << _pa_index
-                  << " to: " << volume << std::endl;
+        LOG (DEBUG) << "AUDIO: setting volume at index: " << _pa_index
+                    << " to: " << volume << std::endl;
 
         pid_t pid = fork ();
         switch (pid) {

@@ -18,18 +18,11 @@
 
 #include "data_parser.hpp"
 #include "libs/audio/audio.hpp"
+#include "libs/config/config_parser.hpp"
 #include "libs/download/download.hpp"
+#include "libs/logger/easylogging++.h"
 #include "libs/rwf/relative_weight_factor.hpp"
 #include "libs/topic/Topic.h"
-#include "libs/config/config_parser.hpp"
-
-/* Debug MACRO */
-//#define MAIN_DEBUG
-#ifdef MAIN_DEBUG
-#define D(call) (call)
-#else
-#define D(call)
-#endif
 
 class dns : public mosqpp::mosquittopp {
     public:
@@ -42,7 +35,7 @@ class dns : public mosqpp::mosquittopp {
     dns (config_parser& config);
 
     dns (const dns& other) = delete;
-    dns& operator=(const dns& other) = delete;
+    dns& operator= (const dns& other) = delete;
     virtual ~dns ();
 
     protected:

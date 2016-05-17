@@ -8,6 +8,8 @@
 #include <wait.h>
 #include <vector>
 
+#include "../logger/easylogging++.h"
+
 class audio_player {
     std::string _file_name;
     std::string _pa_index;

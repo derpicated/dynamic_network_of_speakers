@@ -1,13 +1,5 @@
 #include "relative_weight_factor.hpp"
 
-/* Debug MACRO */
-//#define DEBUG_RWF
-#ifdef DEBUG_RWF
-#define D(call) (call)
-#else
-#define D(call)
-#endif
-
 template <class T>
 rwf::rwf<T>::rwf (std::vector<T> vec, int head, int tail)
 : _factors (vec)
@@ -25,12 +17,11 @@ template <class T> std::vector<T> rwf::rwf<T>::get_relative_weight_factor () {
         T sum          = _sum (_factors);
         T sum_inv      = _sum_inv (_factors);
         T step_per_fac = _steps / sum_inv;
-        D (std::cout << "Sum: " << sum << "Sum inv: " << sum_inv
-                     << "Steps/fac: " << step_per_fac << std::endl);
+        LOG (DEBUG) << "RWF:\tSum: " << sum << "Sum inv: " << sum_inv
+                    << "Steps/fac: " << step_per_fac;
         for (auto i : _factors) {
             // Add: (sum-val)*(step per factor)
             vec.push_back ((sum - i) * (step_per_fac));
-            D (std::cout << "Fac: " << i << " InvFac: " << sum - i << std::endl);
         }
     }
     return vec;
@@ -41,7 +32,6 @@ template <class T> T rwf::rwf<T>::_sum (std::vector<T> vec) {
     for (auto i : vec) {
         sum += i;
     }
-    D (std::cout << "Sum: " << sum << std::endl);
     return sum;
 }
 
@@ -51,7 +41,6 @@ template <class T> T rwf::rwf<T>::_sum_inv (std::vector<T> vec) {
     for (auto i : vec) {
         sum_inv += sum - i;
     }
-    D (std::cout << "Sum inv: " << sum_inv << std::endl);
     return sum_inv;
 }
 

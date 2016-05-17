@@ -47,7 +47,7 @@ void config_parser::load_config_file () {
 }
 
 void config_parser::print_config_string () {
-    std::cout << config_string << std::endl;
+    LOG (DEBUG) << config_string;
 }
 
 std::string config_parser::project_name (bool fullname) {
@@ -70,21 +70,37 @@ std::string config_parser::version () {
 std::string config_parser::speaker_prefix () {
     Jzon::Parser parser;
     Jzon::Node root_node = parser.parseString (config_string);
-    return root_node.get ("name_speaker").toString ();
+    return root_node.get ("speaker_prefix").toString ();
 }
 
 std::string config_parser::site_prefix () {
     Jzon::Parser parser;
     Jzon::Node root_node = parser.parseString (config_string);
-    return root_node.get ("name_website").toString ();
+    return root_node.get ("speaker_prefix").toString ();
 }
 
 std::string config_parser::clientid () {
+    Jzon::Parser parser;
+    Jzon::Node root_node = parser.parseString (config_string);
+    if (!root_node.get ("client_name").toString ().empty ()) {
+        return speaker_prefix () + root_node.get ("client_name").toString ();
+    }
     return _clientid;
 }
 
+std::string config_parser::log_level () {
+    Jzon::Parser parser;
+    Jzon::Node root_node = parser.parseString (config_string);
+    return root_node.get ("log_level").toString ();
+}
+std::string config_parser::log_file () {
+    Jzon::Parser parser;
+    Jzon::Node root_node = parser.parseString (config_string);
+    return root_node.get ("log_file").toString ();
+}
+
 void config_parser::set_client_id (std::string clientid) {
-    _clientid = clientid;
+    _clientid = (speaker_prefix () + clientid);
 }
 config_parser::broker_type config_parser::broker () {
     Jzon::Parser parser;
@@ -118,19 +134,19 @@ int config_parser::broker_selector () {
 
 std::string config_parser::topic (std::string topic_name) {
     Jzon::Parser parser;
-    Jzon::Node root_node = parser.parseString (config_string);
-    std::string topic = root_node.get ("topics").get (topic_name).toString ();
+    Jzon::Node root_node        = parser.parseString (config_string);
+    std::string topic           = root_node.get ("topics").get (topic_name).toString ();
     std::string topic_root_name = "root";
     std::string topic_root = root_node.get ("topics").get (topic_root_name).toString ();
-    if (topic_root.empty()) {
+    if (topic_root.empty ()) {
         throw std::invalid_argument ("config parser: topic_root unknown");
-    } else if (topic.empty ()){
+    } else if (topic.empty ()) {
         throw std::invalid_argument ("config parser: topic \"" + topic_name + "\" unknown");
     }
-    if (!topic_name.compare(topic_root_name)) { // Equal
+    if (!topic_name.compare (topic_root_name)) { // Equal
         return topic_root;
     }
-    return topic_root+topic;
+    return topic_root + topic;
 }
 
 std::string config_parser::generate_name (std::string prefix, int min, int max) {

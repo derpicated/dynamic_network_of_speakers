@@ -19,13 +19,13 @@ dns::dns (config_parser& config)
 }
 
 dns::~dns () {
-    std::cerr << "---- ** disconnecting dns" << std::endl;
     publish (nullptr, CONFIG.topic ("offline").c_str (),
     CONFIG.clientid ().size (), CONFIG.clientid ().c_str (), MQTT_QoS_0);
     disconnect ();
 }
 
 void dns::on_connect (int rc) {
+    LOG (INFO) << "MQTT:\tconnected with broker, rc=" << rc;
     if (rc == 0) {
         publish (nullptr, CONFIG.topic ("online").c_str (),
         CONFIG.clientid ().size (), CONFIG.clientid ().c_str (), MQTT_QoS_0);
@@ -43,24 +43,15 @@ void dns::on_disconnect (int rc) {
         publish (nullptr, CONFIG.topic ("offline").c_str (),
         CONFIG.clientid ().size (), CONFIG.clientid ().c_str (), MQTT_QoS_0);
     }
-    std::cerr << "---- dns disconnected with rc = " << rc << std::endl;
+    LOG (ERROR) << "dns disconnected from broker, rc=" << rc;
 }
 
 void dns::on_message (const mosquitto_message* message) {
     std::unique_lock<std::mutex> lk{ _mtx };
     std::string topic{ message->topic };
 
-    D (std::cerr << "DATA received by a topic + message: " << topic << " "
-                 << (char*)message->payload << std::endl;);
-
-    D (std::cerr << "Value of the struct mosquitto_message" << std::endl
-                 << "Mid: " << message->mid << std::endl
-                 << "topic: " << message->topic << std::endl
-                 << "payload: " << (char*)message->payload
-                 << " lengte: " << message->payloadlen << std::endl
-                 << "QOS: " << message->qos << std::endl
-                 << "Retian" << message->retain << std::endl
-                 << std::endl;);
+    LOG (DEBUG) << "MQTT:\tmessage: "
+                << "topic=" << message->topic << ", payload=" << (char*)message->payload;
 
     if (topic == CONFIG.topic ("request_online")) {
         publish (nullptr, CONFIG.topic ("online").c_str (),
@@ -91,19 +82,17 @@ void dns::on_message (const mosquitto_message* message) {
 }
 
 void dns::on_subscribe (int mid, int qos_count, const int* granted_qos) {
-    std::cerr << "---- dns subscription succeeded mid = " << mid << std::endl
-              << " qos_count = " << qos_count << std::endl
-              << " granted_qos = " << *granted_qos << std::endl;
+    LOG (DEBUG) << "MQTT:\tsubscription succeeded = " << mid
+                << ", qos_count = " << qos_count << ", granted_qos = " << *granted_qos;
 }
 
 
 void dns::on_log (int level, const char* str) {
-    std::cerr << "---- # log dns " << level << std::endl
-              << ": " << str << std::endl;
+    LOG (DEBUG) << "MQTT:\tlog level " << level << ": " << str;
 }
 
 void dns::on_error () {
-    std::cerr << "**** dns ERROR" << std::endl;
+    LOG (ERROR) << "MQTT:\tunspecified error";
 }
 
 void dns::setMasterVolume (std::string volume) {
@@ -111,14 +100,12 @@ void dns::setMasterVolume (std::string volume) {
         size_t size{ 0 };
         _master_volume = stoi (volume, &size);
         if (volume.size () != size) {
-            D (std::cerr << "wrong volume value" << std::endl;);
+            LOG (ERROR) << "Attempt to set invalid master volume";
         }
     } catch (std::invalid_argument& e) {
-        D (std::cerr << std::endl
-                     << "## EXCEPTION s40 invalid_argument: " << e.what () << std::endl;);
+        LOG (ERROR) << "EXCEPTION s40 invalid_argument: " << e.what ();
     } catch (std::out_of_range& e) {
-        D (std::cerr << std::endl
-                     << "## EXCEPTION s40 out_of_range: " << e.what () << std::endl;);
+        LOG (ERROR) << "EXCEPTION s40 out_of_range: " << e.what ();
     }
 
     for (auto& object : _players) {
@@ -216,6 +203,12 @@ for every local speaker object
         if a source file is known for the object
             create player and set file
             set player local object volume
+
+for every player
+    if player name is NOT found in local objects
+        delete player
+    else
+        do nothing
 */
 
 void dns::processClientData (std::string json_str) {
@@ -242,7 +235,7 @@ void dns::processClientData (std::string json_str) {
                 _players[object_name].set_file (_cache_path + object_name);
                 _players[object_name].set_volume (adjusted_volume);
             } else {
-                ; // TODO LOG this somehow: no file known for this object
+                LOG (ERROR) << "No known source file for object \"" << object_name << "\"";
             }
         }
     }
