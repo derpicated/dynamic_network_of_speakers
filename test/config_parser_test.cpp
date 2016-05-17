@@ -17,8 +17,11 @@ int main (int argc, char const* argv[]) {
     std::cout << "Project name: " << test_config.project_name () << std::endl;
     std::cout << "Project name short: " << test_config.project_name (false) << std::endl;
     std::cout << "v" << test_config.version () << std::endl;
+    std::cout << "log level: " << test_config.log_level () << std::endl;
+    std::cout << "log file: " << test_config.log_file () << std::endl;
+
+    std::cout << "Client Name: " << test_config.clientid () << std::endl;
     std::cout << "Speaker prefix: " << test_config.speaker_prefix () << std::endl;
-    std::cout << "Client ID: " << test_config.clientid () << std::endl;
     std::cout << "Website prefix: " << test_config.site_prefix () << std::endl;
 
     std::cout << "Using broker: " << test_config.broker_selector () << std::endl;

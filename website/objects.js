@@ -51,7 +51,7 @@ OBJECT = (function (global) {
 
     /* Send the sources */
     var send_objects = function () {
-        DNS.send(DNS.topic.info_music_sources, JSON.stringify(get_objects()), true);
+        DNS.send(DNS.topic("music_sources"), JSON.stringify(get_objects()), true);
     };
 
     /* Debug print */

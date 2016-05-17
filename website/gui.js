@@ -17,15 +17,21 @@ GUI = (function (global) {
     var SPEAKER_LIST = $("#speaker_list");
     var DRAW_AREA = $("#draw_area");
     var OBJECT_LIST = $("#object_list");
-    var UPDATE_FREQ_MOVE = 100; // Send data when an obj/speaker has moved this amount of units
+    var UPDATE_FREQ_MOVE = 20; // Send data when an obj/speaker has moved this amount of units
     /* Scale factor for In Real Life to Virtual
      * Default: 1:1
      */
     var scale_irl=1;
     var scale_virt=1;
+    var first_object_location = {
+        left: DRAW_AREA.width()/2,
+        top: DRAW_AREA.height()/2
+    }
     var init = function () {
         bind_arrow_keys();
+        bind_volume_slider();
         draw_speakers_from_data();
+        set_misc_expand();
     };
     /* Move object with arrows */
     var bind_arrow_keys = function () {
@@ -39,24 +45,29 @@ GUI = (function (global) {
                     $('#'+obj_name).stop().animate({
                         left: "-="+move_amount
                     }).trigger('drop'); //left arrow key
+                    event.returnValue = false;
                     break;
                 case 38:
                     $('#'+obj_name).stop().animate({
                         top: "-="+move_amount
                     }); //up arrow key
+                    event.returnValue = false;
                     break;
                 case 39:
                     $('#'+obj_name).stop().animate({
                         left: "+="+move_amount
                     }); //right arrow key
+                    event.returnValue = false;
                     break;
                 case 40:
                     $('#'+obj_name).stop().animate({
                         top: "+="+move_amount
                     }); //bottom arrow key
+                    event.returnValue = false;
                     break;
+                default:
+                    event.returnValue = true;
                 }
-                event.returnValue = false;
             } else {
                 event.returnValue = true;
             }
@@ -67,7 +78,20 @@ GUI = (function (global) {
     var update_clients_data = function () {
         CLIENT.set_all(make_data_from_drawing());
         console.log('Updating speaker list!');
-        DNS.send(DNS.topic.info_clients_data_site, JSON.stringify(CLIENT.get_online()));
+        DNS.send_clients_data(JSON.stringify(CLIENT.get_online()));
+        // Send first object location
+        var data = CLIENT.get_online();
+        var object_offset_left;
+        var object_offset_top;
+        if (!isEmpty(data)) {
+            for (first_speaker in data) break; // get first speaker in obj
+            if (!isEmpty(data[first_speaker])) {
+                for (first_object in data[first_speaker]) break; // First object
+                object_offset_left = ($('#'+first_object).offset().left-DRAW_AREA.offset().left);
+                object_offset_top = ($('#'+first_object).offset().top-DRAW_AREA.offset().top);
+                DNS.send_first_position(object_offset_left, object_offset_top);
+            }
+        }
     };
     /* Clear the drawn speaker/objects
      * param: 'not_speakers' or 'not_objects'
@@ -78,8 +102,11 @@ GUI = (function (global) {
         empty_objects_list(not_x);
         empty_draw_area(not_x);
     };
-    /* Draw speakers from CLIENT data */
-    var draw_speakers_from_data = function () {
+    /* Draw speakers from CLIENT data
+     * first_object_left is first object location from left in percentage
+     * first_object_top is first object location from top in percentage
+     */
+    var draw_speakers_from_data = function (first_object_left = first_object_location.left, first_object_top = first_object_location.top) {
         empty_draw_area();
         var nr_of_objects=0;
         var object_tmp = $("<div class='object' id='object_tmp'></div>").hide().appendTo("body"); //add temp object
@@ -107,7 +134,8 @@ GUI = (function (global) {
                 nr_of_objects=0;
                 $.each(CLIENT.get_online()[speaker_name], function(object_name, obj_value){
                     if (!nr_of_objects) { // First object
-                        draw_object(object_name, DRAW_AREA, ((DRAW_AREA.width()-object_width)/2), ((DRAW_AREA.height()-object_height)/2));
+                        //draw_object(object_name, DRAW_AREA, ((DRAW_AREA.width()-object_width)*(first_object_left/100)), ((DRAW_AREA.height()-object_height)*(first_object_top/100)));
+                        draw_object(object_name, DRAW_AREA, (first_object_left), (first_object_top));
                         // Draw speaker seen from object
                         var left =$('#'+object_name).offset().left-DRAW_AREA.offset().left-rectangular(obj_value.distance, obj_value.angle).x;
                         var top  =$('#'+object_name).offset().top-DRAW_AREA.offset().top+rectangular(obj_value.distance, obj_value.angle).y;
@@ -174,7 +202,7 @@ GUI = (function (global) {
         if (speaker.length) { // Check if speaker exists
             speaker.detach().appendTo(destination); // Add to x
         } else { // Draw new speaker
-            var speaker_class = "<div class='speaker noselect' move_counter='0' id='"+speaker_name+"'>"+speaker_name.replace(CONFIG.name_speaker, '')+"</div>";
+            var speaker_class = "<div class='speaker noselect' move_counter='0' id='"+speaker_name+"'>"+speaker_name.replace(CONFIG.speaker_prefix, '')+"</div>";
             destination.append(speaker_class);
         }
         speaker = $('#'+speaker_name); // Update reference to object
@@ -225,10 +253,23 @@ GUI = (function (global) {
         if (object.length) { // Check if object exists
             object.detach().appendTo(destination); // Add to destination area
         } else { // Draw new object
-            var object_class = "<div class='object noselect' move_counter='0' id='"+object_name+"' onclick='GUI.load_object_properties(\""+object_name+"\")'>"+object_name+"</div>";
+            var object_class = "<div class='object noselect' move_counter='0' title='' id='"+object_name+"' onclick='GUI.load_object_properties(\""+object_name+"\")'>"+smart_truncate(object_name)+"</div>";
             destination.append(object_class);
         }
-        object = $('#'+object_name);
+        object=$('#'+object_name);
+        object.tooltip({
+            show: null,
+            hide:null,
+            track: true,
+            content: object_name,
+            position: {
+                my: "top-50",
+                at: "right+20 top"
+            },
+            close: function (event, ui) {
+                $(".ui-helper-hidden-accessible").remove();
+            }
+        });
         object.draggable({ // Make dragable in the draw area
             containment: '#top',
             revert: 'invalid',
@@ -325,6 +366,104 @@ GUI = (function (global) {
         del_object(object_name);
         update_clients_data();
     };
+    /* bind volume */
+    var bind_volume_slider = function () {
+        var UPDATE_FREQ_SLIDE = 1; // just 1
+        var volume_slider = $("#volume_slider");
+        if (isEmpty(volume_slider.attr('move_counter'))) {
+            volume_slider.attr('move_counter', 0);
+        }
+        document.getElementById("volume_slider").oninput = function() {
+            volume_slider.attr('move_counter', parseInt(volume_slider.attr('move_counter'))+1);
+            if(volume_slider.attr('move_counter')>UPDATE_FREQ_SLIDE){
+                volume_slider.attr('move_counter', 0);
+                DNS.send(DNS.topic("music_volume"), $("#volume_slider").val(), true);
+            }
+        };
+        volume_slider.mouseup(function() { // enable setting of volume
+            volume_slider.removeAttr('moving');
+        })
+        volume_slider.mousedown(function() { // disable setting of volume
+            volume_slider.attr('moving', true);
+        });
+    };
+    /* Set the volume */
+    var set_volume_slider = function (volume) {
+        if (!$("#volume_slider").attr('moving')) {
+            $("#volume_slider").val(volume);//set slider value
+        }
+    };
+
+    /* Send the music status */
+    var music_status = function (status) {
+        switch (status) {
+            case 'play':
+                DNS.send(DNS.topic('music_status'), 'play');
+                DNS.send(DNS.topic('music_position'), $("#time_slider").val());
+                break;
+            case 'pause':
+                DNS.send(DNS.topic('music_status'), 'pause');
+                break;
+            default:
+                DNS.send(DNS.topic('music_status'), 'stop');
+                break;
+        }
+    };
+
+    var set_misc_expand = function () {
+        $("#expand_button").click(function () {
+            $content = $('#misc_expand');
+            //open up the content needed - toggle the slide- if visible, slide up, if not slidedown.
+            $content.slideToggle(500, function () {
+                if ($content.is(":visible")) {
+                     $("#expand_button").removeClass('fa-plus-square-o').addClass('fa-minus-square-o');
+                     $("#expand_button").attr('title', "Close");
+                } else {
+                    $("#expand_button").removeClass('fa-minus-square-o').addClass('fa-plus-square-o');
+                    $("#expand_button").attr('title', "Open");
+                }
+            });
+        });
+        $("#expand_button").tooltip({
+            show: null,
+            hide:null,
+            track: true,
+            position: {
+                my: "top-50",
+                at: "right+20 top"
+            },
+            close: function (event, ui) {
+                $(".ui-helper-hidden-accessible").remove();
+            }
+        });
+    };
+
+    var batch_delete_objects = function (control = 'all') {
+        switch (control) {
+            case 'all':
+                //console.log("delete all");
+                OBJECT.del_all();
+                OBJECT.send_objects();
+                draw_speakers_from_data();
+                break;
+            default:
+                break;
+        }
+    };
+    var batch_add_objects = function (objects) {
+        //console.log("Add batch: "+objects);
+        for (line in objects.split("\n")){
+            //console.log("Line: "+objects.split("\n")[line]);
+            if(objects.split("\n")[line].split(",").length==2){
+                //console.log("Name: "+objects.split("\n")[line].split(",")[0].replace(' ', ''));
+                $('#music_name').val(objects.split("\n")[line].split(",")[0].replace(' ', ''));
+                //console.log("Object: "+objects.split("\n")[line].split(",")[1].replace(' ', ''));
+                $('#music_uri').val(objects.split("\n")[line].split(",")[1].replace(' ', ''));
+                save_object_properties();
+            }
+        }
+    };
+
     /* Clear speakers respectively */
     var empty_speaker_list = function (not_x = '') {
         if (!(not_x=='not_speakers')) {
@@ -485,6 +624,51 @@ GUI = (function (global) {
     var isValid = function (str){
         return !/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\? ]/g.test(str);
     }
+
+    /* Make short string from long string
+     * some examples
+     * Name_Of_String => NOS
+     * name_of_string => nos
+     * nameofstring => nam
+     * name_OF_string => nOs
+     * na => na_
+     */
+    var smart_truncate = function (string, min_chars=3, max_chars=4) {
+        var between = function (str, min=min_chars, max=max_chars) {
+            if (str.length>=min && str.length<=max) {
+                return true;
+            }
+            return false;
+        }
+        var string_size_check = function (str, min=min_chars, max=max_chars, append_char='_') {
+            if (str.length>max) { // truncate
+                //console.log("truncate string "+str.substring(0, max));
+                return  str.substring(0, max);
+            } else if (str.length<min) { //append missing chars
+                return str+append_char.repeat(min-str.length);
+            }
+            return str;
+        }
+        var new_str;
+        new_str = string.match(/[A-Z, 0-9]/g);//    replace(/[a-z]/g, ''); // capitals: VALUE => VAL...
+        if (new_str) {
+            new_str = new_str.join('')
+            //console.log("regex capitals: "+new_str);
+            if (between(new_str)) {
+                return new_str;
+            }
+        }
+
+        new_str = string.match(/(?:^|_)([A-z])/g); // Befor e'_': V_a_l_u_e => VAL....
+        if (new_str) {
+            //console.log("regex '_': "+new_str);
+            new_str = new_str.join('').replace(/_/g, '')
+            if (between(new_str)) { // more then only start char (first char + min of one char after _ = 2)
+                return new_str;
+            }
+        }
+        return string_size_check(string); // ok, just return part of string none matched
+    }
     /************************************************************/
     /*  MATHS                                                   */
     /************************************************************/
@@ -529,6 +713,7 @@ GUI = (function (global) {
     return { // Bind functions to the outside world
         init                    : init,
         clear                   : clear,
+        empty_draw_area         : empty_draw_area,
         update_clients_data     : update_clients_data,
         draw_speakers_from_data : draw_speakers_from_data,
         draw_available_objects  : draw_available_objects,
@@ -536,6 +721,15 @@ GUI = (function (global) {
         save_object_properties  : save_object_properties,
         load_object_properties  : load_object_properties,
         delete_object_button    : delete_object_button,
+        DRAW_AREA               : DRAW_AREA,
+        SPEAKER_LIST            : SPEAKER_LIST,
+        OBJECT_LIST             : OBJECT_LIST,
+        first_object_location   : first_object_location,
+        smart_truncate          : smart_truncate,
+        set_volume_slider       : set_volume_slider,
+        music_status            : music_status,
+        batch_delete_objects    : batch_delete_objects,
+        batch_add_objects       : batch_add_objects
     };
 })(window);
 /* Check if object is empty */

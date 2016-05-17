@@ -2,10 +2,9 @@
 
 dns::dns (config_parser& config)
 : mosqpp::mosquittopp{ (config.clientid ()).c_str () }
-, _topicRoot ("ESEiot")
 , _mtx{}
 , CONFIG (config)
-, _cache_path (".cache/")
+, _cache_path ("/tmp/dns_sound_cache/")
 , _master_volume (0)
 , _sources ()
 , _rwf_volumes ()
@@ -16,6 +15,12 @@ dns::dns (config_parser& config)
     CONFIG.clientid ().c_str (), MQTT_QoS_0);
 
     connect (CONFIG.broker ().uri.c_str (), CONFIG.broker ().port, MQTT_KEEP_ALIVE);
+
+    if (mkdir (_cache_path.c_str (), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) {
+        if (errno != EEXIST) {
+            throw (std::runtime_error ("could not create cache folder" + _cache_path));
+        }
+    }
 }
 
 dns::~dns () {
@@ -68,7 +73,7 @@ void dns::on_message (const mosquitto_message* message) {
         setMasterVolume (std::string{ (char*)message->payload });
     }
 
-    if (topic == CONFIG.topic ("music_volume")) {
+    if (topic == CONFIG.topic ("music_status")) {
         setPPS (std::string{ (char*)message->payload });
     }
 

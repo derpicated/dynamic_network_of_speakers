@@ -256,7 +256,7 @@
 
     \chapter{Introduction}          % Introduction
     \input{./chapters/introduction}
-    % Convert topic readme from markdown to LaTeX
+    % Convert readme from markdown to LaTeX
     \immediate\write18{
         pandoc                              % Converter
         ../README.md                        % Source
@@ -264,6 +264,8 @@
         -o build/readme.tex                 % Destination/output
     }
     \input{./build/readme.tex} % Include generated file
+    \vspace{5ex}
+    \input{../LICENSE} % Include license file
 
     \chapter{Topics}                % Topic spec sheet
     \input{./chapters/topics}

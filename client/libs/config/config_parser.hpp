@@ -33,14 +33,13 @@ class config_parser {
     std::string speaker_prefix ();
     std::string site_prefix ();
     std::string clientid ();
-    std::string log_level ();
-    std::string log_file ();
+    std::string log_level();
+    std::string log_file();
     void set_client_id (std::string clientid);
     broker_type broker ();
     int broker_selector ();
     void print_config_string ();
-    std::string topic (std::string topic_name);
-
+    std::string topic(std::string topic_name);
     protected:
     private:
     std::string generate_name (std::string prefix, int min = 0, int max = 999);

@@ -2,13 +2,16 @@ var CONFIG =
 {
     "name": "Dynamic Network of Speakers",
     "name_short": "DNS",
+    "client_name": "",
     "version": {
         "major": 0,
         "minor": 0,
         "revision": 1
     },
-    "name_speaker": "speaker_",
-    "name_website": "site_",
+    "log_level":"info",
+    "log_file": "./dns.log",
+    "speaker_prefix": "speaker_",
+    "website_prefix": "site_",
     "use_broker": 1,
     "broker": {
         "1": {
@@ -43,14 +46,17 @@ var CONFIG =
     },
     "topics": {
         "root": "ESEiot/DNS/",
+        "request": "request",
         "request_online": "request/online",
         "request_client_data": "request/info/clients",
+        "answer_site": "answer/site",
         "music_time": "info/music/time",
         "music_position": "info/music/time/position",
         "music_status": "info/music/status",
         "music_sources": "info/music/sources",
         "music_volume": "info/music/volume",
         "clients_data": "info/clients/data",
+        "clients_data_first_object": "info/clients/object/first",
         "online": "info/clients/online",
         "offline": "info/clients/offline"
     }

@@ -6,6 +6,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <deque>
+#include <stdexcept>
 #include <iomanip>
 #include <iostream>
 #include <map>
@@ -13,6 +14,7 @@
 #include <stdexcept>
 #include <stdlib.h>
 #include <string>
+#include <sys/stat.h>
 #include <thread>
 #include <utility>
 
@@ -22,7 +24,6 @@
 #include "libs/download/download.hpp"
 #include "libs/logger/easylogging++.h"
 #include "libs/rwf/relative_weight_factor.hpp"
-#include "libs/topic/Topic.h"
 
 class dns : public mosqpp::mosquittopp {
     public:
@@ -35,11 +36,10 @@ class dns : public mosqpp::mosquittopp {
     dns (config_parser& config);
 
     dns (const dns& other) = delete;
-    dns& operator= (const dns& other) = delete;
+    dns& operator=(const dns& other) = delete;
     virtual ~dns ();
 
     protected:
-    Topic _topicRoot;
     std::mutex _mtx;
 
     virtual void on_connect (int rc) override;
