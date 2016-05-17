@@ -65,6 +65,13 @@ $(data_parser_test_out): $(data_parser_test_src)
 	cp ./test/test_source_data.json $(BUILD_DIR)
 	cp ./test/test_client_compose.json $(BUILD_DIR)
 
+# logger test
+logger_test_src=./test/log_test.cpp
+logger_test_out=logger_test
+$(logger_test_out): $(logger_test_src)
+	$(CHECK_BUILD)
+	$(CXX) $(CXXFLAGS) $(logger_test_src) -o $(BUILD_DIR)/$(logger_test_out)
+
 # jzon test
 jzon_test_src=	./test/jzon_test.cpp \
 				./client/libs/jzon/Jzon.cpp
