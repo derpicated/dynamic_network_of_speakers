@@ -12,7 +12,7 @@
             total={6in, 8in},
             headheight=110pt]{geometry} % Set to a4 paper
 \usepackage{graphicx}                   % Include graphics
-\graphicspath{{./images}
+\graphicspath{{./images/}
               {../misc/logo/}}          % Graphics paths
 \usepackage{titling}                    % Title page
 \usepackage{fancyhdr}                   % Make header end footer
@@ -29,6 +29,7 @@
 \usepackage{etoolbox}                   %e-TEX tools for LATEX
 \usepackage{caption}                    % Customising captions in floating environments
 \usepackage{subcaption}                 % Support for sub-captions
+\usepackage{chngcntr}                   % Change the resetting of counters
 %\usepackage{lipsum}                     % For sample text
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -213,6 +214,7 @@
 \DeclareCaptionFormat{tabcapfont}
     {\nimbus \small\textit{\textbf{#1#2}}#3}    % caption format
 \captionsetup[table]{format=tabcapfont}         % set defined caption
+\counterwithin{table}{section}
 % Sub Tables
 \renewcommand{\thesubtable}{\alph{subtable}}   % a, b etc
 % Figures
@@ -220,6 +222,7 @@
 \DeclareCaptionFormat{figcapfont}
     {\nimbus \small\textit{\textbf{#1#2}}#3}    % caption format
 \captionsetup[figure]{format=figcapfont}        % set defined caption
+\counterwithin{figure}{chapter}
 % Sub figures
 \renewcommand{\thesubfigure}{\alph{subfigure}}  % a, b etc
 %%%%%%%%%%%%%%%%%%%%%%
