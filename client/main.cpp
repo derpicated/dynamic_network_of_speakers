@@ -7,45 +7,44 @@
 #include "./libs/logger/easylogging++.h"
 #include "dns.hpp"
 
+// logger defines and configuration
+#define ELPP_NO_DEFAULT_LOG_FILE
 INITIALIZE_EASYLOGGINGPP
 
-using namespace std;
-
+// declarations
 volatile bool receivedSIGINT{ false };
+void handleSIGCHLD (int);
+void handleSIGINT (int);
+void configure_logger (std::string log_level, std::string log_file);
 
-void handleSIGINT (int) {
-    receivedSIGINT = true;
-}
-
-void handleSIGCHLD (int) {
-    /*TODO implement SIGCHLD handler*/
-    int status;
-    wait (&status); // pid_t pid =
-    /*lookup pid in map to find function
-    remove pid entry from map
-    call function
-    */
-}
-
+// main
 int main (int argc, char const* argv[]) {
+    // if no configuration was given, exit
+    if (argc != 2) {
+        LOG (FATAL) << "usage: " << argv[0] << " config.js";
+        exit (EXIT_FAILURE);
+    }
+
+    // set signal handlers
     signal (SIGINT, handleSIGINT);
     signal (SIGCHLD, handleSIGCHLD);
 
-    int mosquitto_lib_version[] = { 0, 0, 0 };
-
-    if (argc != 2) {
-        LOG (FATAL) << "usage: " << argv[0] << " config.js" << std::endl;
-        exit (EXIT_FAILURE);
-    }
+    // create configuration from file
     config_parser CONFIG (argv[1]);
+    LOG (INFO) << CONFIG.project_name () << " v" << CONFIG.version ();
 
-    LOG (INFO) << CONFIG.project_name () << " v" << CONFIG.version () << std::endl;
+    // configure logger
+    configure_logger (CONFIG.log_level (), CONFIG.log_file ());
 
+    // init libmosquitto
+    int mosquitto_lib_version[] = { 0, 0, 0 };
     mosqpp::lib_init ();
     mosqpp::lib_version (&mosquitto_lib_version[0], &mosquitto_lib_version[1],
     &mosquitto_lib_version[2]);
     LOG (DEBUG) << "using Mosquitto lib version " << mosquitto_lib_version[0] << '.'
                 << mosquitto_lib_version[1] << '.' << mosquitto_lib_version[2];
+
+    // run dns
     try {
         dns client (CONFIG);
 
@@ -57,7 +56,7 @@ int main (int argc, char const* argv[]) {
             }
         }
         LOG (FATAL) << "Revieced signal for signalhandler";
-    } catch (exception& e) {
+    } catch (std::exception& e) {
         LOG (FATAL) << "Exception " << e.what ();
     } catch (...) {
         LOG (FATAL) << "UNKNOWN EXCEPTION";
@@ -67,4 +66,55 @@ int main (int argc, char const* argv[]) {
     mosqpp::lib_cleanup ();
 
     return 0;
+}
+
+// signal handlers
+void handleSIGINT (int) {
+    receivedSIGINT = true;
+}
+
+void handleSIGCHLD (int) {
+    /*TODO implement SIGCHLD handler*/
+    int status;
+    wait (&status);
+}
+
+// logger configuration
+void configure_logger (std::string log_level_str, std::string log_file_str) {
+    el::Configurations log_conf;
+
+    if (log_file_str.empty ()) {
+        log_conf.set (
+        el::Level::Global, el::ConfigurationType::ToFile, "false");
+    } else {
+        log_conf.set (el::Level::Global, el::ConfigurationType::Filename,
+        log_file_str.c_str ());
+    }
+
+
+    el::Level log_level = el::LevelHelper::convertFromString (log_level_str.c_str ());
+    switch (log_level) {
+        case el::Level::Fatal:
+            log_conf.set (
+            el::Level::Error, el::ConfigurationType::Enabled, "false");
+        case el::Level::Error:
+            log_conf.set (el::Level::Warning, el::ConfigurationType::Enabled, "false");
+        case el::Level::Warning:
+            log_conf.set (
+            el::Level::Info, el::ConfigurationType::Enabled, "false");
+        case el::Level::Info:
+            log_conf.set (
+            el::Level::Debug, el::ConfigurationType::Enabled, "false");
+        case el::Level::Debug: break;
+        case el::Level::Global:
+        case el::Level::Trace:
+        case el::Level::Unknown:
+        case el::Level::Verbose:
+        default:
+            LOG (ERROR) << "CONFIG: false log level: \"" << log_level_str << "\"";
+    }
+
+    el::Loggers::reconfigureLogger ("default", log_conf);
+    el::Loggers::addFlag (el::LoggingFlag::DisableApplicationAbortOnFatalLog);
+    el::Loggers::addFlag (el::LoggingFlag::ColoredTerminalOutput);
 }

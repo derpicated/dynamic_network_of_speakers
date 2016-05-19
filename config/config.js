@@ -8,7 +8,7 @@ var CONFIG =
         "minor": 0,
         "revision": 1
     },
-    "log_level":"info",
+    "log_level":"INFO",
     "log_file": "./dns.log",
     "speaker_prefix": "speaker_",
     "website_prefix": "site_",
