@@ -8,9 +8,12 @@
             {biblatex}      % APA style bibliography support
 \DeclareLanguageMapping{english}{english-apa}    % Language mapping
 \addbibresource[datatype=bibtex]{references.bib} % Use a bibtex bibliography file
-\usepackage[a4paper,
-            total={6in, 8in},
-            headheight=110pt]{geometry} % Set to a4 paper
+\usepackage[a4paper,            % Set to a4 paper
+            left    = 2.5cm,    % Left paper margin
+            right   = 2.5cm,    % Right paper margin
+            top     = 2.5cm,    % Top paper margin
+            bottom  = 2.5cm     % Bottom paper margin
+            ]{geometry}
 \usepackage{graphicx}                   % Include graphics
 \graphicspath{{./images/}
               {../misc/logo/}}          % Graphics paths
@@ -27,7 +30,7 @@
 \usepackage{hyperref}                   % Generate links
 \usepackage{xcolor}                     % Color for links etc
 \usepackage{etoolbox}                   % e-TEX tools for LATEX
-\usepackage{caption}                    % Customising captions in floating environments
+\usepackage{caption}                    % Customizing captions in floating environments
 \usepackage{subcaption}                 % Support for sub-captions
 \usepackage{chngcntr}                   % Change the resetting of counters
 \usepackage{float}                      % Improved interface for floating objects
@@ -52,8 +55,8 @@
     \and\\
     Brian van Zwam
 }
-% Puplish data
-\date{April 2016}
+% Publish data
+\date{May 2016}
 % Version number
 \def \version{0.1}
 
@@ -101,8 +104,16 @@
     UprightFont = *_regular ,
     ItalicFont = *_italic ,
     BoldFont = *_bold ,
-    BoldItalicFont = *_bold-italic
-    ]{nimbus-sans-l}
+    BoldItalicFont = *_bold-italic,
+    Ligatures = {   % Set Ligature options
+       NoCommon,
+       NoRequired,
+       NoContextual,
+       NoHistoric,
+       NoDiscretionary,
+       TeX
+   }
+   ]{nimbus-sans-l}
 %%%%%%%%%%%%%%%%%%%%%%
 %% Table of Content
 %%%%%%%%%%%%%%%%%%%%%%
@@ -143,7 +154,8 @@
 }
 % sectional unit title format per section
 \renewcommand{\cftlottitlefont}{\Huge\xolonium}     % LoT title
-\renewcommand{\cfttabfont}{\normalsize\nimbus{Table }}  % LoF entries
+\renewcommand{\cfttabfont}{\normalsize\nimbus{Table }}  % LoT entries
+\setlength{\cfttabnumwidth}{4em}  % Modify number width in LoT
 % Page number format per section
 %% Skip distance
 \renewcommand\cfttabafterpnum{\vskip6pt}        % figure page
@@ -160,6 +172,8 @@
 % sectional unit title format per section
 \renewcommand{\cftloftitlefont}{\Huge\xolonium} % LoF title
 \renewcommand{\cftfigfont}{\normalsize\nimbus{Figure }}  % LoF entries
+\setlength{\cftfignumwidth}{4em}  % Modify number width in LoF
+
 % Page number format per section
 %% Skip distance
 \renewcommand\cftfigafterpnum{\vskip6pt}        % figure page
@@ -177,7 +191,7 @@
 \titleformat{\chapter}
     {\Large\xolonium}         % format
     {\xolonium\thechapter }   % label
-    {1.5em}                   % seperation
+    {1.5em}                   % separation
     {\huge}                   % before-code
 \titlespacing{\chapter}
     {0em}  % from left
@@ -192,13 +206,13 @@
 % Subsection
 \titleformat{\subsection}
     {\xolonium}
-    {\xolonium\thesection}
+    {\xolonium\thesubsection}
     {1em}
     {}
 % Subsubsection
 \titleformat{\subsubsection}
     {\xolonium}
-    {\xolonium\thesection}
+    {\xolonium\thesubsubsection}
     {1em}
     {}
 % Paragraph
@@ -211,21 +225,21 @@
 %% Format captions
 %%%%%%%%%%%%%%%%%%%%%%
 % Tables
-\renewcommand{\thetable}{\arabic{table}}        % numbering:  1, 2 etc
+\renewcommand{\thetable}{\arabic{table}}        % numbering:  1, 2 etc.
 \DeclareCaptionFormat{tabcapfont}
     {\nimbus \small\textit{\textbf{#1#2}}#3}    % caption format
 \captionsetup[table]{format=tabcapfont}         % set defined caption
 \counterwithin{table}{section}
 % Sub Tables
-\renewcommand{\thesubtable}{\alph{subtable}}   % a, b etc
+\renewcommand{\thesubtable}{\alph{subtable}}   % a, b etc.
 % Figures
-\renewcommand{\thefigure}{\arabic{figure}}      % numbering:  1, 2 etc
+\renewcommand{\thefigure}{\arabic{figure}}      % numbering:  1, 2 etc.
 \DeclareCaptionFormat{figcapfont}
     {\nimbus \small\textit{\textbf{#1#2}}#3}    % caption format
 \captionsetup[figure]{format=figcapfont}        % set defined caption
 \counterwithin{figure}{chapter}
 % Sub figures
-\renewcommand{\thesubfigure}{\alph{subfigure}}  % a, b etc
+\renewcommand{\thesubfigure}{\alph{subfigure}}  % a, b etc.
 %%%%%%%%%%%%%%%%%%%%%%
 %% Header and Footer
 %%%%%%%%%%%%%%%%%%%%%%
@@ -250,7 +264,7 @@
 \begin{document}
     \nimbus % Set global font
 
-    \input{./chapters/titlepage}    % Include the titlepage
+    \input{./chapters/titlepage}    % Include the title page
 
     \chapter*{Summary}              % Summary
     \input{./chapters/summary}
