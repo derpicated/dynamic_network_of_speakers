@@ -30,11 +30,9 @@ int main (int argc, char const* argv[]) {
     signal (SIGCHLD, handleSIGCHLD);
 
     // create configuration from file
-    config_parser CONFIG (argv[1]);
-    LOG (INFO) << CONFIG.project_name () << " v" << CONFIG.version ();
-
-    // configure logger
-    configure_logger (CONFIG.log_level (), CONFIG.log_file ());
+    config_parser config (argv[1]);
+    LOG (INFO) << config.project_name () << " v" << config.version ();
+    configure_logger (config.log_level (), config.log_file ());
 
     // init libmosquitto
     int mosquitto_lib_version[] = { 0, 0, 0 };
@@ -46,7 +44,7 @@ int main (int argc, char const* argv[]) {
 
     // run dns
     try {
-        dns client (CONFIG);
+        dns client (config);
 
         while (!receivedSIGINT) {
             int rc = client.loop ();
@@ -62,7 +60,7 @@ int main (int argc, char const* argv[]) {
         LOG (FATAL) << "UNKNOWN EXCEPTION";
     }
 
-    LOG (INFO) << CONFIG.project_name () << " stopped";
+    LOG (INFO) << config.project_name () << " stopped";
     mosqpp::lib_cleanup ();
 
     return 0;
@@ -111,7 +109,7 @@ void configure_logger (std::string log_level_str, std::string log_file_str) {
         case el::Level::Unknown:
         case el::Level::Verbose:
         default:
-            LOG (ERROR) << "CONFIG: false log level: \"" << log_level_str << "\"";
+            LOG (ERROR) << "config: false log level: \"" << log_level_str << "\"";
     }
 
     el::Loggers::reconfigureLogger ("default", log_conf);
