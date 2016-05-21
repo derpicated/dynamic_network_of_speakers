@@ -26,10 +26,11 @@
 \usepackage{bookmark}                   % Generate bookmarks
 \usepackage{hyperref}                   % Generate links
 \usepackage{xcolor}                     % Color for links etc
-\usepackage{etoolbox}                   %e-TEX tools for LATEX
+\usepackage{etoolbox}                   % e-TEX tools for LATEX
 \usepackage{caption}                    % Customising captions in floating environments
 \usepackage{subcaption}                 % Support for sub-captions
 \usepackage{chngcntr}                   % Change the resetting of counters
+\usepackage{float}                      % Improved interface for floating objects
 %\usepackage{lipsum}                     % For sample text
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -230,8 +231,9 @@
 %%%%%%%%%%%%%%%%%%%%%%
 \pagestyle{fancy}           % Set default style
 \fancyhf{}                  % Clear all header and footer fields
-\lhead{\nimbus\thedate}     % Left head
+\lhead{\nimbus\title}       % Left head
 \rhead{\nimbus\thesection}  % Right head
+\lfoot{\nimbus\thedate}     % Left foot
 \rfoot{\nimbus\thepage}     % Right foot
 % Redefine the plain page style
 \fancypagestyle{plain}{ % Used at start of chapter
