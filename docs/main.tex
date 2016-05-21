@@ -34,6 +34,11 @@
 \usepackage{subcaption}                 % Support for sub-captions
 \usepackage{chngcntr}                   % Change the resetting of counters
 \usepackage{float}                      % Improved interface for floating objects
+\usepackage[bottom,
+            hang,
+            flushmargin]
+            {footmisc}                  % A range of footnote options
+\usepackage{wrapfig}                    % Produces figures which text can flow around
 %\usepackage{lipsum}                     % For sample text
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,6 +119,11 @@
        TeX
    }
    ]{nimbus-sans-l}
+% Footnotes
+\renewcommand{\footnotelayout}{
+    \footnotesize\nimbus
+}
+
 %%%%%%%%%%%%%%%%%%%%%%
 %% Table of Content
 %%%%%%%%%%%%%%%%%%%%%%
@@ -188,39 +198,76 @@
 %% Format per section
 %%%%%%%%%%%%%%%%%%%%%%
 % Chapter
+%\titleformat{\chapter}
+%    {\Large\xolonium}         % format
+%    {\xolonium\thechapter }   % label
+%    {1.5em}                   % separation
+%    {\huge}                   % before-code
+%\titlespacing{\chapter}
+%    {0em}   % left spacing
+%    {0ex}   % before spacing
+%    {2ex}   % after spacing
+%    % [right
 \titleformat{\chapter}
-    {\Large\xolonium}         % format
-    {\xolonium\thechapter }   % label
-    {1.5em}                   % separation
-    {\huge}                   % before-code
+    [hang] % shape
+    {\Large\xolonium} % format
+    {\thechapter} % label
+    {1.5em} % horizontal sep between label and title body
+    {} % before-code
+    [] % after-code
 \titlespacing{\chapter}
-    {0em}  % from left
-    {0ex}   % above header
-    {2ex}  % Below header
+    {0em}   % left spacing
+    {0ex}   % before spacing
+    {3ex}   % after spacing
 % Section
 \titleformat{\section}
-    {\xolonium}
-    {\xolonium\thesection}
-    {1em}
-    {}
+    [hang] % shape
+    {\Large\xolonium} % format
+    {\thesection} % label
+    {2em} % horizontal sep between label and title body
+    {} % before-code
+    [] % after-code
+\titlespacing{\section}
+    {0em}   % left spacing
+    {2ex}   % before spacing
+    {2ex}   % after spacing
 % Subsection
 \titleformat{\subsection}
-    {\xolonium}
-    {\xolonium\thesubsection}
-    {1em}
-    {}
+    [hang] % shape
+    {\normalsize\xolonium} % format
+    {\thesubsection} % label
+    {2.5em} % horizontal sep between label and title body
+    {} % before-code
+    [] % after-code
+\titlespacing{\subsection}
+    {0em}   % left spacing
+    {2ex}   % before spacing
+    {1ex}   % after spacing
 % Subsubsection
 \titleformat{\subsubsection}
-    {\xolonium}
-    {\xolonium\thesubsubsection}
-    {1em}
-    {}
+    [hang] % shape
+    {\xolonium} % format
+    {\thesubsubsection} % label
+    {3em} % horizontal sep between label and title body
+    {} % before-code
+    [] % after-code
+\titlespacing{\subsubsection}
+    {0em}   % left spacing
+    {2ex}   % before spacing
+    {1ex}   % after spacing
 % Paragraph
 \titleformat{\paragraph}
-    {\normalfont\normalsize\xolonium\color{cyan}}
-    {\theparagraph}
-    {1em}
-    {}
+    [hang] % shape
+    {\normalfont\normalsize\xolonium\color{cyan}} % format
+    {\theparagraph} % label
+    {1em} % horizontal sep between label and title body
+    {} % before-code
+    [] % after-code
+\titlespacing{\paragraph}
+    {0em}   % left spacing
+    {2ex}   % before spacing
+    {1ex}   % after spacing
+
 %%%%%%%%%%%%%%%%%%%%%%
 %% Format captions
 %%%%%%%%%%%%%%%%%%%%%%
@@ -267,6 +314,7 @@
     \input{./chapters/titlepage}    % Include the title page
 
     \chapter*{Summary}              % Summary
+    \label{chap:Summary}
     \input{./chapters/summary}
 
     \clearpage
@@ -274,6 +322,7 @@
     \tableofcontents                % Generate and include a table of contents
 
     \chapter{Introduction}          % Introduction
+    \label{chap:Introduction}
     \input{./chapters/introduction}
     % Convert readme from markdown to LaTeX
     \immediate\write18{
@@ -287,6 +336,7 @@
     \input{../LICENSE} % Include license file
 
     \chapter{Topics}                % Topic spec sheet
+    \label{chap:Topics}
     \input{./chapters/topics}
     % Convert topic spec sheet from markdown to LaTeX
     \immediate\write18{
@@ -298,12 +348,15 @@
     \input{./build/topic_specification.tex} % Include generated file
 
     \chapter{Client}                % Client
+    \label{chap:Client}
     \input{./chapters/client}
 
     \chapter{Website}               % Website
+    \label{chap:Website}
     \input{./chapters/website}
 
     \chapter{Conclusion}            % Conclusion
+    \label{chap:Conclusion}
     \input{./chapters/conclusion}
 
     \clearpage      % Clear page for LoT
