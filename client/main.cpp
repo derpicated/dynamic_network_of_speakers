@@ -111,8 +111,12 @@ void configure_logger (std::string log_level_str, std::string log_file_str) {
         default:
             LOG (ERROR) << "config: false log level: \"" << log_level_str << "\"";
     }
+    el::Loggers::reconfigureAllLoggers (
+    el::ConfigurationType::Format, "%datetime %level : %msg");
+    log_conf.set (el::Level::Debug, el::ConfigurationType::Format,
+    "%datetime %level: at %loc : %msg");
 
-    el::Loggers::reconfigureLogger ("default", log_conf);
+    el::Loggers::reconfigureAllLoggers (log_conf);
     el::Loggers::addFlag (el::LoggingFlag::DisableApplicationAbortOnFatalLog);
     el::Loggers::addFlag (el::LoggingFlag::ColoredTerminalOutput);
 }
