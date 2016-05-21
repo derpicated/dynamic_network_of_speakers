@@ -134,6 +134,8 @@ A general information topic.
 }
 ```
 
+- `info/clients/object/first/xxx`: Topic for sending the x and y offset of the first object. This is used by the website for synchronization of the data. `xxx` is the name of the website that is sending the data.
+
 #### Device status
 
 - `info/clients/online`: If a clients comes online, it will post its `clientid`.

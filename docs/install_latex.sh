@@ -35,6 +35,8 @@ DNF_PACKAGE_NAMES=(
     texlive-lipsum
     texlive-xetex
     texlive-euenc
+    texlive-wrapfig
+    texlive-dirtytalk
     texlive-collection-fontsrecommended
     pandoc
 )

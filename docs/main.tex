@@ -8,11 +8,14 @@
             {biblatex}      % APA style bibliography support
 \DeclareLanguageMapping{english}{english-apa}    % Language mapping
 \addbibresource[datatype=bibtex]{references.bib} % Use a bibtex bibliography file
-\usepackage[a4paper,
-            total={6in, 8in},
-            headheight=110pt]{geometry} % Set to a4 paper
+\usepackage[a4paper,            % Set to a4 paper
+            left    = 2.5cm,    % Left paper margin
+            right   = 2.5cm,    % Right paper margin
+            top     = 2.5cm,    % Top paper margin
+            bottom  = 2.5cm     % Bottom paper margin
+            ]{geometry}
 \usepackage{graphicx}                   % Include graphics
-\graphicspath{{./images}
+\graphicspath{{./images/}
               {../misc/logo/}}          % Graphics paths
 \usepackage{titling}                    % Title page
 \usepackage{fancyhdr}                   % Make header end footer
@@ -26,9 +29,17 @@
 \usepackage{bookmark}                   % Generate bookmarks
 \usepackage{hyperref}                   % Generate links
 \usepackage{xcolor}                     % Color for links etc
-\usepackage{etoolbox}                   %e-TEX tools for LATEX
-\usepackage{caption}                    % Customising captions in floating environments
+\usepackage{etoolbox}                   % e-TEX tools for LATEX
+\usepackage{caption}                    % Customizing captions in floating environments
 \usepackage{subcaption}                 % Support for sub-captions
+\usepackage{chngcntr}                   % Change the resetting of counters
+\usepackage{float}                      % Improved interface for floating objects
+\usepackage[bottom,
+            hang,
+            flushmargin]
+            {footmisc}                  % A range of footnote options
+            \usepackage{dirtytalk}
+\usepackage{wrapfig}                    % Produces figures which text can flow around
 %\usepackage{lipsum}                     % For sample text
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,8 +61,8 @@
     \and\\
     Brian van Zwam
 }
-% Puplish data
-\date{April 2016}
+% Publish data
+\date{May 2016}
 % Version number
 \def \version{0.1}
 
@@ -99,8 +110,21 @@
     UprightFont = *_regular ,
     ItalicFont = *_italic ,
     BoldFont = *_bold ,
-    BoldItalicFont = *_bold-italic
-    ]{nimbus-sans-l}
+    BoldItalicFont = *_bold-italic,
+    Ligatures = {   % Set Ligature options
+       NoCommon,
+       NoRequired,
+       NoContextual,
+       NoHistoric,
+       NoDiscretionary,
+       TeX
+   }
+   ]{nimbus-sans-l}
+% Footnotes
+\renewcommand{\footnotelayout}{
+    \footnotesize\nimbus
+}
+
 %%%%%%%%%%%%%%%%%%%%%%
 %% Table of Content
 %%%%%%%%%%%%%%%%%%%%%%
@@ -141,7 +165,8 @@
 }
 % sectional unit title format per section
 \renewcommand{\cftlottitlefont}{\Huge\xolonium}     % LoT title
-\renewcommand{\cfttabfont}{\normalsize\nimbus{Table }}  % LoF entries
+\renewcommand{\cfttabfont}{\normalsize\nimbus{Table }}  % LoT entries
+\setlength{\cfttabnumwidth}{4em}  % Modify number width in LoT
 % Page number format per section
 %% Skip distance
 \renewcommand\cfttabafterpnum{\vskip6pt}        % figure page
@@ -158,6 +183,8 @@
 % sectional unit title format per section
 \renewcommand{\cftloftitlefont}{\Huge\xolonium} % LoF title
 \renewcommand{\cftfigfont}{\normalsize\nimbus{Figure }}  % LoF entries
+\setlength{\cftfignumwidth}{4em}  % Modify number width in LoF
+
 % Page number format per section
 %% Skip distance
 \renewcommand\cftfigafterpnum{\vskip6pt}        % figure page
@@ -172,63 +199,103 @@
 %% Format per section
 %%%%%%%%%%%%%%%%%%%%%%
 % Chapter
+%\titleformat{\chapter}
+%    {\Large\xolonium}         % format
+%    {\xolonium\thechapter }   % label
+%    {1.5em}                   % separation
+%    {\huge}                   % before-code
+%\titlespacing{\chapter}
+%    {0em}   % left spacing
+%    {0ex}   % before spacing
+%    {2ex}   % after spacing
+%    % [right
 \titleformat{\chapter}
-    {\Large\xolonium}         % format
-    {\xolonium\thechapter }   % label
-    {1.5em}                   % seperation
-    {\huge}                   % before-code
+    [hang] % shape
+    {\Large\xolonium} % format
+    {\thechapter} % label
+    {1.5em} % horizontal sep between label and title body
+    {} % before-code
+    [] % after-code
 \titlespacing{\chapter}
-    {0em}  % from left
-    {0ex}   % above header
-    {2ex}  % Below header
+    {0em}   % left spacing
+    {0ex}   % before spacing
+    {3ex}   % after spacing
 % Section
 \titleformat{\section}
-    {\xolonium}
-    {\xolonium\thesection}
-    {1em}
-    {}
+    [hang] % shape
+    {\Large\xolonium} % format
+    {\thesection} % label
+    {2em} % horizontal sep between label and title body
+    {} % before-code
+    [] % after-code
+\titlespacing{\section}
+    {0em}   % left spacing
+    {2ex}   % before spacing
+    {2ex}   % after spacing
 % Subsection
 \titleformat{\subsection}
-    {\xolonium}
-    {\xolonium\thesection}
-    {1em}
-    {}
+    [hang] % shape
+    {\normalsize\xolonium} % format
+    {\thesubsection} % label
+    {2.5em} % horizontal sep between label and title body
+    {} % before-code
+    [] % after-code
+\titlespacing{\subsection}
+    {0em}   % left spacing
+    {2ex}   % before spacing
+    {1ex}   % after spacing
 % Subsubsection
 \titleformat{\subsubsection}
-    {\xolonium}
-    {\xolonium\thesection}
-    {1em}
-    {}
+    [hang] % shape
+    {\xolonium} % format
+    {\thesubsubsection} % label
+    {3em} % horizontal sep between label and title body
+    {} % before-code
+    [] % after-code
+\titlespacing{\subsubsection}
+    {0em}   % left spacing
+    {2ex}   % before spacing
+    {1ex}   % after spacing
 % Paragraph
 \titleformat{\paragraph}
-    {\normalfont\normalsize\xolonium\color{cyan}}
-    {\theparagraph}
-    {1em}
-    {}
+    [hang] % shape
+    {\normalfont\normalsize\xolonium\color{cyan}} % format
+    {\theparagraph} % label
+    {1em} % horizontal sep between label and title body
+    {} % before-code
+    [] % after-code
+\titlespacing{\paragraph}
+    {0em}   % left spacing
+    {2ex}   % before spacing
+    {1ex}   % after spacing
+
 %%%%%%%%%%%%%%%%%%%%%%
 %% Format captions
 %%%%%%%%%%%%%%%%%%%%%%
 % Tables
-\renewcommand{\thetable}{\arabic{table}}        % numbering:  1, 2 etc
+\renewcommand{\thetable}{\arabic{table}}        % numbering:  1, 2 etc.
 \DeclareCaptionFormat{tabcapfont}
     {\nimbus \small\textit{\textbf{#1#2}}#3}    % caption format
 \captionsetup[table]{format=tabcapfont}         % set defined caption
+\counterwithin{table}{section}
 % Sub Tables
-\renewcommand{\thesubtable}{\alph{subtable}}   % a, b etc
+\renewcommand{\thesubtable}{\alph{subtable}}   % a, b etc.
 % Figures
-\renewcommand{\thefigure}{\arabic{figure}}      % numbering:  1, 2 etc
+\renewcommand{\thefigure}{\arabic{figure}}      % numbering:  1, 2 etc.
 \DeclareCaptionFormat{figcapfont}
     {\nimbus \small\textit{\textbf{#1#2}}#3}    % caption format
 \captionsetup[figure]{format=figcapfont}        % set defined caption
+\counterwithin{figure}{chapter}
 % Sub figures
-\renewcommand{\thesubfigure}{\alph{subfigure}}  % a, b etc
+\renewcommand{\thesubfigure}{\alph{subfigure}}  % a, b etc.
 %%%%%%%%%%%%%%%%%%%%%%
 %% Header and Footer
 %%%%%%%%%%%%%%%%%%%%%%
 \pagestyle{fancy}           % Set default style
 \fancyhf{}                  % Clear all header and footer fields
-\lhead{\nimbus\thedate}     % Left head
+\lhead{\nimbus\title}       % Left head
 \rhead{\nimbus\thesection}  % Right head
+\lfoot{\nimbus\thedate}     % Left foot
 \rfoot{\nimbus\thepage}     % Right foot
 % Redefine the plain page style
 \fancypagestyle{plain}{ % Used at start of chapter
@@ -245,9 +312,10 @@
 \begin{document}
     \nimbus % Set global font
 
-    \input{./chapters/titlepage}    % Include the titlepage
+    \input{./chapters/titlepage}    % Include the title page
 
     \chapter*{Summary}              % Summary
+    \label{chap:Summary}
     \input{./chapters/summary}
 
     \clearpage
@@ -255,6 +323,7 @@
     \tableofcontents                % Generate and include a table of contents
 
     \chapter{Introduction}          % Introduction
+    \label{chap:Introduction}
     \input{./chapters/introduction}
     % Convert readme from markdown to LaTeX
     \immediate\write18{
@@ -268,6 +337,7 @@
     \input{../LICENSE} % Include license file
 
     \chapter{Topics}                % Topic spec sheet
+    \label{chap:Topics}
     \input{./chapters/topics}
     % Convert topic spec sheet from markdown to LaTeX
     \immediate\write18{
@@ -279,12 +349,15 @@
     \input{./build/topic_specification.tex} % Include generated file
 
     \chapter{Client}                % Client
+    \label{chap:Client}
     \input{./chapters/client}
 
     \chapter{Website}               % Website
+    \label{chap:Website}
     \input{./chapters/website}
 
     \chapter{Conclusion}            % Conclusion
+    \label{chap:Conclusion}
     \input{./chapters/conclusion}
 
     \clearpage      % Clear page for LoT
