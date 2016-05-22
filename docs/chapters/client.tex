@@ -1,1 +1,70 @@
-Information about the client.
+In this chapter the client and it's funcitions are descibed. How the Client exaclty works is describe in this chapter.\\
+
+The client is divided in different parts.
+\small {
+\begin{enumerate}[noitemsep, nolistsep]
+	\item 	{\bf MQTT part }
+	\item 	{\bf Message Parser part}
+	\item	{\bf Music part }
+	\item	{\bf Relative Weight Factor(RWF) part }
+	\item	{\bf Config part} 
+	\item 	{\bf Log Part\\}
+\end{enumerate}
+}
+
+The parts will be explained in the next sections.
+
+\section{MQTT part}
+
+First some general information.\\
+
+The client use the Mosquitto MQTT C++ library. This is an open source message broker that implements the MQTT protocol versions 3.1 and 3.1.1.\\
+
+MQTT provides a lightweight methode of carring out messages using a publish/subsribed model. This makes it suitable for "Internet of Things" messaging.\\
+
+Now the MQTT part of the client can be explained.\\
+
+The client and the website use topics to communicate. The topics for the communication are discribed in the previous chapter.\\
+
+The DNS class has an public inheritance of the Mosquito class. This means all public and protected members of the Mosquitto can be accessed by the DNS class. The private members cannot directly accessed by DNS class.\\
+
+In the DNS class the Mosquitto functions are been overwritten by our own implementation. The Mosquitto functions are automatically called by the Mosquitto library.\\
+
+If the client is excuted the Mosquitto library calls the function  
+{\bf on connect}. This function published the client-id in the {\bf online topic } and subsribes itself on the following topics:
+\small{
+\begin{itemize} [noitemsep, nolistsep]
+	\item {\bf request online}
+	\item {\bf request client data}
+	\item {\bf clients data}
+	\item {\bf music volume}
+	\item {\bf music status}
+	\item {\bf music sources\\}
+\end{itemize}
+}
+If the client is stopped or disconnected the Mosquitto library calls the function {\bf on disconnect}. This function published the client-id in the {\bf offline topic}.\\
+
+When the client is running and has excuted the function {\bf on connect}. He waits on a message from a subscribed topic. If there appears a message, the function {\bf on message} is called. This function has as parameters a mosquitto message struct. This contains: 
+\small{
+\begin{itemize} [noitemsep, nolistsep]
+	\item {\bf int mid}
+	\item {\bf char *topic}
+	\item {\bf void* payload}
+	\item {\bf int payloadlen}
+	\item {\bf int qos}
+	\item {\bf bool retain\\}
+\end{itemize}
+}
+
+In the function is watched on which topic a message is send. This is done by compare the {\bf char *topic} of the mosquitto message struct with the defined topic described in chapter 2. When there is a match, a specific action is carried out. These action will bescribed in the next sections.\\
+
+MQTT has a funcion that is called {\bf last will}. This function is called when a client abruptly disconnected and published his last will message. This can means that the client crashed, hasn't a connection to the broker or something else. In the client this function is implemented and the client will publish his message to the {\bf offline} topic.
+
+\section{Message Parser part}
+
+
+
+
+
+
+
