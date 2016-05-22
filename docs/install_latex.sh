@@ -37,6 +37,8 @@ DNF_PACKAGE_NAMES=(
     texlive-euenc
     texlive-wrapfig
     texlive-dirtytalk
+    texlive-spreadtab
+    texlive-multirow
     texlive-collection-fontsrecommended
     pandoc
 )
