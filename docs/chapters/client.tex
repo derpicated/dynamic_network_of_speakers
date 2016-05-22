@@ -77,19 +77,22 @@ Audio driver
 \section{Relative Weight Factor}
 \label{sec:client_relative_weight_factor}
 
-This system is based on a virtual object that will create sound like it is in some place in 2D space.
-This library calculates the volume level that a speaker needs to be in comparison with all the other speakers.
+This system is based on a virtual object that will create sound like it is in some 2D space.
+This library calculates the volume level that a speaker needs to be in comparison with all the other speakers relative from an object.
 
 \subsection{The problem}
 \label{sub:client_rwf_the_problem}
 
-The explain the inner workings lets look at an example.
-
-In figure \ref{fig:client_rwf_center} is a simple setup. Two speakers, a virtual object that \say{creates} the sound and the real life user that listens to this.
+To explain the inner workings lets look at an example.
+In figure \ref{fig:client_rwf_center} is a simple setup. Two speakers \say{Sp1} and \say{Sp2}, a virtual object, \say{Obj}, that \say{creates} the sound and the real life \say{user} that listens to this.
 The speakers are the actual devices that are creating the sound.
-What the goal of these speaker is, is to reenact the sound that comes out of a speaker at such a sound level that the user is thinking that the sound comes from a certain place.
+What the goal of these speaker is, is to recreate the location of the virtual object by means of differing in audio output volume.
+So that the user is thinking that the sound comes from a certain place.
+Similar like a surround sound\footnotemark setup.
+\footnotetext{\href{https://en.wikipedia.org/wiki/Surround_sound}{Surround sound}}
 In the aforementioned figure, it is clear that the sound levels need to be of the same volume.
-That way, the user thinks that the sound at that place is equally as loud, so it is the center of the volume.
+This way the user thinks that he stands at the origin of the sound, because the sound has the same volume from all directions.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=.8\textwidth]{client_rwf_center}
@@ -102,7 +105,7 @@ you would normally say that \say{Sp1} has a shorter distance and \say{Sp2} has a
 To compensate, \say{Sp2} needs to be harder then \say{Sp1}. Let's think about this for a minute.
 If the user is standing in the middle and \say{Sp2} is playing harder then \say{Sp1}.
 This means that the \say{Right} side produces more sound then the \say{Left} side.
-The user would hear more sound comming from the \say{Right} side, so the user would think that the sound comes from the \say{Right} side.
+The user would hear more sound coming from the \say{Right} side, so the user would think that the sound comes from the \say{Right} side.
 
 \begin{figure}[H]
     \centering
@@ -111,23 +114,57 @@ The user would hear more sound comming from the \say{Right} side, so the user wo
     \label{fig:client_rwf_offset}
 \end{figure}
 
-In conclusion the speaker where the object is closed to, needs to produce the most sound.
+In conclusion the speaker where the object is closest to, needs to produce the most sound.
 
-\subsection{Calculating value}
-\label{sub:client_rwf_calculating_value}
+\subsection{Calculating the RWF}
+\label{sub:client_calculating_the_rwf}
+It's is clear that the speaker closest to the object, needs to produce more sound.
+This way, of the user stands in the middle he will think that the sound is coming from the place where the sound is the hardest.
 
-\begin{spreadtab}{{tabular}{ l | r || r l l | r l l }}
-    @Speaker    & @Distance                         & @\multicolumn{3}{c|}{Inverse distance}& @\multicolumn{3}{c}{Calculated Value} \\
-    @A          & 1                                 & :={b5}&-:={b2}&= :={b5-b2}            &  :={e2}&*:={e10}&= :={round(e2*(e9/e5), 0)} \\
-    @B          & 2                                 & :={b5}&-:={b3}&= :={b5-b3}            &  :={e3}&*:={e10}&= :={round(e3*(e9/e5), 0)}\\
-    @C          & 3                                 & :={b5}&-:={b4}&= :={b5-b4}            &  :={e4}&*:={e10}&= :={round(e4*(e9/e5), 0)}\\
-    @Total:     & sum(b2:b4)                        &       &       &= :={sum(e2:e4)}       &  \\ \hline
-                &                                   &       &       &                       &  \\
-    @\multicolumn{2}{r ||}{Head}                    & 100   &       &                       &  \\
-    @\multicolumn{2}{r || }{Tail}                   & 0     &       &                       &  \\
-    @\multicolumn{2}{r || }{Volume steps}           & :={c7}&-:={c8}& = :={c7-c8}           & \\
-    @\multicolumn{2}{r || }{Value per volume step}  & :={e9}&/:={e5}& = :={round(e9/e5, 2)} & \\
-\end{spreadtab}
+The value of the volume in this project, is called the relative weight factor or RWF in short.
+Because there needs to be a value that represents the relative weight each speaker has relative to any object.
+Table \ref{table:client_calculate_rwf_for_three_speakers_1_2_3} shows the calculation of the RWF for three objects.
+
+
+In the left half of the table are the speakers with there distances to an object.
+The units of measurement don't matter in this case, as long as they are of the same type.
+The first step is to \say{invert} all the distances. See the table \ref{table:client_calculate_rwf_for_three_speakers_1_2_3} \say{Inverse distance}.
+This is done by adding all the distances and subtracting the distance of a speaker to an object from this total.
+Next there are the values at the bottom of the table. The \textit{Head} is the maximal value of the RWF factor.
+The \textit{tail} is the minimal value of the RWF factor. In this project's case, this would be a value between 0\% and 100\%.
+Now the number of steps are known.(head-tail)
+To get the actual RWF value the \say{value per step} is needed. This is calculated by dividing the \say{value per step} by the total inverse distance value.
+Now it is a matter of multiplying the inverse distance with the \say{value per step} and the RWF values are known.
+
+\newcommand\RWFTable[3]% #1 = distance speaker 1, #2 = distance speaker 2, #3 = distance speaker 3
+{\begin{table}[H]
+    \renewcommand{\familydefault}{\ttdefault}\nimbus
+    \centering
+    \begin{spreadtab}{{tabular}{ l | r || r l l | r l l }}
+        @Speaker    & @Distance                             & @\multicolumn{3}{c|}{Inverse distance}& @\multicolumn{3}{c}{Calculated Value} \\
+        @A          & #1                                    & :={b5}&-:={b2}&= :={b5-b2}            & :={e2}&*:={e10}       &= :={round(e2*(e9/e5), 0)} \\
+        @B          & #2                                    & :={b5}&-:={b3}&= :={b5-b3}            & :={e3}&*:={e10}       &= :={round(e3*(e9/e5), 0)} \\
+        @C          & #3                                    & :={b5}&-:={b4}&= :={b5-b4}            & :={e4}&*:={e10}       &= :={round(e4*(e9/e5), 0)} \\ \hline
+        @Total:     & sum(b2:b4)                            &       &       &= :={sum(e2:e4)}       & @\multicolumn{2}{c}{} &= :={sum(h2:h4)}\\ \hline \hline
+                    &                                       &       &       &                       & \\
+        @\multicolumn{2}{r ||}{Head}                        & 100   &       &                       & \\
+        @\multicolumn{2}{r ||}{Tail}                        & 0     &       &                       & \\
+        @\multicolumn{2}{r ||}{Volume steps [head-tail]}    & :={c7}&-:={c8}& = :={c7-c8}           & \\
+        @\multicolumn{2}{r ||}{Value per volume step}       & :={e9}&/:={e5}& = :={round(e9/e5, 2)} & \\
+    \end{spreadtab}
+    \caption{Calculate RWF for three speakers. Distances: #1, #2 and #3}
+    \label{table:client_calculate_rwf_for_three_speakers_#1_#2_#3}
+\end{table}
+}
+
+\RWFTable{1}{2}{3} % print RWF Table
+
+The tables below show other examples with different distances values.
+(See table \ref{table:client_calculate_rwf_for_three_speakers_1_1_1} and \ref{table:client_calculate_rwf_for_three_speakers_5_8_3})
+
+\RWFTable{1}{1}{1} % print RWF Table
+
+\RWFTable{5}{8}{3} % print RWF Table
 
 \section{Logger}
 \label{sec:client_logger}
