@@ -199,16 +199,6 @@
 %% Format per section
 %%%%%%%%%%%%%%%%%%%%%%
 % Chapter
-%\titleformat{\chapter}
-%    {\Large\xolonium}         % format
-%    {\xolonium\thechapter }   % label
-%    {1.5em}                   % separation
-%    {\huge}                   % before-code
-%\titlespacing{\chapter}
-%    {0em}   % left spacing
-%    {0ex}   % before spacing
-%    {2ex}   % after spacing
-%    % [right
 \titleformat{\chapter}
     [hang] % shape
     {\Large\xolonium} % format
@@ -306,6 +296,15 @@
     \rfoot{\nimbus\thepage}
 }
 
+%%%%%%%%%%%%%%%%%%%%%%
+%% Lists
+%%%%%%%%%%%%%%%%%%%%%%
+\newenvironment{shortlist}
+{ \begin{itemize}
+    \setlength{\itemsep}{0pt}
+    \setlength{\parskip}{0pt}
+    \setlength{\parsep}{0pt}     }
+{ \end{itemize}                  }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%    Start document
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
