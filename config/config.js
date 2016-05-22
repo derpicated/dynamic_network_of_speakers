@@ -4,9 +4,9 @@ var CONFIG =
     "name_short": "DNS",
     "client_name": "",
     "version": {
-        "major": 0,
+        "major": 1,
         "minor": 0,
-        "revision": 1
+        "revision": 0
     },
     "log_level":"INFO",
     "log_file": "./dns.log",

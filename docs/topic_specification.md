@@ -143,7 +143,9 @@ A general information topic.
 
 # General notes
 
+- In this document and all other documents, the word `speaker` is the same as the word `client`.
 - Client name (aka the `clientid`) - Speaker: The name for a speaker will be in the form of `speak_xxx`, where XXX is a random number. The minimal value is `0` and the maximal value of this random number is: `999`. Make sure that the devices can connect with its clientname. If not, that name already could be in use.
+- The data for the clients in relation to speaker and object, are in complex notation. So from speaker to client, there is a distance and an angle.
 - An MQTT client can create topic strings of up to 65535 bytes.
 - Parts between `[]` or the use of `*` after a sentence in this document usually mean that information needs to be added. Or that clarification is needed.
 - Values used in client settings are as follows: `0` - `xxx` are legitimate values. `>0` i.e. `-1` are ignore values, these say that the client can ignore this value. See [Clients](#clients)

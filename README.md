@@ -10,7 +10,7 @@ via a protocol called [MQTT](http://mqtt.org/).
 
 This project can be described as a surround sound system.
 There is support for objects that make sound and support for physical speakers that can play this sound.
-Via a web interface, the speakers and object can be draw into an area.
+Via a web interface, the speakers and objects can be drawn into an area.
 If, for example, an object is closer to speaker A then to speaker B, then speaker A will produce more sound of said object in comparison with speaker B.  
 In this project an object represents an Ogg music file.
 A good example of a use case for this system is to use a [Multitrack song](https://en.wikipedia.org/wiki/Multitrack_recording) and use a multiple of speakers.
@@ -21,7 +21,7 @@ If this would be setup correctly you, the user, can walk between the speakers in
 
 ## Folder structure
 
-The foldor structure used in this project and what to expect in each folder:
+The folder structure used in this project and what to expect in each folder:
 
 -   `./client/`: Contains the client source files.
 -   `./config/`: Contains the config file that us used for configuration between website and client.
