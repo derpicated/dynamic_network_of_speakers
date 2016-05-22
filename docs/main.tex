@@ -281,12 +281,12 @@
 %%%%%%%%%%%%%%%%%%%%%%
 %% Header and Footer
 %%%%%%%%%%%%%%%%%%%%%%
-\pagestyle{fancy}           % Set default style
-\fancyhf{}                  % Clear all header and footer fields
-\lhead{\nimbus\title}       % Left head
-\rhead{\nimbus\thesection}  % Right head
-\lfoot{\nimbus\thedate}     % Left foot
-\rfoot{\nimbus\thepage}     % Right foot
+\pagestyle{fancy}                       % Set default style
+\fancyhf{}                              % Clear all header and footer fields
+\lhead{\nimbus\title}                   % Left head
+\rhead{\nimbus\nouppercase\leftmark}    % Right head
+\lfoot{\nimbus\thedate}                 % Left foot
+\rfoot{\nimbus\thepage}                 % Right foot
 % Redefine the plain page style
 \fancypagestyle{plain}{ % Used at start of chapter
     \fancyhf{} % clear all header and footer fields
