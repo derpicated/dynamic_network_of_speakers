@@ -1,26 +1,30 @@
-In this chapter the client and it's funcitions are descibed. How the Client exaclty works is describe in this chapter.\\
+In this chapter the client and it's functions are described. The Client exists of the following subsystems:
+\begin{shortlist}
+    \item MQTT
+    \item Message/Config Parser
+    \item Audio driver
+    \item Relative Weight Factor
+    \item Logger
+\end{shortlist}
 
-The client is divided in different parts.
-\small {
-\begin{enumerate}[noitemsep, nolistsep]
-	\item 	\textbf{MQTT}
-	\item 	\textbf{Message/Config Parser}
-	\item	\textbf{Music}
-	\item	\textbf{Relative Weight Factor(RWF)}
-	\item 	\textbf{Log}
-\end{enumerate}
-}
-
-The parts will be explained in the next sections.
+The aforementioned parts will be described in the following sections.
 
 \section{MQTT}
 
-The client use the \href{http://mosquitto.org/}{Mosquitto MQTT C++ library.} This is an open source message broker that implements the MQTT protocol versions 3.1 and 3.1.1. MQTT provides a lightweight methode of carring out messages using a publish/subsribed model. This makes it suitable for \say{Internet of Things} messaging.\\
+The client uses the \href{http://mosquitto.org/}{Mosquitto MQTT C++ library}.
+This is an open source message broker that implements the MQTT protocol versions 3.1 and 3.1.1.
+MQTT is a publish-subscribe based \say{light weight} messaging protocol for use on top of the TCP/IP protocol.
+It is designed for connections with remote locations where a \say{small code footprint} is required or the network bandwidth is limited.
+This makes it suitable for \say{Internet of Things} messaging.
 
-The client and the website use topics to communicate. The topics for the communication are discribed in the previous chapter. The DNS class has an public inheritance of the Mosquito class. This means all public and protected members of the Mosquitto can be accessed by the DNS class. The private members cannot directly accessed by DNS class. In the DNS class the Mosquitto functions are been overwritten by our own implementation. The Mosquitto functions are automatically called by the Mosquitto library.\\
+The client and the website use topics to communicate. The topics for the communication are described in the previous chapter.
+The DNS class has a public inheritance of the Mosquito class.
+This means all public and protected members of the Mosquitto class can be accessed by the DNS class.
+The private members cannot directly accessed by DNS class. In the DNS class the Mosquitto functions are been overwritten by DNS's own implementation.
+The Mosquitto functions are automatically called by the Mosquitto library.
 
-If the client is excuted the Mosquitto library calls the function
-\textbf{ on connect}. This function published the client-id in the \textbf{online topic } and subsribes itself on the following topics:
+If the client is executed the Mosquitto library calls the function
+\textbf{ on connect}. This function published the client-id in the \textbf{online topic } and subscribe itself on the following topics:
 \small{
 \begin{itemize} [noitemsep, nolistsep]
 	\item \textbf {request online}
@@ -28,7 +32,7 @@ If the client is excuted the Mosquitto library calls the function
 	\item \textbf {clients data}
 	\item \textbf {music volume}
 	\item \textbf {music status}
-	\item \textbf {music sources\\}
+	\item \textbf {music sources}
 \end{itemize}
 }
 
