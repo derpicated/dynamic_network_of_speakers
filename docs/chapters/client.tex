@@ -71,7 +71,7 @@ The user must provide the client with a config file in JSON format which is used
 }
 It should be noted that the config file has a \say{.js} extension, this is because the same config is also used by the website. The benefits of doing this is that you only have to change a single config file and everything adapts, instead of changing every client individually.
 
-\subsection{Config}
+\subsection{Message}
 The messages that are supplied in JSON format, are parsed using an iterative feature, ensuring full dynamic behavior. As an example, the message format of \say{info/clients/data/+} as specified in \ref{topics}:
 \begin{lstlisting}
 {
@@ -105,7 +105,7 @@ This message can have any amount \say{n} of client-nodes, each containing any nu
 \label{sec:client_audio_driver}
 
 Since this project requires the client to play audio files, a small class was implemented to do just that. To keep development time low, a couple of cli tools were used to achieve functionality: vorbis tools' \texttt{ogg123} and pulse audio's \texttt{pactl}. An instance of this class is created for each audio object.
-Playing the audio is straight forward, execute an instance of \texttt{ogg123} with a file path and save the PID. If the music has to be stopped (as per user input) simply call \texttt{kill(ogg123_pid)} and the music stops playing.
+Playing the audio is straight forward, execute an instance of \texttt{ogg123} with a file path and save the PID. If the music has to be stopped (as per user input) simply call \texttt{kill([pid])} and the music stops playing.
 The volume regulation is less straight forward. It uses \texttt{pactl list sink-inputs} to list all applications using pulse audio as output. This list is indexed and contains information such as application name, and process ID. So a loop checks each index in the list for the \texttt{ogg123} PID. Once the correct index has been found, it can then be used to set the stream volume with \texttt{pactl set-sink-input-volume [index] [volume]%}.
 
 \section{Relative Weight Factor}
