@@ -5,7 +5,12 @@ This folder contains all the necessary documentation for this project.
 Most of the documentation is written in LaTeX. The supplied makefile can generate a PDF from these files.
 
 ### Dependencies
-To make the documentation from the LaTeX source files, a list of dependencies are needed. 
+The client uses a couple of tools:
+- pulseaudio
+- pactl
+- ogg123
+
+To make the documentation from the LaTeX source files, a list of dependencies are needed.
 To install these dependencies, run the `install_latex.sh` script in this folder.
 
 ## Compilation
