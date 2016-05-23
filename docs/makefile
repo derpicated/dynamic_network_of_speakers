@@ -12,7 +12,7 @@ CHECK_BUILD=if [ ! -d "./$(BUILD_DIR)" ];then	\
 
 # Generate PDF
 latex_src=./main.tex
-document_name=Dynamic_Network_of_Speakers
+document_name=dynamic_network_of_speakers
 latex_to_pdf=$(LATEX_PDF) $(LATEXFLAGS) -output-directory=$(BUILD_DIR) -jobname=$(document_name) $(latex_src)
 documentation:$(latex_src)
 			  $(CHECK_BUILD)
