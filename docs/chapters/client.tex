@@ -106,7 +106,7 @@ This message can have any amount \say{n} of client-nodes, each containing any nu
 
 Since this project requires the client to play audio files, a small class was implemented to do just that. To keep development time low, a couple of cli tools were used to achieve functionality: vorbis tools' \texttt{ogg123} and pulse audio's \texttt{pactl}. An instance of this class is created for each audio object.
 Playing the audio is straight forward, execute an instance of \texttt{ogg123} with a file path and save the PID. If the music has to be stopped (as per user input) simply call \texttt{kill([pid])} and the music stops playing.
-The volume regulation is less straight forward. It uses \texttt{pactl list sink-inputs} to list all applications using pulse audio as output. This list is indexed and contains information such as application name, and process ID. So a loop checks each index in the list for the \texttt{ogg123} PID. Once the correct index has been found, it can then be used to set the stream volume with \texttt{pactl set-sink-input-volume [index] [volume]%}.
+The volume regulation is less straight forward. It uses \texttt{pactl list sink-inputs} to list all applications using pulse audio as output. This list is indexed and contains information such as application name, and process ID. So a loop checks each index in the list for the \texttt{ogg123} PID. Once the correct index has been found, it can then be used to set the stream volume with \texttt{pactl set-sink-input-volume [index] [volume]}.
 
 \section{Relative Weight Factor}
 \label{sec:client_relative_weight_factor}
