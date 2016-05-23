@@ -50,9 +50,11 @@ Make commands available:
 - `make purge`: Delete the Build directory
 
 ### Dependencies
-
-- Mosquitto (mosquitto-devel)
-- ogg123 (vorbis-tools package)
+The client uses a couple of tools:
+- pulseaudio
+- pactl
+- ogg123
+- libMosquitto
 
 ## Credits
 
