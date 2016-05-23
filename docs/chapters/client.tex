@@ -72,7 +72,7 @@ The user must provide the client with a config file in JSON format which is used
 It should be noted that the config file has a \say{.js} extension, this is because the same config is also used by the website. The benefits of doing this is that you only have to change a single config file and everything adapts, instead of changing every client individually.
 
 \subsection{Message}
-The messages that are supplied in JSON format, are parsed using an iterative feature, ensuring full dynamic behavior. As an example, the message format of \say{info/clients/data/+} as specified in \ref{topics}:
+The messages that are supplied in JSON format, are parsed using an iterative feature, ensuring full dynamic behavior. As an example, the message format of \say{info/clients/data/+} as specified in \hyperref[chap:Topics]{topics}:
 \begin{lstlisting}
 {
   "clientid1": {
@@ -202,4 +202,26 @@ The tables below show other examples with different distances values.
 
 \section{Logger}
 \label{sec:client_logger}
-Logger
+
+The application logs certain events according to their importance level.
+The logger used is \href{https://github.com/easylogging/easyloggingpp/}{easylogging++}, which is a single header file that implements a full feature logger.
+A custom configuration is made applied in main, after the initialization. This changes the default output from:\\
+\texttt{2016-05-23 20:05:44,117 DEBUG [default] [Johannux@localhost.localdomain] [int main()] [./test/log\_test.cpp:9] unconfigured DEBUG log}\\
+\texttt{2016-05-23 20:05:44,133 INFO  [default] unconfigured INFO log}\\
+\texttt{2016-05-23 20:05:44,133 WARN  [default] unconfigured WARNING log}\\
+\texttt{2016-05-23 20:05:44,133 ERROR [default] unconfigured ERROR log}\\
+to:\\
+\texttt{2016-05-23 20:05:44,133 INFO  [default] configured INFO log}\\
+\texttt{\color{orange}{2016-05-23 20:05:44,133 WARN  [default] configured WARNING log}}\\
+\texttt{\color{red}{2016-05-23 20:05:44,133 ERROR [default] configured ERROR log}}\\
+\texttt{\color{red}{2016-05-23 20:05:44,133 FATAL [default] configured FATAL log}}\\
+The log output is simultationously written to the terminal, aswel as an output file, if one is specified in the config. Also specified in the config is a minimum loglevel:
+\small{
+\begin{itemize} [noitemsep, nolistsep]
+	\item DEBUG
+	\item INFO
+	\item WARNING
+	\item ERROR
+	\item FATAL
+\end{itemize}
+}
