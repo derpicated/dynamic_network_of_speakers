@@ -1,30 +1,39 @@
-The project functions as a decent proof of concept. The surround sound gives a noticable effect, with minimal audible latency.
-It shows the power of MQTT as an IOT protocol, where speed and dynamic behavior are key. C++14 + MQTT + JSON makes for easy development, and great flexibility.
-We, derpicated, are proud of this project, as it came out working great and was allot of fun to develop.
+The project functions as a decent proof of concept.
+The surround sound gives a noticeable effect, with minimal audible latency.
+It shows the power of MQTT as an \say{IoT} protocol, where speed and dynamic behavior are key.
+C++14 + MQTT + JSON makes for easy development, and great flexibility.
+We, \say{derpicated}, are proud of this project, as it came out working great and was allot of fun to develop.
 
 \section{Known issues}
 Yet some known issues could be solved in future iterations, to name a couple:
 
-
-The latency is still audible. A system could be designed, that better syncs the audio. Perhaps by pre-planning the actions, and then executing on time-points.
+\subsection{Audio latency}
+The latency is still audible. A system could be designed, that better syncs the audio.
+Perhaps by pre-planning the actions, and then executing on time-points.
 A bit of research into the minimal audible latency wouldn't harm, most likely the media sector has determined this already.
 
-
+\subsection{Dedicated audio library}
 Audio could be improved by using a dedicated library, instead of CLI-tools.
 To implement this only the audio class needs to be revised, but finding a suitable library might prove difficult,
 as it needs to support an arbitrary amount of streams, each at a different volume, and should preferably be easy to use.
 
-
+\subsection{Start at time}
 A start time feature could be implemented, where the user can determine a time point in the audio to play from.
 The difficulty with implementing this is that the website has to know the total length of audio tracks, which can differ from each other.
 Since the website doesn't have the computing power to parse an audio file, the client would have to decide the audio length, send it back to the website, which in turn could send a start time back to the clients.
 
-
+\subsection{Different hardware}
 As the project is meant to run on many devices, perhaps with different hardware, some devices might be louder than others.
 The current setup only scales to the max output, per devices. A system could be implemented, where the user can configure a factor per device.
-Meaning that a laptop that outputs double the volume as a raspberry pi, could be set to 50% max volume. Only an extra config parameter would be needed.
+Meaning that a laptop that outputs double the volume as a raspberry pi, could be set to 50\% max volume. Only an extra config parameter would be needed.
 
+\subsection{Website framework}
+The website is using jQuery for manipulating the UI of the website.
+This is a bit messy and s a better system could be used.
+Something that acts more as an object that can be interfered with then DOM elements.
 
-website logging
-
-website framework should be improved
+\subsection{Website logging}
+The website itself doesn't tell the user a great deal about it's status.
+Sure, it says that a speaker is online, but what happens when the website can't connect?
+At this moment, it will log things in the console, but this is not user friendly.
+Some kind of log window or message box would be appreciated.
