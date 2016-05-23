@@ -23,56 +23,66 @@ This means all public and protected members of the Mosquitto class can be access
 The private members cannot directly accessed by DNS class. In the DNS class the Mosquitto functions are been overwritten by DNS's own implementation.
 The Mosquitto functions are automatically called by the Mosquitto library.
 
-If the client is executed the Mosquitto library calls the function
-\textbf{ on connect}. This function published the client-id in the \textbf{online topic } and subscribe itself on the following topics:
-\small{
-\begin{itemize} [noitemsep, nolistsep]
-	\item \textbf {request online}
-	\item \textbf {request client data}
-	\item \textbf {clients data}
-	\item \textbf {music volume}
-	\item \textbf {music status}
-	\item \textbf {music sources}
-\end{itemize}
-}
+If the client is executed the Mosquitto library calls the function \textbf{on connect}.
+This function published the client-id in the \textbf{online topic} and subscribe itself on the following topics:
 
-If the client is stopped or disconnected the Mosquitto library calls the function \textbf {on disconnect}. This function published the client-id in the \textbf {offline topic}.\\
+\begin{shortlist}
+	\item \textbf{request online}
+	\item \textbf{request client data}
+	\item \textbf{clients data}
+	\item \textbf{music volume}
+	\item \textbf{music status}
+	\item \textbf{music sources}
+\end{shortlist}
 
-When the client is running and has excuted the function \textbf {on connect}, It waits on a message from a subscribed topic. If a message appears, the function \textbf {on message} is called. This function takes as parameters a mosquitto message struct, containing:
-\small{
-\begin{itemize} [noitemsep, nolistsep]
-	\item \textbf {int mid}
-	\item \textbf {char *topic}
-	\item \textbf {void* payload}
-	\item \textbf {int payloadlen}
-	\item \textbf {int qos}
-	\item \textbf {bool retain\\}
-\end{itemize}
-}
+If the client is stopped or disconnected the Mosquitto library calls the function \textbf{on disconnect}.
+This function published the clientid in the \textbf{offline topic}.
 
-In the function is decided on which topic the message came from, by comparing the \textbf {topic} field with the topics defined in \ref{topics}. A list of actions is implemented for each topic.\\
+When the client is running and has executed the function \textbf{on connect},
+It waits on a message from a subscribed topic.
+If a message appears, the function \textbf{on message} is called.
+This function takes as parameters a mosquitto message struct, containing:
 
-MQTT has a funcion that is called \textbf {last will}. This function is called when a client times out, for example if the systems power cuts out and doesn't properly shutdown. The broker will detect this and publish the clients' last will message. In the client this function is used to publish its message to the \textbf {offline} topic.
+\begin{shortlist}
+	\item \textbf{int mid}
+	\item \textbf{char *topic}
+	\item \textbf{void* payload}
+	\item \textbf{int payloadlen}
+	\item \textbf{int qos}
+	\item \textbf{bool retain}
+\end{shortlist}
+
+In the function is decided on which topic the message came from,
+by comparing the \textbf{topic} field with the topics defined in \ref{chap:Topics}.
+A list of actions is implemented for each topic.
+
+MQTT has a function that is called \textbf{last will}.
+This function is called when a client times out, for example if the systems power cuts out and doesn't properly shutdown.
+The broker will detect this and publish the clients' last will message.
+In the client this function is used to publish its message to the \textbf{offline} topic.
 
 \section{Message/Config Parser}
 
-A large portion of the messages that are send in this application are in \href{http://www.json.org/}{JSON string format}. Since the C++ spec does not include a JSON Parser, the \href{https://github.com/Zguy/Jzon}{library JZON} is used to parse/compose the JSON string formats.\\
+A large portion of the messages that are send in this application are in \href{http://www.json.org/}{JSON string format}.
+Since the C++ spec does not include a JSON Parser, the \href{https://github.com/Zguy/Jzon}{library JZON} is used to parse/compose the JSON string formats.
 
 \subsection{Config}
 The user must provide the client with a config file in JSON format which is used to initialize the client. The data that can be specified includes:
-\small{
-\begin{itemize} [noitemsep, nolistsep]
-	\item \textbf {Name}
-	\item \textbf {Log settings}
-	\item \textbf {Topic prefix}
-	\item \textbf {Broker}
-	\item \textbf {Topics\\}
-\end{itemize}
-}
-It should be noted that the config file has a \say{.js} extension, this is because the same config is also used by the website. The benefits of doing this is that you only have to change a single config file and everything adapts, instead of changing every client individually.
+
+\begin{shortlist}
+	\item \textbf{Name}
+	\item \textbf{Log settings}
+	\item \textbf{Topic prefix}
+	\item \textbf{Broker}
+	\item \textbf{Topics}
+\end{shortlist}
+
+It should be noted that the config file has a \say{.js} extension, this is because the same config is also used by the website.
+The benefits of doing this is that only on file has to change so that everything adapts, instead of changing the config for the website and client separately.
 
 \subsection{Message}
-The messages that are supplied in JSON format, are parsed using an iterative feature, ensuring full dynamic behavior. As an example, the message format of \say{info/clients/data/+} as specified in \hyperref[chap:Topics]{topics}:
+The messages that are supplied in JSON format, are parsed using an iterative feature, ensuring full dynamic behavior.
+As an example, the message format of \say{info/clients/data/+} as specified in \hyperref[chap:Topics]{topics}:
 \begin{lstlisting}
 {
   "clientid1": {
@@ -99,14 +109,24 @@ The messages that are supplied in JSON format, are parsed using an iterative fea
   }
 \end{lstlisting}
 
-This message can have any amount \say{n} of client-nodes, each containing any number \say{m} of objects-nodes. Jzon implements an iterator for JSON nodes, these can be used with C++14's great ranged based for loops. This allows the client to convert the JSON message into an map of objects per client, and a vector with all the distances, which in turn are used by the RWF calculations which will be touched on later.
+This message can have any amount \say{n} of client-nodes, each containing any number \say{m} of objects-nodes.
+Jzon implements an iterator for JSON nodes, these can be used with C++14's great ranged based for loops.
+This allows the client to convert the JSON message into an map of objects per client, and a vector with all the distances,
+which in turn are used by the RWF calculations which will be touched on later.
 
 \section{Audio driver}
 \label{sec:client_audio_driver}
 
-Since this project requires the client to play audio files, a small class was implemented to do just that. To keep development time low, a couple of cli tools were used to achieve functionality: vorbis tools' \texttt{ogg123} and pulse audio's \texttt{pactl}. An instance of this class is created for each audio object.
-Playing the audio is straight forward, execute an instance of \texttt{ogg123} with a file path and save the PID. If the music has to be stopped (as per user input) simply call \texttt{kill([pid])} and the music stops playing.
-The volume regulation is less straight forward. It uses \texttt{pactl list sink-inputs} to list all applications using pulse audio as output. This list is indexed and contains information such as application name, and process ID. So a loop checks each index in the list for the \texttt{ogg123} PID. Once the correct index has been found, it can then be used to set the stream volume with \texttt{pactl set-sink-input-volume [index] [volume]}.
+Since this project requires the client to play audio files, a small class was implemented to do just that.
+To keep development time low, a couple of cli tools were used to achieve functionality: vorbis tools' \texttt{ogg123} and pulse audio's \texttt{pactl}.
+An instance of this class is created for each audio object.
+Playing the audio is straight forward, execute an instance of \texttt{ogg123} with a file path and save the PID.
+If the music has to be stopped (as per user input) simply call \texttt{kill([pid])} and the music stops playing.
+The volume regulation is less straight forward.
+It uses \texttt{pactl list sink-inputs} to list all applications using pulse audio as output.
+This list is indexed and contains information such as application name, and process ID.
+So a loop checks each index in the list for the \texttt{ogg123} PID.
+Once the correct index has been found, it can then be used to set the stream volume with \texttt{pactl set-sink-input-volume [index] [volume]}.
 
 \section{Relative Weight Factor}
 \label{sec:client_relative_weight_factor}
@@ -206,7 +226,7 @@ The tables below show other examples with different distances values.
 The application logs certain events according to their importance level.
 The logger used is \href{https://github.com/easylogging/easyloggingpp/}{easylogging++}, which is a single header file that implements a full feature logger.
 A custom configuration is made applied in main, after the initialization. This changes the default output from:\\
-\texttt{2016-05-23 20:05:44,117 DEBUG [default] [Johannux@localhost.localdomain] [int main()] [./test/log\_test.cpp:9] unconfigured DEBUG log}\\
+\texttt{2016-05-23 20:05:44,117 DEBUG [default] [User@localhost.localdomain] [int main()] [./test/log\_test.cpp:9] unconfigured DEBUG log}\\
 \texttt{2016-05-23 20:05:44,133 INFO  [default] unconfigured INFO log}\\
 \texttt{2016-05-23 20:05:44,133 WARN  [default] unconfigured WARNING log}\\
 \texttt{2016-05-23 20:05:44,133 ERROR [default] unconfigured ERROR log}\\
@@ -215,13 +235,12 @@ to:\\
 \texttt{\color{orange}{2016-05-23 20:05:44,133 WARN  [default] configured WARNING log}}\\
 \texttt{\color{red}{2016-05-23 20:05:44,133 ERROR [default] configured ERROR log}}\\
 \texttt{\color{red}{2016-05-23 20:05:44,133 FATAL [default] configured FATAL log}}\\
-The log output is simultationously written to the terminal, aswel as an output file, if one is specified in the config. Also specified in the config is a minimum loglevel:
-\small{
-\begin{itemize} [noitemsep, nolistsep]
+The log output is simultaneously written to the terminal, as well as an output file, if one is specified in the config. Also specified in the config is a minimum loglevel:
+
+\begin{shortlist}
 	\item DEBUG
 	\item INFO
 	\item WARNING
 	\item ERROR
 	\item FATAL
-\end{itemize}
-}
+\end{shortlist}
