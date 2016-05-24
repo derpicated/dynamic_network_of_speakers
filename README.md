@@ -55,7 +55,6 @@ The client uses a couple of tools:
 - pactl
 - ogg123
 - libMosquitto
-- LaTeX (See [documentation](./docs/README.md))
 
 ## Credits
 
