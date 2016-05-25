@@ -1,16 +1,17 @@
 #ifndef DNS_H
 #define DNS_H
 
+#include <SFML/Audio.hpp>
 #include <assert.h>
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
 #include <deque>
-#include <stdexcept>
 #include <iomanip>
 #include <iostream>
 #include <map>
 #include <mosquittopp.h>
+#include <stdexcept>
 #include <stdexcept>
 #include <stdlib.h>
 #include <string>
@@ -19,7 +20,6 @@
 #include <utility>
 
 #include "data_parser.hpp"
-#include "libs/audio/audio.hpp"
 #include "libs/config/config_parser.hpp"
 #include "libs/download/download.hpp"
 #include "libs/logger/easylogging++.h"
@@ -36,7 +36,7 @@ class dns : public mosqpp::mosquittopp {
     dns (config_parser& config);
 
     dns (const dns& other) = delete;
-    dns& operator=(const dns& other) = delete;
+    dns& operator= (const dns& other) = delete;
     virtual ~dns ();
 
     protected:
@@ -54,8 +54,8 @@ class dns : public mosqpp::mosquittopp {
     const std::string _cache_path;
     int _master_volume;
     std::map<std::string, std::string> _sources;
-    std::map<std::string, int> _rwf_volumes;      // key = object name
-    std::map<std::string, audio_player> _players; // key = object name
+    std::map<std::string, int> _rwf_volumes;  // key = sound object name
+    std::map<std::string, sf::Music> _musics; // key = sound object name
     speakerData _speaker_data;
     data_parser _data_parser;
 

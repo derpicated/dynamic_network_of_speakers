@@ -8,7 +8,7 @@ dns::dns (config_parser& config)
 , _master_volume (0)
 , _sources ()
 , _rwf_volumes ()
-, _players ()
+, _musics ()
 , _speaker_data ()
 , _data_parser () {
     will_set (CONFIG.topic ("online").c_str (), CONFIG.clientid ().size (),
@@ -113,13 +113,13 @@ void dns::setMasterVolume (std::string volume) {
         LOG (ERROR) << "EXCEPTION s40 out_of_range: " << e.what ();
     }
 
-    for (auto& object : _players) {
+    for (auto& object : _musics) {
         int rwf_volume, adjusted_volume;
 
         rwf_volume      = _rwf_volumes[object.first];
         adjusted_volume = (rwf_volume * _master_volume) / 100;
 
-        object.second.set_volume (adjusted_volume);
+        object.second.setVolume (adjusted_volume);
     }
 }
 
@@ -135,11 +135,11 @@ void dns::setPPS (std::string status_str) {
         status = stop;
     }
 
-    for (auto& player : _players) {
+    for (auto& music : _musics) {
         switch (status) {
-            case play: player.second.play (); break;
-            case pause: // simply stop playing
-            case stop: player.second.stop (); break;
+            case play: music.second.play (); break;
+            case pause: music.second.pause (); break;
+            case stop: music.second.stop (); break;
         }
     }
 }
@@ -173,15 +173,16 @@ void dns::processMusicSourceData (std::string json_str) {
 
         if (_sources[local_name] != new_source.second) {
             // only interact with player if it already exists
-            if (_players.find (local_name) != _players.end ()) {
-                int status = _players[local_name].stop ();
+            if (_musics.find (local_name) != _musics.end ()) {
+                sf::SoundSource::Status status = _musics[local_name].getStatus ();
+                _musics[local_name].stop ();
 
                 download::download (new_source.second, _cache_path + local_name);
 
                 // only start playing if it was previously playing
-                if (status == 0) {
-                    _players[local_name].set_file (_cache_path + local_name);
-                    _players[local_name].play ();
+                if (status == sf::SoundSource::Status::Playing) {
+                    _musics[local_name].openFromFile (_cache_path + local_name);
+                    _musics[local_name].play ();
                 }
             } else {
                 download::download (new_source.second, _cache_path + local_name);
@@ -233,12 +234,12 @@ void dns::processClientData (std::string json_str) {
         _rwf_volumes[object_name] = rwf_volume;
         adjusted_volume           = (rwf_volume * _master_volume) / 100;
 
-        if (_players.find (object_name) != _players.end ()) {
-            _players[object_name].set_volume (adjusted_volume);
+        if (_musics.find (object_name) != _musics.end ()) {
+            _musics[object_name].setVolume (adjusted_volume);
         } else {
             if (_sources.find (object_name) != _sources.end ()) {
-                _players[object_name].set_file (_cache_path + object_name);
-                _players[object_name].set_volume (adjusted_volume);
+                _musics[object_name].openFromFile (_cache_path + object_name);
+                _musics[object_name].setVolume (adjusted_volume);
             } else {
                 LOG (ERROR) << "No known source file for object \"" << object_name << "\"";
             }
@@ -246,9 +247,9 @@ void dns::processClientData (std::string json_str) {
     }
 
     // remove all unneeded players
-    for (auto it = _players.cbegin (); it != _players.cend ();) {
+    for (auto it = _musics.cbegin (); it != _musics.cend ();) {
         if (_speaker_data.objects.find (it->first) == _speaker_data.objects.end ()) {
-            _players.erase (it++);
+            _musics.erase (it++);
         } else {
             ++it;
         }

@@ -1,7 +1,7 @@
 # Makefile for DNS
 CC=gcc
 CXX=g++
-LDFLAGS = -lmosquittopp -L/usr/local/lib
+LDFLAGS = -lmosquittopp -lsfml-system -lsfml-audio -L/usr/local/lib
 RM=rm -f
 CXXFLAGS= -g -std=c++11 -Wall -Wextra -Weffc++ -D_GLIBCXX_USE_NANOSLEEP -pthread
 BUILD_DIR=build
@@ -14,7 +14,6 @@ MKDIR_P = mkdir -p
 dns_client_src=./client/main.cpp \
 				./client/dns.cpp \
 				./client/data_parser.cpp \
-				./client/libs/audio/audio.cpp \
 				./client/libs/download/download.cpp \
 				./client/libs/config/config_parser.cpp \
 				./client/libs/jzon/Jzon.cpp \
@@ -37,7 +36,6 @@ $(rwf_test_src_out): $(rwf_test_src)
 
 # Audio Output
 audio_test_src=	./test/audio_test.cpp \
-				./client/libs/audio/audio.cpp
 audio_test_out=audio_test
 $(audio_test_out): $(audio_test_src)
 	$(CHECK_BUILD)
