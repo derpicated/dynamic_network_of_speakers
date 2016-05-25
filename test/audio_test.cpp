@@ -1,8 +1,7 @@
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <sys/stat.h>
 #include <unistd.h>
-
-#include "../client/libs/audio/audio.hpp"
 
 int main (int argc, char const* argv[]) {
     if (argc != 2) {
@@ -17,34 +16,44 @@ int main (int argc, char const* argv[]) {
         std::perror ("error, file:");
     }
 
-    audio_player test_player (test_file);
+    sf::Music test_music;
 
-    test_player.play ();
+    test_music.openFromFile (test_file);
+
+    test_music.play ();
 
     sleep (5);
 
-    test_player.stop ();
+    test_music.stop ();
 
     sleep (1);
 
-    test_player.play (120);
+    test_music.play ();
 
     sleep (5);
 
-    test_player.set_volume (30);
+    test_music.pause ();
 
     sleep (5);
 
-    test_player.set_volume (75);
+    test_music.play ();
 
     sleep (5);
 
-    test_player.set_volume (1);
+    test_music.setVolume (30);
 
     sleep (5);
 
-    test_player.set_volume (50);
-    test_player.stop ();
+    test_music.setVolume (75);
+
+    sleep (5);
+
+    test_music.setVolume (1);
+
+    sleep (5);
+
+    test_music.setVolume (50);
+    test_music.stop ();
 
     return 0;
 }

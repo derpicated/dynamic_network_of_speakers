@@ -35,11 +35,11 @@ $(rwf_test_src_out): $(rwf_test_src)
 	$(CXX) $(CXXFLAGS) $(rwf_test_src) -o $(BUILD_DIR)/$(rwf_test_src_out)
 
 # Audio Output
-audio_test_src=	./test/audio_test.cpp \
 audio_test_out=audio_test
+audio_test_src=	./test/audio_test.cpp
 $(audio_test_out): $(audio_test_src)
 	$(CHECK_BUILD)
-	$(CXX) $(CXXFLAGS) $(audio_test_src) -o $(BUILD_DIR)/$(audio_test_out)
+	$(CXX) $(CXXFLAGS) $(audio_test_src) $(LDFLAGS) -o $(BUILD_DIR)/$(audio_test_out)
 
 # Download test
 download_test_src=	./test/download_test.cpp \
