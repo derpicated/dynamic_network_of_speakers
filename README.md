@@ -51,10 +51,8 @@ Make commands available:
 
 ### Dependencies
 The client uses a couple of tools:
-- pulseaudio
-- pactl
-- ogg123
-- libMosquitto
+- libSFML-devel
+- libMosquitto-devel
 
 ## Credits
 
