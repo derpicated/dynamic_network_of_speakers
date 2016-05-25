@@ -1,12 +1,12 @@
 #ifndef DNS_data_parser_HPP
 #define DNS_data_parser_HPP
 
+#include "./libs/logger/easylogging++.h"
 #include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
 #include <vector>
-
 
 #include "libs/jzon/Jzon.h"
 
