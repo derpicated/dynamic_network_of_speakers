@@ -136,12 +136,12 @@ DNS = (function (global) {
     var message_recieve = function (message) {
         switch (message.destinationName) {
             case topic("online"):
-                CLIENT.online(message.payloadString);
+                CLIENT.online(message.payloadString.replace(/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\? ]/g,'')); // remove special chars spaces
                 GUI.draw_speakers_from_data();
                 //console.log("Client online: "+message.payloadString);
                 break;
             case topic("offline"):
-                CLIENT.offline(message.payloadString);
+                CLIENT.offline(message.payloadString.replace(/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\? ]/g,'')); // remove special chars spaces
                 GUI.draw_speakers_from_data();
                 //console.log("Client offline: "+message.payloadString);
                 break;
