@@ -48,6 +48,7 @@ Make commands available:
 - `make config_parser_test`: Test of the Config Parser lib
 - `make clean`: Clean the build directory
 - `make purge`: Delete the Build directory
+- `make all`: Build all programs
 
 ### Dependencies
 The client uses a couple of tools:
