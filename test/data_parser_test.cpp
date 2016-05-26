@@ -1,4 +1,5 @@
 #include "../client/data_parser.hpp"
+#include "../client/libs/logger/easylogging++_setup.hpp"
 #include <cassert>
 #include <fstream>
 #include <iostream>
@@ -12,6 +13,7 @@ void test_prarse_source_data ();
 void test_compose_client_data ();
 
 int main () {
+    configure_logger ("INFO", "./logs/data_parser_test.log");
     test_prarse_client_data ();
     std::cout << "Passed client data parsing asserts" << std::endl;
     test_prarse_source_data ();

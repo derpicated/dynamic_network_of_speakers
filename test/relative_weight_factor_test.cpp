@@ -1,9 +1,11 @@
 #include "../client/libs/rwf/relative_weight_factor.hpp"
+#include "../client/libs/logger/easylogging++_setup.hpp"
 #include <iostream>
 #include <stdio.h>
 #include <vector>
 
 int main () {
+    configure_logger ("INFO", "./logs/rwf_test.log");
     std::cout << "Testing RWF" << std::endl;
     // answer is 12.5
     // rounding error incoming at whole numbers!
