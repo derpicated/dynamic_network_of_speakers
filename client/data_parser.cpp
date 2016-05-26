@@ -31,7 +31,7 @@ std::map<std::string, std::vector<float>>& objects) {
                 object.angle    = std::atof(sub_node.second.get ("angle").toString ().c_str());
                 ret_speaker.objects[key] = object;
                 LOG (DEBUG) << "Data Parser data: " << key << " Dist:" << object.distance
-                            << " angle:" << object.distance;
+                            << " angle:" << object.angle;
             }
         } else {
             for (Jzon::NamedNode sub_node : node.second) {

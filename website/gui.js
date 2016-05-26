@@ -206,8 +206,8 @@ GUI = (function (global) {
                 };// Placeholder value
                 left = object.offset().left-speaker.offset().left;
                 top = speaker.offset().top-object.offset().top;
-                speakers[speaker.attr('id')][object.attr('id')].distance=polar(left, top).distance.toFixed(3);
-                speakers[speaker.attr('id')][object.attr('id')].angle=polar(left, top).angle.toFixed(3);
+                speakers[speaker.attr('id')][object.attr('id')].distance=polar(left, top).distance;//.toFixed(3);
+                speakers[speaker.attr('id')][object.attr('id')].angle=polar(left, top).angle;//.toFixed(3);
             });
         });
         $('#speaker_list .speaker').each(function(index, speaker_obj){ // Loop online idle speakers
