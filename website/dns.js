@@ -163,7 +163,7 @@ DNS = (function (global) {
                 if(message.destinationName.indexOf(topic("request"))>-1){ // Request topic
                     console.log("Request: "+message.destinationName+" | "+message.payloadString);
                     return;
-                } else if(message.destinationName.indexOf(topic("answer_site"))>-1){ // Got answer
+                } else if(message.destinationName.indexOf(topic("answer_site"))>-1){ // Got device data from client
                     var device_date=message.payloadString;
                     if (!device_date) {
                         console.log("Empty device string!");
@@ -196,15 +196,17 @@ DNS = (function (global) {
                         console.log(error.message);
                     }
                     //console.log(info_clients);
-                    //GUI.draw_speakers_from_data(); // Redraw
+                    //GUI.draw_speakers_from_data(); // No need ro redraw here, wait for the message with first obj location
                     return;
                 } else if (message.destinationName.indexOf(topic("clients_data_first_object")+'/')>-1) { // Got first object pos
-                    //send(message.destinationName, '', true);
                     try {
-                        var object = JSON.parse(message.payloadString); // syntax error
-                        GUI.first_object_location.left = object.object_offset_left;
-                        GUI.first_object_location.top = object.object_offset_top;
-                        GUI.draw_speakers_from_data(); // Redraw
+                        if(isEmpty(message.payloadString)){
+                            return;
+                        } else {
+                            var object = JSON.parse(message.payloadString);
+                            GUI.first_object(object.object_offset_left, object.object_offset_top); // Set the first object
+                            GUI.draw_speakers_from_data(object.object_offset_left, object.object_offset_top); // Redraw
+                        }
                     } catch (error) {
                         console.log("First object wrong message error:");
                         console.log(error.message);
