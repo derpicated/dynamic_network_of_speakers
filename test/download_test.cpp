@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include "../client/libs/download/download.hpp"
+#include "../client/libs/logger/easylogging++_setup.hpp"
 
 int main (int argc, char const* argv[]) {
     if (argc != 3) {
