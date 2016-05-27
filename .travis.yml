@@ -1,9 +1,11 @@
+# Ubuntu 14.04 Trusty support
+sudo: required
+dist: trusty
 language: cpp
 
 compiler:
   - gcc
   - clang
-
 os:
   - linux
 
@@ -16,16 +18,5 @@ before_install:
   - make
   - sudo make -i install #mosquitto is does not install without errors...
   - cd ..
-
-install:
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - gcc-4.8
-    - g++-4.8
-    - clang
 
 script: make all
