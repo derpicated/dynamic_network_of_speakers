@@ -26,15 +26,17 @@ std::map<std::string, std::vector<float>>& objects) {
             ret_speaker.speakerid = node.first;
             for (Jzon::NamedNode sub_node : node.second) {
                 audioObject object;
-                std::string key          = sub_node.first;
-                object.distance          = sub_node.second.get ("distance").toFloat ();
-                object.angle             = sub_node.second.get ("angle").toFloat ();
+                std::string key = sub_node.first;
+                object.distance = std::atof(sub_node.second.get ("distance").toString ().c_str());
+                object.angle    = std::atof(sub_node.second.get ("angle").toString ().c_str());
                 ret_speaker.objects[key] = object;
+                LOG (DEBUG) << "Data Parser data: " << key << " Dist:" << object.distance
+                            << " angle:" << object.angle;
             }
         } else {
             for (Jzon::NamedNode sub_node : node.second) {
                 std::string key = sub_node.first;
-                int distance = sub_node.second.get ("distance").toInt ();
+                int distance    = sub_node.second.get ("distance").toInt ();
                 if (distance != -1) {
                     objects[key].push_back (distance);
                 }

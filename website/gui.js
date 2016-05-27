@@ -23,10 +23,7 @@ GUI = (function (global) {
      */
     var scale_irl=1;
     var scale_virt=1;
-    var first_object_location = {
-        left: DRAW_AREA.width()/2,
-        top: DRAW_AREA.height()/2
-    }
+
     var init = function () {
         bind_arrow_keys();
         bind_volume_slider();
@@ -89,7 +86,10 @@ GUI = (function (global) {
                 for (first_object in data[first_speaker]) break; // First object
                 object_offset_left = ($('#'+first_object).offset().left-DRAW_AREA.offset().left);
                 object_offset_top = ($('#'+first_object).offset().top-DRAW_AREA.offset().top);
+                //console.log("First object: "+object_offset_left+" "+object_offset_top);
                 DNS.send_first_position(object_offset_left, object_offset_top);
+            }else {
+                DNS.send_first_position();
             }
         }
     };
@@ -102,11 +102,34 @@ GUI = (function (global) {
         empty_objects_list(not_x);
         empty_draw_area(not_x);
     };
+    /* First object location set and get */
+    var first_object = function (left, top) {
+        if(left){
+            localStorage.setItem("first_object_left", left);
+        } else if (localStorage.getItem("first_object_left")===null) {
+            localStorage.setItem("first_object_left", DRAW_AREA.width()/2);
+        }
+        if(top){
+            localStorage.setItem("first_object_top", top);
+        } else if (localStorage.getItem("first_object_top")===null) {
+            localStorage.setItem("first_object_left", DRAW_AREA.height()/2);
+        }
+        var first_object_location = {
+            left: Number(localStorage.getItem("first_object_left")),
+            top: Number(localStorage.getItem("first_object_top"))
+        }
+        return first_object_location;
+    };
     /* Draw speakers from CLIENT data
-     * first_object_left is first object location from left in percentage
-     * first_object_top is first object location from top in percentage
+     * first_object_left is first object location from left
+     * first_object_top is first object location from top
      */
-    var draw_speakers_from_data = function (first_object_left = first_object_location.left, first_object_top = first_object_location.top) {
+    var draw_speakers_from_data = function (first_object_left = GUI.first_object().left,
+                                            first_object_top = GUI.first_object().top) {
+        if($('.draw_lock').length){ // if the drawing filed is 'locked' exit
+            return;
+        }
+        //console.log("drawing from: "+first_object_left+" "+first_object_top);
         empty_draw_area();
         var nr_of_objects=0;
         var object_tmp = $("<div class='object' id='object_tmp'></div>").hide().appendTo("body"); //add temp object
@@ -134,7 +157,6 @@ GUI = (function (global) {
                 nr_of_objects=0;
                 $.each(CLIENT.get_online()[speaker_name], function(object_name, obj_value){
                     if (!nr_of_objects) { // First object
-                        //draw_object(object_name, DRAW_AREA, ((DRAW_AREA.width()-object_width)*(first_object_left/100)), ((DRAW_AREA.height()-object_height)*(first_object_top/100)));
                         draw_object(object_name, DRAW_AREA, (first_object_left), (first_object_top));
                         // Draw speaker seen from object
                         var left =$('#'+object_name).offset().left-DRAW_AREA.offset().left-rectangular(obj_value.distance, obj_value.angle).x;
@@ -186,8 +208,8 @@ GUI = (function (global) {
                 };// Placeholder value
                 left = object.offset().left-speaker.offset().left;
                 top = speaker.offset().top-object.offset().top;
-                speakers[speaker.attr('id')][object.attr('id')].distance=polar(left, top).distance;
-                speakers[speaker.attr('id')][object.attr('id')].angle=polar(left, top).angle;
+                speakers[speaker.attr('id')][object.attr('id')].distance=polar(left, top).distance;//.toFixed(3);
+                speakers[speaker.attr('id')][object.attr('id')].angle=polar(left, top).angle;//.toFixed(3);
             });
         });
         $('#speaker_list .speaker').each(function(index, speaker_obj){ // Loop online idle speakers
@@ -202,10 +224,15 @@ GUI = (function (global) {
         if (speaker.length) { // Check if speaker exists
             speaker.detach().appendTo(destination); // Add to x
         } else { // Draw new speaker
-            var speaker_class = "<div class='speaker noselect' move_counter='0' id='"+speaker_name+"'>"+speaker_name.replace(CONFIG.speaker_prefix, '')+"</div>";
+            var speaker_class = "<div class='speaker noselect' move_counter='0' id='"+speaker_name+"'>"+smart_truncate(speaker_name.replace(CONFIG.speaker_prefix, ''))+"</div>";
             destination.append(speaker_class);
         }
         speaker = $('#'+speaker_name); // Update reference to object
+        speaker.mouseup(function(){ // set mousedown lock for drawing
+            speaker.removeClass("draw_lock");
+        }).mousedown(function(){
+            speaker.addClass("draw_lock");
+        });
         speaker.draggable({ // Make speaker dragable in the list and draw area (top div)
             containment: "#top",
             revert: 'invalid',
@@ -257,7 +284,7 @@ GUI = (function (global) {
             destination.append(object_class);
         }
         object=$('#'+object_name);
-        object.tooltip({
+        object.tooltip({ // set tooltip
             show: null,
             hide:null,
             track: true,
@@ -269,6 +296,11 @@ GUI = (function (global) {
             close: function (event, ui) {
                 $(".ui-helper-hidden-accessible").remove();
             }
+        });
+        object.mouseup(function(){ // set mousedown lock for drawing
+            object.removeClass("draw_lock");
+        }).mousedown(function(){
+            object.addClass("draw_lock");
         });
         object.draggable({ // Make dragable in the draw area
             containment: '#top',
@@ -724,7 +756,7 @@ GUI = (function (global) {
         DRAW_AREA               : DRAW_AREA,
         SPEAKER_LIST            : SPEAKER_LIST,
         OBJECT_LIST             : OBJECT_LIST,
-        first_object_location   : first_object_location,
+        first_object            : first_object,
         smart_truncate          : smart_truncate,
         set_volume_slider       : set_volume_slider,
         music_status            : music_status,

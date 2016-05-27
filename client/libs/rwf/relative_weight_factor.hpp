@@ -26,9 +26,4 @@ template <class T> class rwf {
 };
 } /* relative_weight_factor */
 
-/* explicit instantiation declaration*/
-template class rwf::rwf<int>;
-template class rwf::rwf<float>;
-template class rwf::rwf<double>;
-template class rwf::rwf<long double>;
 #endif // relative_weight_factor_HPP

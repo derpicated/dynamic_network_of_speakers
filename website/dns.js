@@ -136,12 +136,12 @@ DNS = (function (global) {
     var message_recieve = function (message) {
         switch (message.destinationName) {
             case topic("online"):
-                CLIENT.online(message.payloadString);
+                CLIENT.online(message.payloadString.replace(/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\? ]/g,'')); // remove special chars spaces
                 GUI.draw_speakers_from_data();
                 //console.log("Client online: "+message.payloadString);
                 break;
             case topic("offline"):
-                CLIENT.offline(message.payloadString);
+                CLIENT.offline(message.payloadString.replace(/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\? ]/g,'')); // remove special chars spaces
                 GUI.draw_speakers_from_data();
                 //console.log("Client offline: "+message.payloadString);
                 break;
@@ -163,7 +163,7 @@ DNS = (function (global) {
                 if(message.destinationName.indexOf(topic("request"))>-1){ // Request topic
                     console.log("Request: "+message.destinationName+" | "+message.payloadString);
                     return;
-                } else if(message.destinationName.indexOf(topic("answer_site"))>-1){ // Got answer
+                } else if(message.destinationName.indexOf(topic("answer_site"))>-1){ // Got device data from client
                     var device_date=message.payloadString;
                     if (!device_date) {
                         console.log("Empty device string!");
@@ -196,15 +196,18 @@ DNS = (function (global) {
                         console.log(error.message);
                     }
                     //console.log(info_clients);
-                    //GUI.draw_speakers_from_data(); // Redraw
+                    //GUI.draw_speakers_from_data(); // No need ro redraw here, wait for the message with first obj location
                     return;
                 } else if (message.destinationName.indexOf(topic("clients_data_first_object")+'/')>-1) { // Got first object pos
-                    //send(message.destinationName, '', true);
                     try {
-                        var object = JSON.parse(message.payloadString); // syntax error
-                        GUI.first_object_location.left = object.object_offset_left;
-                        GUI.first_object_location.top = object.object_offset_top;
-                        GUI.draw_speakers_from_data(); // Redraw
+                        if(isEmpty(message.payloadString)){
+                            GUI.draw_speakers_from_data();// empty, redraw because no speakers drawn
+                            return;
+                        } else {
+                            var object = JSON.parse(message.payloadString);
+                            GUI.first_object(object.object_offset_left, object.object_offset_top); // Set the first object
+                            GUI.draw_speakers_from_data(object.object_offset_left, object.object_offset_top); // Redraw
+                        }
                     } catch (error) {
                         console.log("First object wrong message error:");
                         console.log(error.message);
@@ -227,13 +230,18 @@ DNS = (function (global) {
     };
     /* Send first position of first object */
     var send_first_position = function (left, top) {
-        first_object = {
-            object_offset_left: 0,
-            object_offset_top: 0
-        };
-        first_object.object_offset_left = left;
-        first_object.object_offset_top = top;
-        send(DNS.topic("clients_data_first_object")+'/'+broker_mqtt.client_name, JSON.stringify(first_object), true);
+        if(left && top){
+            first_object = {
+                object_offset_left: 0,
+                object_offset_top: 0
+            };
+            first_object.object_offset_left = left;
+            first_object.object_offset_top = top;
+            send(DNS.topic("clients_data_first_object")+'/'+broker_mqtt.client_name, JSON.stringify(first_object), true);
+        } else {
+            console.log("send empty");
+            send(DNS.topic("clients_data_first_object")+'/'+broker_mqtt.client_name, "", true); // send empty data
+        }
     };
     /* Subscribe to a topic */
     var subscribe = function (topic) {

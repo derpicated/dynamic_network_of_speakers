@@ -1,13 +1,15 @@
+#include "../client/libs/logger/easylogging++_setup.hpp"
+#include <exception>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <stdexcept>
-#include <exception>
 
 #include "../client/libs/config/config_parser.hpp"
 
 int main (int argc, char const* argv[]) {
+    configure_logger ("INFO", "./logs/config_parser_test.log");
     if (argc != 2) {
         std::cout << "usage: config file" << std::endl;
         exit (EXIT_FAILURE);

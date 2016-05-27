@@ -51,3 +51,9 @@ template <class T> void rwf::rwf<T>::set_head_tail (int head, int tail) {
 template <class T> void rwf::rwf<T>::set_factors (std::vector<T> vec) {
     _factors = vec;
 }
+
+/* explicit instantiation declaration */
+template class rwf::rwf<int>;
+template class rwf::rwf<float>;
+template class rwf::rwf<double>;
+template class rwf::rwf<long double>;
