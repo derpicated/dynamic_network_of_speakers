@@ -14,7 +14,7 @@ before_install:
   - cd mosquitto
   - cmake .
   - make
-  - sudo make install
+  - sudo make -i install #mosquitto is does not install without errors...
   - cd ..
 
 script: make all
