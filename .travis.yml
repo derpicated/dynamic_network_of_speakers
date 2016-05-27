@@ -9,7 +9,12 @@ os:
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -qq libsfml-dev libmosquittopp-dev
-  -
+  - sudo apt-get install -qq libsfml-dev
+  - git clone https://github.com/eclipse/mosquitto.git
+  - cd mosquitto
+  - cmake .
+  - make
+  - sudo make install
+  - cd ..
 
 script: make all
