@@ -6,11 +6,6 @@ compiler:
 
 os:
   - linux
-# - osx
-
-#matrix:
-# allow_failures:
-#   - os: osx
 
 before_install:
   - sudo apt-get update -qq
