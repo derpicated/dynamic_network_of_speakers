@@ -88,6 +88,8 @@ GUI = (function (global) {
                 object_offset_top = ($('#'+first_object).offset().top-DRAW_AREA.offset().top);
                 //console.log("First object: "+object_offset_left+" "+object_offset_top);
                 DNS.send_first_position(object_offset_left, object_offset_top);
+            }else {
+                DNS.send_first_position();
             }
         }
     };

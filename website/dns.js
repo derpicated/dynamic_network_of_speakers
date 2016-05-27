@@ -201,6 +201,7 @@ DNS = (function (global) {
                 } else if (message.destinationName.indexOf(topic("clients_data_first_object")+'/')>-1) { // Got first object pos
                     try {
                         if(isEmpty(message.payloadString)){
+                            GUI.draw_speakers_from_data();// empty, redraw because no speakers drawn
                             return;
                         } else {
                             var object = JSON.parse(message.payloadString);
@@ -229,13 +230,18 @@ DNS = (function (global) {
     };
     /* Send first position of first object */
     var send_first_position = function (left, top) {
-        first_object = {
-            object_offset_left: 0,
-            object_offset_top: 0
-        };
-        first_object.object_offset_left = left;
-        first_object.object_offset_top = top;
-        send(DNS.topic("clients_data_first_object")+'/'+broker_mqtt.client_name, JSON.stringify(first_object), true);
+        if(left && top){
+            first_object = {
+                object_offset_left: 0,
+                object_offset_top: 0
+            };
+            first_object.object_offset_left = left;
+            first_object.object_offset_top = top;
+            send(DNS.topic("clients_data_first_object")+'/'+broker_mqtt.client_name, JSON.stringify(first_object), true);
+        } else {
+            console.log("send empty");
+            send(DNS.topic("clients_data_first_object")+'/'+broker_mqtt.client_name, "", true); // send empty data
+        }
     };
     /* Subscribe to a topic */
     var subscribe = function (topic) {
