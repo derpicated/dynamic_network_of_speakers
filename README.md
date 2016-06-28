@@ -1,4 +1,6 @@
-# Dynamic Network of Speakers [![Build Status](https://travis-ci.org/derpicated/dynamic_network_of_speakers.svg?branch=devel)](https://travis-ci.org/derpicated/dynamic_network_of_speakers)
+# Dynamic Network of Speakers [![Build Status](https://travis-ci.org/derpicated/dynamic_network_of_speakers.svg?branch=master)](https://travis-ci.org/derpicated/dynamic_network_of_speakers)
+
+Development branch: [![Build Status](https://travis-ci.org/derpicated/dynamic_network_of_speakers.svg?branch=devel)](https://travis-ci.org/derpicated/dynamic_network_of_speakers)
 
 This project holds a Dynamic Network of Speakers.
 
