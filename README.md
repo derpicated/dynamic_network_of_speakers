@@ -61,7 +61,7 @@ The client uses a couple of tools:
 
 All Authors - Listed Alphabetically.
 
--   [Ingmar Delsink](https://github.com/MrCrazyID)
+-   [Ingmar Delsink](https://github.com/idelsink)
 -   [Menno van der Graaf](https://github.com/Mercotui)
 -   [Brian van Zwam](https://github.com/Gerwie)
 
